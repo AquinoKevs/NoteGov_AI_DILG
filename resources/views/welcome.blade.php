@@ -28,7 +28,7 @@
                         @auth
                             <a href="{{ route('dashboard') }}" class="btn-primary">Open Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="btn-secondary">Sign InAHAHAHAHAHHAHAHH</a>
+                            <a href="{{ route('login') }}" class="btn-secondary">Sign In</a>
                             <a href="{{ route('register') }}" class="btn-primary">Create Account</a>
                         @endauth
                     </div>
