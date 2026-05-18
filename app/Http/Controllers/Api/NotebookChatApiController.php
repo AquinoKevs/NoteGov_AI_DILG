@@ -24,7 +24,6 @@ class NotebookChatApiController extends Controller
         NotebookRagService $rag,
         OpenAIService $openAI,
     ): Response|JsonResponse|StreamedResponse {
-        $this->authorize('view', $notebook);
         abort_unless($chat->notebook_id === $notebook->id, 404);
 
         $prompt = $request->string('prompt')->trim()->toString();
@@ -33,7 +32,7 @@ class NotebookChatApiController extends Controller
         $contextPayload = $rag->buildContext($notebook, $prompt);
 
         $userMessage = $chat->messages()->create([
-            'user_id' => $request->user()->id,
+            'user_id' => null,
             'role' => 'user',
             'content' => $prompt,
             'metadata' => ['mode' => $mode],

@@ -26,7 +26,7 @@ class SourceController extends Controller
             $notebook,
             $request->validated(),
             $request->file('upload_file'),
-            $request->user()
+            null
         );
 
         return redirect()
@@ -39,12 +39,12 @@ class SourceController extends Controller
      */
     public function destroy(Request $request, Notebook $notebook, Source $source): RedirectResponse
     {
-        $this->authorize('delete', $source);
+        abort_unless($source->notebook_id === $notebook->id, 404);
 
         $this->ingestion->deleteSource($source);
 
         $this->activityLogger->log(
-            $request->user(),
+            null,
             'source.deleted',
             "Deleted source {$source->name}.",
             $notebook,

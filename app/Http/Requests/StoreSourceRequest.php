@@ -14,10 +14,7 @@ class StoreSourceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** @var Notebook|null $notebook */
-        $notebook = $this->route('notebook');
-
-        return $notebook ? $this->user()?->can('uploadSource', $notebook) ?? false : false;
+        return $this->route('notebook') instanceof Notebook;
     }
 
     /**

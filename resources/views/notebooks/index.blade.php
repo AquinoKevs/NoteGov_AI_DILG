@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <div class="chip mb-2">Notebook directory</div>
-            <div class="text-2xl font-bold text-white sm:text-3xl">Browse every governance notebook you can access.</div>
+            <div class="text-2xl font-bold text-white sm:text-3xl">Browse every governance notebook in the shared workspace.</div>
         </div>
     </x-slot>
 

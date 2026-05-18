@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Source;
-use App\Notifications\SourceProcessedNotification;
 use App\Services\DocumentIngestionService;
 use App\Services\NotebookRagService;
 use Illuminate\Bus\Queueable;
@@ -46,7 +45,5 @@ class ProcessSourceJob implements ShouldQueue
         ]);
 
         $rag->syncSourceEmbeddings($source);
-
-        $source->notebook->owner->notify(new SourceProcessedNotification($source));
     }
 }

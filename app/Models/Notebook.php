@@ -54,8 +54,12 @@ class Notebook extends Model
     /**
      * Scope a query to notebooks the user can access.
      */
-    public function scopeAccessibleBy(Builder $query, User $user): Builder
+    public function scopeAccessibleBy(Builder $query, ?User $user): Builder
     {
+        if (! $user) {
+            return $query;
+        }
+
         return $query->where(function (Builder $builder) use ($user): void {
             $builder
                 ->where('owner_id', $user->id)
@@ -135,7 +139,7 @@ class Notebook extends Model
     public function isAccessibleBy(?User $user): bool
     {
         if (! $user) {
-            return false;
+            return true;
         }
 
         if ($user->isAdmin() || $this->owner_id === $user->id) {
@@ -151,7 +155,7 @@ class Notebook extends Model
     public function userPermission(?User $user): ?string
     {
         if (! $user) {
-            return null;
+            return 'owner';
         }
 
         if ($user->isAdmin() || $this->owner_id === $user->id) {

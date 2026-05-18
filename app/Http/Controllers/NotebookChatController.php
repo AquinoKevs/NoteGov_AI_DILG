@@ -14,7 +14,6 @@ class NotebookChatController extends Controller
      */
     public function export(Notebook $notebook, Chat $chat, PdfExportService $pdfExport): Response
     {
-        $this->authorize('view', $notebook);
         abort_unless($chat->notebook_id === $notebook->id, 404);
 
         $chat->load('messages.user', 'notebook');

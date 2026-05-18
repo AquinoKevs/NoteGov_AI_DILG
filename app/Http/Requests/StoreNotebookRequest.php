@@ -12,7 +12,17 @@ class StoreNotebookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('create', \App\Models\Notebook::class) ?? false;
+        return true;
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'visibility' => $this->input('visibility', 'shared'),
+        ]);
     }
 
     /**

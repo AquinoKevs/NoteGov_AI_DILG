@@ -13,10 +13,7 @@ class StoreChatMessageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** @var Notebook|null $notebook */
-        $notebook = $this->route('notebook');
-
-        return $notebook ? $this->user()?->can('view', $notebook) ?? false : false;
+        return $this->route('notebook') instanceof Notebook;
     }
 
     /**

@@ -15,8 +15,8 @@ class NotebookApiController extends Controller
     public function index(Request $request): JsonResponse
     {
         $notebooks = Notebook::query()
-            ->with(['owner', 'category'])
-            ->withCount(['sources', 'chats', 'members'])
+            ->with(['category'])
+            ->withCount(['sources', 'chats'])
             ->accessibleBy($request->user())
             ->orderByDesc('last_activity_at')
             ->paginate(10);
@@ -29,9 +29,7 @@ class NotebookApiController extends Controller
      */
     public function show(Request $request, Notebook $notebook): JsonResponse
     {
-        $this->authorize('view', $notebook);
-
-        $notebook->load(['owner', 'category', 'members', 'sources', 'chats.messages']);
+        $notebook->load(['category', 'sources', 'chats.messages']);
 
         return response()->json($notebook);
     }

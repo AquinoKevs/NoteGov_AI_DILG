@@ -13,11 +13,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        @php
-            $user = auth()->user();
-            $unreadNotifications = $user?->unreadNotifications()->count() ?? 0;
-        @endphp
-
         <div x-data="{ navOpen: false }" class="relative min-h-screen overflow-hidden">
             <div class="pointer-events-none absolute inset-0 opacity-70">
                 <div class="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_55%)]"></div>
@@ -44,35 +39,25 @@
                             <span>Notebooks</span>
                             <span class="text-xs uppercase tracking-[0.22em] text-slate-500">02</span>
                         </a>
-                        <a href="{{ route('notifications.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('notifications.*') ? 'bg-sky-400/15 text-white' : 'text-slate-300 hover:bg-white/6 hover:text-white' }}">
-                            <span>Notifications</span>
-                            <span class="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-slate-200">{{ $unreadNotifications }}</span>
-                        </a>
-                        @if ($user?->isAdmin())
-                            <a href="{{ route('analytics') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('analytics') ? 'bg-sky-400/15 text-white' : 'text-slate-300 hover:bg-white/6 hover:text-white' }}">
-                                <span>Admin Analytics</span>
-                                <span class="text-xs uppercase tracking-[0.22em] text-slate-500">03</span>
-                            </a>
-                        @endif
-                        <a href="{{ route('profile.edit') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('profile.*') ? 'bg-sky-400/15 text-white' : 'text-slate-300 hover:bg-white/6 hover:text-white' }}">
-                            <span>Profile</span>
-                            <span class="text-xs uppercase tracking-[0.22em] text-slate-500">04</span>
+                        <a href="{{ route('analytics') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('analytics') ? 'bg-sky-400/15 text-white' : 'text-slate-300 hover:bg-white/6 hover:text-white' }}">
+                            <span>Analytics</span>
+                            <span class="text-xs uppercase tracking-[0.22em] text-slate-500">03</span>
                         </a>
                     </div>
 
                     <div class="panel mt-8 space-y-4 p-5">
                         <div class="flex items-center justify-between">
                             <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Workspace</p>
-                            <span class="chip">AI Ready</span>
+                            <span class="chip">Open Access</span>
                         </div>
                         <div class="grid gap-3">
                             <div class="panel-muted px-4 py-3">
-                                <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Role</p>
-                                <p class="mt-2 text-lg font-semibold text-white">{{ str($user?->role ?? 'staff')->headline() }}</p>
+                                <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Mode</p>
+                                <p class="mt-2 text-lg font-semibold text-white">Shared knowledge workspace</p>
                             </div>
                             <div class="panel-muted px-4 py-3">
                                 <p class="text-xs uppercase tracking-[0.22em] text-slate-500">Office</p>
-                                <p class="mt-2 text-sm text-slate-200">{{ $user?->office ?: 'DILG Knowledge Operations' }}</p>
+                                <p class="mt-2 text-sm text-slate-200">DILG Knowledge Operations</p>
                             </div>
                         </div>
                     </div>
@@ -106,11 +91,7 @@
                                     <input type="search" name="search" value="{{ request('search') }}" placeholder="Search notebooks, reports, or source topics" class="input-shell">
                                 </form>
                                 <a href="{{ route('notebooks.create') }}" class="btn-primary">New Notebook</a>
-                                <a href="{{ route('notifications.index') }}" class="btn-secondary">Alerts {{ $unreadNotifications > 0 ? "({$unreadNotifications})" : '' }}</a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="btn-secondary">Sign Out</button>
-                                </form>
+                                <a href="{{ route('analytics') }}" class="btn-secondary">Analytics</a>
                             </div>
                         </div>
                     </header>
@@ -130,11 +111,7 @@
                         <div class="mt-8 space-y-2">
                             <a href="{{ route('dashboard') }}" class="block rounded-2xl px-4 py-3 text-slate-200 hover:bg-white/6">Dashboard</a>
                             <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-slate-200 hover:bg-white/6">Notebooks</a>
-                            @if ($user?->isAdmin())
-                                <a href="{{ route('analytics') }}" class="block rounded-2xl px-4 py-3 text-slate-200 hover:bg-white/6">Admin Analytics</a>
-                            @endif
-                            <a href="{{ route('notifications.index') }}" class="block rounded-2xl px-4 py-3 text-slate-200 hover:bg-white/6">Notifications</a>
-                            <a href="{{ route('profile.edit') }}" class="block rounded-2xl px-4 py-3 text-slate-200 hover:bg-white/6">Profile</a>
+                            <a href="{{ route('analytics') }}" class="block rounded-2xl px-4 py-3 text-slate-200 hover:bg-white/6">Analytics</a>
                         </div>
                     </aside>
 

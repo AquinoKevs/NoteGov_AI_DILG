@@ -10,23 +10,23 @@ class NotebookPolicy
     /**
      * Perform pre-authorization checks.
      */
-    public function before(User $user, string $ability): bool|null
+    public function before(?User $user, string $ability): bool|null
     {
-        return $user->isAdmin() ? true : null;
+        return $user?->isAdmin() ? true : null;
     }
 
     /**
      * Determine whether the user can view any notebooks.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(?User $user): bool
     {
-        return $user->hasRole([User::ROLE_ADMIN, User::ROLE_STAFF, User::ROLE_VIEWER]);
+        return true;
     }
 
     /**
      * Determine whether the user can view the notebook.
      */
-    public function view(User $user, Notebook $notebook): bool
+    public function view(?User $user, Notebook $notebook): bool
     {
         return $notebook->isAccessibleBy($user);
     }
@@ -34,15 +34,15 @@ class NotebookPolicy
     /**
      * Determine whether the user can create notebooks.
      */
-    public function create(User $user): bool
+    public function create(?User $user): bool
     {
-        return $user->hasRole([User::ROLE_ADMIN, User::ROLE_STAFF]);
+        return true;
     }
 
     /**
      * Determine whether the user can update the notebook.
      */
-    public function update(User $user, Notebook $notebook): bool
+    public function update(?User $user, Notebook $notebook): bool
     {
         return $notebook->canManage($user);
     }
@@ -50,30 +50,23 @@ class NotebookPolicy
     /**
      * Determine whether the user can delete the notebook.
      */
-    public function delete(User $user, Notebook $notebook): bool
+    public function delete(?User $user, Notebook $notebook): bool
     {
-        return $notebook->owner_id === $user->id;
+        return true;
     }
 
     /**
      * Determine whether the user can share the notebook.
      */
-    public function share(User $user, Notebook $notebook): bool
+    public function share(?User $user, Notebook $notebook): bool
     {
-        if ($notebook->owner_id === $user->id) {
-            return true;
-        }
-
-        return $notebook->members()
-            ->where('users.id', $user->id)
-            ->wherePivot('can_share', true)
-            ->exists();
+        return false;
     }
 
     /**
      * Determine whether the user can upload a source to the notebook.
      */
-    public function uploadSource(User $user, Notebook $notebook): bool
+    public function uploadSource(?User $user, Notebook $notebook): bool
     {
         return $notebook->canManage($user);
     }

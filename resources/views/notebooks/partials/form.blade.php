@@ -44,14 +44,6 @@
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div>
-                        <x-input-label for="visibility" value="Visibility" />
-                        <select id="visibility" name="visibility" class="input-shell mt-1">
-                            <option value="private" @selected(old('visibility', $notebook->visibility ?? 'private') === 'private')>Private</option>
-                            <option value="shared" @selected(old('visibility', $notebook->visibility ?? 'private') === 'shared')>Shared</option>
-                        </select>
-                        <x-input-error :messages="$errors->get('visibility')" />
-                    </div>
-                    <div>
                         <x-input-label for="status" value="Status" />
                         <select id="status" name="status" class="input-shell mt-1">
                             <option value="draft" @selected(old('status', $notebook->status ?? 'active') === 'draft')>Draft</option>
@@ -59,6 +51,10 @@
                             <option value="archived" @selected(old('status', $notebook->status ?? 'active') === 'archived')>Archived</option>
                         </select>
                         <x-input-error :messages="$errors->get('status')" />
+                    </div>
+                    <div class="panel-muted px-4 py-4">
+                        <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Access</p>
+                        <p class="mt-2 text-sm text-slate-200">Every notebook now opens directly in the shared workspace without account sign-in.</p>
                     </div>
                 </div>
 

@@ -26,7 +26,7 @@
             <div class="panel p-5">
                 <div class="rounded-[24px] p-5 text-white" style="background: linear-gradient(135deg, {{ $notebook->cover_color ?? '#1f6feb' }} 0%, rgba(8,15,31,0.95) 85%);">
                     <div class="flex items-center justify-between">
-                        <span class="chip border-white/15 bg-black/20 text-white/80">{{ str($notebook->visibility)->headline() }}</span>
+                        <span class="chip border-white/15 bg-black/20 text-white/80">Open Workspace</span>
                         <span class="text-xs uppercase tracking-[0.22em] text-white/70">{{ str($notebook->status)->headline() }}</span>
                     </div>
                     <p class="mt-4 text-sm leading-7 text-white/80">{{ $notebook->summary ?: 'No summary yet. Use the AI tools on the right to generate one from your sources.' }}</p>
@@ -38,8 +38,8 @@
                         <p class="mt-2 text-lg font-semibold text-white">{{ $notebook->sources->count() }}</p>
                     </div>
                     <div class="panel-muted px-4 py-3">
-                        <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Members</p>
-                        <p class="mt-2 text-lg font-semibold text-white">{{ $notebook->members->count() + 1 }}</p>
+                        <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Chats</p>
+                        <p class="mt-2 text-lg font-semibold text-white">{{ $notebook->chats->count() }}</p>
                     </div>
                     <div class="panel-muted px-4 py-3">
                         <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Last activity</p>
@@ -112,7 +112,7 @@
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <p class="text-sm font-semibold text-white">{{ $source->name }}</p>
-                                    <p class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{{ strtoupper($source->type) }} • {{ str($source->status)->headline() }}</p>
+                                    <p class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{{ strtoupper($source->type) }} - {{ str($source->status)->headline() }}</p>
                                 </div>
                                 <form method="POST" action="{{ route('notebooks.sources.destroy', [$notebook, $source]) }}">
                                     @csrf
@@ -210,48 +210,21 @@
             </div>
 
             <div class="panel p-5">
-                <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Share and permissions</p>
+                <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Workspace details</p>
                 <div class="mt-4 space-y-3">
                     <div class="panel-muted px-4 py-4">
-                        <p class="text-sm font-semibold text-white">Owner</p>
-                        <p class="mt-1 text-sm text-slate-300">{{ $notebook->owner->name }} • {{ $notebook->owner->email }}</p>
+                        <p class="text-sm font-semibold text-white">Access mode</p>
+                        <p class="mt-1 text-sm text-slate-300">This notebook opens directly in the shared workspace with no login or sign-up required.</p>
                     </div>
-                    @foreach ($notebook->members as $member)
-                        <div class="panel-muted flex items-center justify-between gap-4 px-4 py-4">
-                            <div>
-                                <p class="text-sm font-semibold text-white">{{ $member->name }}</p>
-                                <p class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{{ $member->pivot->permission }}</p>
-                            </div>
-                            <form method="POST" action="{{ route('notebooks.members.destroy', [$notebook, $member->pivot->id]) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button class="text-xs font-semibold text-rose-300 transition hover:text-rose-200" type="submit">Remove</button>
-                            </form>
-                        </div>
-                    @endforeach
+                    <div class="panel-muted px-4 py-4">
+                        <p class="text-sm font-semibold text-white">Category</p>
+                        <p class="mt-1 text-sm text-slate-300">{{ $notebook->category?->name ?: 'General notebook' }}</p>
+                    </div>
+                    <div class="panel-muted px-4 py-4">
+                        <p class="text-sm font-semibold text-white">Status</p>
+                        <p class="mt-1 text-sm text-slate-300">{{ str($notebook->status)->headline() }}</p>
+                    </div>
                 </div>
-
-                <form method="POST" action="{{ route('notebooks.members.store', $notebook) }}" class="mt-5 space-y-4">
-                    @csrf
-                    <div>
-                        <x-input-label for="email" value="Share with existing user" />
-                        <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" placeholder="colleague@dilg.gov.ph" />
-                    </div>
-                    <div class="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <x-input-label for="permission" value="Permission" />
-                            <select id="permission" name="permission" class="input-shell mt-1">
-                                <option value="viewer">Viewer</option>
-                                <option value="editor">Editor</option>
-                            </select>
-                        </div>
-                        <label class="mt-7 flex items-center gap-3 text-sm text-slate-300">
-                            <input type="checkbox" name="can_share" value="1" class="rounded border-white/20 bg-slate-950/60">
-                            Can reshare
-                        </label>
-                    </div>
-                    <button type="submit" class="btn-primary w-full">Update Sharing</button>
-                </form>
             </div>
 
             <div class="panel p-5">
@@ -260,10 +233,10 @@
                     @forelse ($notebook->activityLogs->take(8) as $activity)
                         <div class="panel-muted px-4 py-4">
                             <p class="text-sm font-semibold text-white">{{ $activity->description }}</p>
-                            <p class="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">{{ $activity->action }} • {{ $activity->created_at?->diffForHumans() }}</p>
+                            <p class="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">{{ $activity->action }} - {{ $activity->created_at?->diffForHumans() }}</p>
                         </div>
                     @empty
-                        <p class="text-sm text-slate-400">Notebook events will appear here after uploads, sharing changes, and AI interactions.</p>
+                        <p class="text-sm text-slate-400">Notebook events will appear here after uploads, edits, and AI interactions.</p>
                     @endforelse
                 </div>
             </div>

@@ -2,14 +2,14 @@
     <x-slot name="header">
         <div>
             <div class="chip mb-2">Operational intelligence</div>
-            <div class="text-2xl font-bold text-white sm:text-3xl">Governance notebooks, grounded answers, and AI-ready source workspaces.</div>
+            <div class="text-2xl font-bold text-white sm:text-3xl">Governance notebooks, grounded answers, and one open AI workspace.</div>
         </div>
     </x-slot>
 
     <div class="grid gap-6 xl:grid-cols-[1.3fr_.7fr]">
         <section class="space-y-6">
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <x-stat-card label="Accessible Notebooks" :value="$stats['notebooks']" hint="Your active knowledge spaces" accent="sky" />
+                <x-stat-card label="Total Notebooks" :value="$stats['notebooks']" hint="Shared governance knowledge spaces" accent="sky" />
                 <x-stat-card label="Indexed Sources" :value="$stats['sources']" hint="Documents and links in scope" accent="amber" />
                 <x-stat-card label="Active Chats" :value="$stats['chats']" hint="Notebook-specific AI threads" accent="emerald" />
                 <x-stat-card label="Pending Processing" :value="$stats['pending_sources']" hint="Queued for AI indexing" accent="rose" />
@@ -19,7 +19,7 @@
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Recent notebooks</p>
-                        <h2 class="mt-2 text-2xl font-bold text-white">Continue where your governance work left off.</h2>
+                        <h2 class="mt-2 text-2xl font-bold text-white">Continue building the shared governance workspace.</h2>
                     </div>
                     <a href="{{ route('notebooks.create') }}" class="btn-primary">Create New Notebook</a>
                 </div>
@@ -101,7 +101,7 @@
             <div class="panel p-6">
                 <div class="flex items-center justify-between">
                     <p class="text-xs uppercase tracking-[0.24em] text-slate-400">Activity History</p>
-                    <a href="{{ route('notifications.index') }}" class="text-sm text-sky-200">View alerts</a>
+                    <a href="{{ route('analytics') }}" class="text-sm text-sky-200">Open analytics</a>
                 </div>
                 <div class="mt-5 space-y-3">
                     @forelse ($activities as $activity)
@@ -113,7 +113,7 @@
                             <p class="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">{{ $activity->action }}</p>
                         </div>
                     @empty
-                        <p class="text-sm text-slate-400">Recent uploads, sharing activity, and AI actions will appear here.</p>
+                        <p class="text-sm text-slate-400">Recent uploads, notebook updates, and AI actions will appear here.</p>
                     @endforelse
                 </div>
             </div>

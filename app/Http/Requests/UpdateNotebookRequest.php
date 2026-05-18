@@ -13,10 +13,17 @@ class UpdateNotebookRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** @var Notebook|null $notebook */
-        $notebook = $this->route('notebook');
+        return $this->route('notebook') instanceof Notebook;
+    }
 
-        return $notebook ? $this->user()?->can('update', $notebook) ?? false : false;
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'visibility' => $this->input('visibility', 'shared'),
+        ]);
     }
 
     /**

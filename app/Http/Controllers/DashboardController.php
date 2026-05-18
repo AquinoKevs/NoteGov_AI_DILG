@@ -56,11 +56,7 @@ class DashboardController extends Controller
 
         $activities = ActivityLog::query()
             ->with(['user', 'notebook', 'source'])
-            ->where(function ($query) use ($user): void {
-                $query
-                    ->whereHas('notebook', fn ($notebookQuery) => $notebookQuery->accessibleBy($user))
-                    ->orWhere('user_id', $user->id);
-            })
+            ->whereHas('notebook', fn ($notebookQuery) => $notebookQuery->accessibleBy($user))
             ->latest('created_at')
             ->limit(8)
             ->get();

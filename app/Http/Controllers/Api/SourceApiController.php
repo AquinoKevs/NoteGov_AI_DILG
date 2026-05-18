@@ -19,7 +19,7 @@ class SourceApiController extends Controller
             $notebook,
             $request->validated(),
             $request->file('upload_file'),
-            $request->user()
+            null
         );
 
         return response()->json([

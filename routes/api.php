@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\NotebookChatApiController;
 use App\Http\Controllers\Api\SourceApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->prefix('v1')->name('api.')->group(function () {
+Route::prefix('v1')->name('api.')->group(function () {
     Route::get('/notebooks', [NotebookApiController::class, 'index'])->name('notebooks.index');
     Route::get('/notebooks/{notebook}', [NotebookApiController::class, 'show'])->name('notebooks.show');
 
