@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class NotebookInsightsService
 {
-    public function __construct(protected OpenAIService $openAI) {}
+    public function __construct(protected GeminiService $openAI) {}
 
     /**
      * Build dashboard and workspace insights for a notebook.

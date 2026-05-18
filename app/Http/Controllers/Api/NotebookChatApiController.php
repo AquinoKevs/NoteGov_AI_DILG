@@ -7,7 +7,7 @@ use App\Http\Requests\StoreChatMessageRequest;
 use App\Models\Chat;
 use App\Models\Notebook;
 use App\Services\NotebookRagService;
-use App\Services\OpenAIService;
+use App\Services\GeminiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -22,7 +22,7 @@ class NotebookChatApiController extends Controller
         Notebook $notebook,
         Chat $chat,
         NotebookRagService $rag,
-        OpenAIService $openAI,
+        GeminiService $openAI,
     ): Response|JsonResponse|StreamedResponse {
         abort_unless($chat->notebook_id === $notebook->id, 404);
 
