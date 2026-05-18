@@ -9,24 +9,18 @@
     --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --font-display: 'Space Grotesk', 'Manrope', ui-sans-serif, system-ui, sans-serif;
-    --color-gov-950: #07111f;
-    --color-gov-900: #0d1a2e;
-    --color-gov-800: #13243f;
-    --color-gov-700: #1a3257;
 }
 
 @layer base {
     html {
-        color-scheme: dark;
+        color-scheme: light;
+        scroll-behavior: smooth;
     }
 
     body {
         min-height: 100vh;
-        background:
-            radial-gradient(circle at top left, rgba(14, 165, 233, 0.18), transparent 34%),
-            radial-gradient(circle at top right, rgba(245, 158, 11, 0.16), transparent 32%),
-            linear-gradient(180deg, #07111f 0%, #091426 45%, #050b15 100%);
-        color: #e2e8f0;
+        background: #f3f4f6;
+        color: #1f2937;
     }
 
     h1,
@@ -36,51 +30,33 @@
     h5,
     h6 {
         font-family: var(--font-display);
-        letter-spacing: -0.03em;
+        letter-spacing: -0.02em;
     }
 
     ::selection {
-        background: rgba(245, 158, 11, 0.35);
-        color: #fff7ed;
+        background: rgba(56, 189, 248, 0.2);
+        color: #0f172a;
     }
 }
 
 @layer components {
     .panel {
-        @apply rounded-[28px] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur-xl;
-    }
-
-    .panel-muted {
-        @apply rounded-[24px] border border-white/8 bg-slate-950/40 shadow-xl shadow-black/10 backdrop-blur-md;
-    }
-
-    .btn-primary {
-        @apply inline-flex items-center justify-center rounded-2xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300/70;
-    }
-
-    .btn-secondary {
-        @apply inline-flex items-center justify-center rounded-2xl border border-white/12 bg-white/6 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-300/60;
+        @apply rounded-3xl bg-white border border-gray-200 shadow-sm;
     }
 
     .chip {
-        @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-slate-300;
+        @apply inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-gray-600;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center rounded-2xl bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-400/50;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300/50;
     }
 
     .input-shell {
-        @apply w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 shadow-inner shadow-black/20 outline-none transition placeholder:text-slate-500 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/20;
-    }
-
-    .floating-grid {
-        background-image:
-            linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
-        background-size: 42px 42px;
-    }
-
-    .aurora-border {
-        box-shadow:
-            0 0 0 1px rgba(255, 255, 255, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.06),
-            0 24px 80px rgba(2, 6, 23, 0.34);
+        @apply w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20;
     }
 }
