@@ -28,14 +28,18 @@ class NotebookChatApiController extends Controller
 
         $prompt = $request->string('prompt')->trim()->toString();
         $mode = $request->string('mode')->toString() ?: ($chat->mode ?: 'qa');
+        $selectedSourceIds = $request->input('selected_source_ids');
+        $selectedSourceIds = is_array($selectedSourceIds)
+            ? array_values(array_map('intval', array_filter($selectedSourceIds, fn ($id) => is_int($id) || ctype_digit((string) $id))))
+            : null;
 
-        $contextPayload = $rag->buildContext($notebook, $prompt);
+        $contextPayload = $rag->buildContext($notebook, $prompt, 4, $selectedSourceIds ?: null);
 
         $userMessage = $chat->messages()->create([
             'user_id' => null,
             'role' => 'user',
             'content' => $prompt,
-            'metadata' => ['mode' => $mode],
+            'metadata' => ['mode' => $mode, 'selected_source_ids' => $selectedSourceIds ?: null],
         ]);
 
         $answer = $openAI->answer($prompt, $contextPayload['context'], $contextPayload['citations'], $mode);

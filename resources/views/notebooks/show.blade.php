@@ -577,6 +577,21 @@
                     ])->values()),
                 }),
                 sourcesCollapsed: false,
+                selectedSourceIds: [],
+                pageSourceIds: @js($sources->getCollection()->pluck('id')->values()),
+                get selectAllChecked() {
+                    if (!this.pageSourceIds.length) return false;
+                    return this.pageSourceIds.every((id) => this.selectedSourceIds.includes(id));
+                },
+                toggleSelectAll() {
+                    if (this.selectAllChecked) {
+                        this.selectedSourceIds = this.selectedSourceIds.filter((id) => !this.pageSourceIds.includes(id));
+                        return;
+                    }
+
+                    const merged = new Set([...(this.selectedSourceIds || []), ...(this.pageSourceIds || [])]);
+                    this.selectedSourceIds = Array.from(merged);
+                },
                 showModal: false,
                 modalStep: 'main',
                 sourceType: 'pdf',
@@ -1032,17 +1047,32 @@
                     </div>
 
                     <div class="space-y-3">
+                        @if ($sources->count())
+                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 4px 6px;">
+                                <span style="font-size: 13px; font-weight: 700; color: #0f172a;">Select all</span>
+                                <input type="checkbox" :checked="selectAllChecked" @change="toggleSelectAll()" style="width: 16px; height: 16px;">
+                            </div>
+                        @endif
                         @forelse ($sources as $source)
                             <div class="border border-gray-100 bg-white rounded-2xl px-4 py-4 flex items-center justify-between">
-                                <div class="min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">{{ strtoupper($source->type) }}</p>
+                                <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                                    <div style="width: 22px; height: 22px; color: #2563eb; flex: 0 0 auto;">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h7l3 3v13a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">{{ strtoupper($source->type) }}</p>
+                                    </div>
                                 </div>
-                                <form method="POST" action="{{ route('notebooks.sources.destroy', [$notebook, $source]) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="text-xs text-rose-500 hover:text-rose-700 font-semibold" type="submit">Remove</button>
-                                </form>
+                                <input
+                                    type="checkbox"
+                                    :value="{{ $source->id }}"
+                                    x-model="selectedSourceIds"
+                                    style="width: 16px; height: 16px;"
+                                    title="Include in chat context"
+                                >
                             </div>
                         @empty
                             <div class="empty-state">
@@ -1139,7 +1169,7 @@
                             class="chat-textarea"
                             placeholder="Ask a question or create something"
                         ></textarea>
-                        <span class="source-count" x-text="`{{ $sourcesTotal }} sources`"></span>
+                        <span class="source-count" x-text="selectedSourceIds.length ? `${selectedSourceIds.length} selected` : `{{ $sourcesTotal }} sources`"></span>
                         <button
                             type="button"
                             class="chat-send-btn"
@@ -1376,6 +1406,7 @@
                                     prompt: userPrompt,
                                     mode: this.mode,
                                     stream: true,
+                                    selected_source_ids: (this.selectedSourceIds && this.selectedSourceIds.length) ? this.selectedSourceIds : null,
                                 }),
                             });
 

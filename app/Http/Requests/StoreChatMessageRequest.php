@@ -23,10 +23,18 @@ class StoreChatMessageRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var Notebook|null $notebook */
+        $notebook = $this->route('notebook');
+
         return [
             'prompt' => ['required', 'string', 'max:4000'],
             'mode' => ['nullable', Rule::in(['qa', 'summary', 'report', 'brief', 'compare'])],
             'stream' => ['nullable', 'boolean'],
+            'selected_source_ids' => ['nullable', 'array'],
+            'selected_source_ids.*' => [
+                'integer',
+                Rule::exists('sources', 'id')->when($notebook, fn ($rule) => $rule->where('notebook_id', $notebook->id)),
+            ],
         ];
     }
 }

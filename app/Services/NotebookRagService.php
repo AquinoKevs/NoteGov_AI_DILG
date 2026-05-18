@@ -52,13 +52,17 @@ class NotebookRagService
      *
      * @return array{context:string,citations:array<int, array<string, mixed>>,chunks:Collection<int, AiEmbedding>}
      */
-    public function buildContext(Notebook $notebook, string $prompt, int $limit = 4): array
+    public function buildContext(Notebook $notebook, string $prompt, int $limit = 4, ?array $sourceIds = null): array
     {
-        $chunks = $this->searchRelevantChunks($notebook, $prompt, $limit);
+        $chunks = $this->searchRelevantChunks($notebook, $prompt, $limit, $sourceIds);
 
         if ($chunks->isEmpty()) {
             $fallbackSources = $notebook->sources()
                 ->whereNotNull('summary')
+                ->when(
+                    is_array($sourceIds) && $sourceIds !== [],
+                    fn ($query) => $query->whereIn('id', $sourceIds)
+                )
                 ->latest('updated_at')
                 ->limit($limit)
                 ->get();
@@ -104,7 +108,7 @@ class NotebookRagService
      *
      * @return Collection<int, AiEmbedding>
      */
-    public function searchRelevantChunks(Notebook $notebook, string $prompt, int $limit = 4): Collection
+    public function searchRelevantChunks(Notebook $notebook, string $prompt, int $limit = 4, ?array $sourceIds = null): Collection
     {
         $keywords = collect(Str::of($prompt)->lower()->replaceMatches('/[^a-z0-9\s]/', ' ')->explode(' '))
             ->filter(fn (string $part) => Str::length($part) > 2)
@@ -113,6 +117,10 @@ class NotebookRagService
 
         return $notebook->embeddings()
             ->with('source')
+            ->when(
+                is_array($sourceIds) && $sourceIds !== [],
+                fn ($query) => $query->whereIn('source_id', $sourceIds)
+            )
             ->get()
             ->map(function (AiEmbedding $chunk) use ($keywords): AiEmbedding {
                 $haystack = Str::lower($chunk->content);
