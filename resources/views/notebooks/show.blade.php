@@ -775,106 +775,79 @@
             
             <div x-show="showShareModal" class="modal-overlay" @click.self="showShareModal = false">
                 <div class="modal-content" style="max-width: 640px; border-radius: 24px;" @click.stop>
-                    <div style="padding: 24px 32px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <svg style="width: 28px; height: 28px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
-                            </svg>
-                            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #1e293b; margin: 0;">Share "{{ $notebook->title }}"</h2>
+                    <form method="POST" action="{{ route('notebooks.members.store', $notebook) }}">
+                        @csrf
+                        <div style="padding: 24px 32px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <svg style="width: 28px; height: 28px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                </svg>
+                                <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #1e293b; margin: 0;">Share "{{ $notebook->title }}"</h2>
+                            </div>
+                            <button type="button" class="modal-close" @click="showShareModal = false">&times;</button>
                         </div>
-                        <button class="modal-close" @click="showShareModal = false">&times;</button>
-                    </div>
-                    
-                    <div style="padding: 32px;">
-                        <div style="margin-bottom: 32px;">
-                            <input type="text" placeholder="Add people and groups *" style="width: 100%; padding: 20px 24px; border: 2px solid #ef4444; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 18px; color: #1e293b; outline: none; background: white;">
+                        
+                        <div style="padding: 32px;">
+                            <div style="margin-bottom: 32px;">
+                                <input type="email" name="email" placeholder="Add people by email *" required style="width: 100%; padding: 20px 24px; border: 2px solid #e2e8f0; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 18px; color: #1e293b; outline: none; background: white;">
+                            <input type="hidden" name="permission" value="view">
+                            @error('email')
+                                <p style="color: #ef4444; font-size: 14px; margin-top: 8px;">{{ $message }}</p>
+                            @enderror
                         </div>
                         
                         <div style="margin-bottom: 32px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                                 <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #1e293b; margin: 0;">People with access</h3>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-family: 'Manrope', sans-serif; font-size: 16px; color: #1e293b;">Notify people</span>
-                                    <div style="width: 24px; height: 24px; background: #3b82f6; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                                        <svg style="width: 16px; height: 16px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </div>
-                                </div>
                             </div>
                             
                             <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid #e2e8f0;">
                                 <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #8b5cf6, #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Manrope', sans-serif; font-size: 24px; font-weight: 700;">
-                                    K
+                                    {{ strtoupper(substr(($notebook->owner->name ?? 'K'), 0, 1)) }}
                                 </div>
                                 <div style="flex: 1;">
-                                    <p style="font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; color: #1e293b; margin: 0 0 4px;">Kevin Aquino</p>
-                                    <p style="font-family: 'Manrope', sans-serif; font-size: 14px; color: #64748b; margin: 0;">aquinokeevin688@gmail....</p>
+                                    <p style="font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; color: #1e293b; margin: 0 0 4px;">{{ $notebook->owner->name ?? 'Owner' }}</p>
+                                    <p style="font-family: 'Manrope', sans-serif; font-size: 14px; color: #64748b; margin: 0;">{{ $notebook->owner->email ?? '' }}</p>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <span style="font-family: 'Manrope', sans-serif; font-size: 16px; color: #94a3b8;">Owner</span>
-                                    <svg style="width: 20px; height: 20px; color: #94a3b8;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div style="margin-bottom: 24px;">
-                            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #1e293b; margin: 0 0 16px;">Notebook Access</h3>
                             
-                            <div style="position: relative;">
-                                <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; cursor: pointer;" @click="showAccessDropdown = !showAccessDropdown">
-                                    <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                        <svg style="width: 28px; height: 28px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                        </svg>
+                            @foreach($notebook->memberships as $membership)
+                                <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid #e2e8f0;">
+                                    <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #8b5cf6, #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Manrope', sans-serif; font-size: 24px; font-weight: 700;">
+                                        {{ strtoupper(substr(($membership->user->name ?? 'U'), 0, 1)) }}
                                     </div>
                                     <div style="flex: 1;">
-                                        <p style="font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; margin: 0;" x-text="shareAccess === 'restricted' ? 'Restricted' : shareAccess === 'link' ? 'Anyone with a link' : 'Public'"></p>
+                                        <p style="font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; color: #1e293b; margin: 0 0 4px;">{{ $membership->user->name ?? 'User' }}</p>
+                                        <p style="font-family: 'Manrope', sans-serif; font-size: 14px; color: #64748b; margin: 0;">{{ $membership->user->email ?? '' }}</p>
                                     </div>
-                                    <svg style="width: 24px; height: 24px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span style="font-family: 'Manrope', sans-serif; font-size: 16px; color: #94a3b8;">{{ ucfirst($membership->permission) }}</span>
+                                        <form method="POST" action="{{ route('notebooks.members.destroy', [$notebook, $membership]) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" style="padding: 4px 8px; border: none; background: none; color: #ef4444; cursor: pointer; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600;">Remove</button>
+                                        </form>
+                                    </div>
                                 </div>
-                                
-                                <div x-show="showAccessDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: #f1f5f9; border-radius: 8px; margin-top: 4px; z-index: 100; overflow: hidden;" @click.outside="showAccessDropdown = false">
-                                    <button style="width: 100%; padding: 16px 20px; border: none; background: white; text-align: left; cursor: pointer; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; display: flex; align-items: center; justify-content: space-between;" @click="shareAccess = 'restricted'; showAccessDropdown = false;">
-                                        Restricted
-                                        <svg x-show="shareAccess === 'restricted'" style="width: 24px; height: 24px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </button>
-                                    <button style="width: 100%; padding: 16px 20px; border: none; background: white; text-align: left; cursor: pointer; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; display: flex; align-items: center; justify-content: space-between;" @click="shareAccess = 'link'; showAccessDropdown = false;">
-                                        Anyone with a link
-                                        <svg x-show="shareAccess === 'link'" style="width: 24px; height: 24px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </button>
-                                    <button style="width: 100%; padding: 16px 20px; border: none; background: white; text-align: left; cursor: pointer; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; display: flex; align-items: center; justify-content: space-between;" @click="shareAccess = 'public'; showAccessDropdown = false;">
-                                        Public
-                                        <svg x-show="shareAccess === 'public'" style="width: 24px; height: 24px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <p style="font-family: 'Manrope', sans-serif; font-size: 14px; color: #64748b; margin: 8px 0 0 72px;">Only people added can open with the link</p>
+                            @endforeach
                         </div>
                         
                         <div style="display: flex; align-items: center; gap: 16px;">
-                            <button style="flex: 1; padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 999px; background: white; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <button type="button" onclick="navigator.clipboard.writeText('{{ request()->url() }}')" style="flex: 1; padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 999px; background: white; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                                 <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2zm6-8a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                                 Copy link
                             </button>
-                            <button style="padding: 16px 48px; border: none; border-radius: 999px; background: #e2e8f0; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 700; color: #94a3b8; cursor: pointer;">
-                                Save
+                            <button type="submit" style="padding: 16px 48px; border: none; border-radius: 999px; background: #1e293b; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 700; color: white; cursor: pointer;">
+                                Share
                             </button>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
             

@@ -22,3 +22,8 @@ Route::delete('/notebooks/{notebook}/sources/{source}', [SourceController::class
 
 Route::get('/notebooks/{notebook}/chats/{chat}/export', [NotebookChatController::class, 'export'])
     ->name('notebooks.chats.export');
+
+Route::post('/notebooks/{notebook}/members', [\App\Http\Controllers\NotebookMemberController::class, 'store'])
+    ->name('notebooks.members.store');
+Route::delete('/notebooks/{notebook}/members/{member}', [\App\Http\Controllers\NotebookMemberController::class, 'destroy'])
+    ->name('notebooks.members.destroy');

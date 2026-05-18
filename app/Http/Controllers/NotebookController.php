@@ -108,6 +108,7 @@ class NotebookController extends Controller
             'sources',
             'activityLogs.user',
             'chats.messages.user',
+            'memberships.user',
         ]);
 
         /** @var Chat $activeChat */
