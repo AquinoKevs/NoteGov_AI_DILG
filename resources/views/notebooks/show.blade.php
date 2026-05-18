@@ -22,11 +22,21 @@
                 height: 100dvh;
             }
             .notebook-layout {
-                display: grid;
-                grid-template-columns: 380px 1fr;
+                display: flex;
                 flex: 1;
                 min-height: 0;
                 gap: 0;
+            }
+            .notebook-layout.sources-collapsed {
+                /* state class used for widths below */
+            }
+            .notebook-layout.sources-collapsed .panel-left .panel-header {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .notebook-layout.sources-collapsed .panel-left .panel-header h2 {
+                display: none;
             }
             .panel-left, .panel-right {
                 background: white;
@@ -36,6 +46,18 @@
                 height: 100%;
                 min-height: 0;
                 overflow: hidden;
+            }
+            .panel-left {
+                width: 380px;
+                flex: 0 0 auto;
+                transition: width 240ms ease;
+            }
+            .panel-right {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+            .notebook-layout.sources-collapsed .panel-left {
+                width: 72px;
             }
             .panel-header {
                 padding: 20px 24px;
@@ -91,6 +113,47 @@
             .add-sources-btn:hover {
                 border-color: #94a3b8;
                 background: #f8fafc;
+            }
+            .sources-collapsed-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 0;
+            }
+            .sources-icon-btn {
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #475569;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.15s ease;
+            }
+            .sources-icon-btn:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+                color: #1e293b;
+            }
+            .sources-icon-btn.primary {
+                border-style: dashed;
+            }
+            .sources-icon-badge {
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                background: #1e293b;
+                color: white;
+                border-radius: 999px;
+                padding: 2px 6px;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 1.2;
+                border: 2px solid white;
             }
             .empty-state {
                 text-align: center;
@@ -513,6 +576,7 @@
                         'created_at' => $message->created_at?->format('M d, Y h:i A'),
                     ])->values()),
                 }),
+                sourcesCollapsed: false,
                 showModal: false,
                 modalStep: 'main',
                 sourceType: 'pdf',
@@ -920,17 +984,17 @@
                 </div>
             </div>
             
-            <div class="notebook-layout">
+            <div class="notebook-layout" :class="sourcesCollapsed ? 'sources-collapsed' : ''">
             <div class="panel-left">
                 <div class="panel-header">
                     <h2>Sources</h2>
-                    <button class="text-gray-400 hover:text-gray-600">
+                    <button type="button" class="text-gray-400 hover:text-gray-600" @click="sourcesCollapsed = !sourcesCollapsed" :aria-label="sourcesCollapsed ? 'Expand sources panel' : 'Collapse sources panel'">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
                 </div>
-                <div class="panel-content">
+                <div class="panel-content" x-show="!sourcesCollapsed" x-transition.opacity.duration.200ms>
                     <button class="add-sources-btn" type="button" @click="showModal = true; modalStep = 'main'">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -996,6 +1060,28 @@
                             {{ $sources->onEachSide(1)->links() }}
                         </div>
                     @endif
+                </div>
+                <div class="panel-content" x-show="sourcesCollapsed" x-transition.opacity.duration.200ms style="padding: 16px 0;">
+                    <div class="sources-collapsed-actions">
+                        <button type="button" class="sources-icon-btn primary" title="Add sources" @click="showModal = true; modalStep = 'main'">
+                            <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </button>
+
+                        <button type="button" class="sources-icon-btn" title="Search sources" @click="showModal = true; modalStep = 'main'">
+                            <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+
+                        <button type="button" class="sources-icon-btn" title="Show sources" @click="sourcesCollapsed = false" style="position: relative;">
+                            <span class="sources-icon-badge">{{ $sourcesTotal }}</span>
+                            <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
