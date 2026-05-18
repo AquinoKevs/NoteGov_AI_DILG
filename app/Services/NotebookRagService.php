@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class NotebookRagService
 {
-    public function __construct(protected OpenAIService $openAI) {}
+    public function __construct(protected GeminiService $openAI) {}
 
     /**
      * Index a source into chunked embeddings.
@@ -35,7 +35,7 @@ class NotebookRagService
                 'message_id' => null,
                 'chunk_index' => $index,
                 'content_hash' => sha1($chunk['content']),
-                'embedding_model' => $vectors !== [] ? config('services.openai.embedding_model', 'text-embedding-3-small') : null,
+                'embedding_model' => $vectors !== [] ? config('services.gemini.embedding_model', 'text-embedding-004') : null,
                 'token_count' => $chunk['token_count'],
                 'content' => $chunk['content'],
                 'embedding' => $vectors[$index] ?? null,
