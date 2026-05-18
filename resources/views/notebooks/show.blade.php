@@ -18,6 +18,8 @@
                 margin: 0;
                 padding: 0;
                 color: #1e293b;
+                overflow: hidden;
+                height: 100vh;
             }
             .notebook-layout {
                 display: grid;
@@ -50,6 +52,13 @@
                 flex: 1;
                 overflow-y: auto;
                 padding: 24px;
+            }
+            .panel-content::-webkit-scrollbar {
+                display: none;
+            }
+            .panel-content {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
             }
             .add-sources-btn {
                 width: 100%;
@@ -94,21 +103,42 @@
                 margin-bottom: 8px;
             }
             .chat-welcome {
-                max-width: 768px;
+                max-width: 900px;
                 margin: 0 auto;
+                padding: 48px 32px;
             }
             .chat-welcome h3 {
                 font-family: 'Space Grotesk', sans-serif;
-                font-size: 28px;
+                font-size: 42px;
                 font-weight: 700;
                 margin: 0 0 24px;
                 color: #1e293b;
+                line-height: 1.1;
             }
             .chat-welcome p {
-                font-size: 18px;
+                font-size: 20px;
                 line-height: 1.7;
-                color: #334155;
+                color: #475569;
                 margin: 0 0 16px;
+            }
+            .search-option-btn {
+                padding: 8px 16px;
+                border: 1px solid #e2e8f0;
+                background: white;
+                border-radius: 999px;
+                font-family: 'Manrope', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                color: #1e293b;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.2s ease;
+            }
+            .search-option-btn:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
             }
             .chat-input-area {
                 border-top: 1px solid #e2e8f0;
@@ -505,12 +535,15 @@
                 </div>
                 
                 <div style="display: flex; align-items: center; gap: 16px;">
-                    <a href="{{ route('notebooks.create') }}" style="padding: 12px 28px; background: #1e293b; color: white; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Create notebook
-                    </a>
+                    <form method="POST" action="{{ route('notebooks.create.quick') }}">
+                        @csrf
+                        <button type="submit" style="padding: 12px 28px; background: #1e293b; color: white; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Create notebook
+                        </button>
+                    </form>
                     
                     <button @click="showAnalyticsModal = true" style="padding: 10px 20px; border: 1px solid #e2e8f0; background: white; color: #475569; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                         <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -893,6 +926,35 @@
                         Add sources
                     </button>
 
+                    <div style="margin-top: 24px; padding: 20px; background: #f8fafc; border-radius: 24px; border: 1px solid #e2e8f0;">
+                        <p style="font-family: 'Manrope', sans-serif; font-size: 16px; color: #475569; margin: 0 0 16px;">Search the web for new sources</p>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button class="search-option-btn" :class="searchMode === 'web' ? 'border-blue-500 bg-blue-50' : ''" @click="searchMode = 'web'" style="padding: 8px 16px; border: 1px solid #e2e8f0; background: white; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c1.657 0 3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                                </svg>
+                                Web
+                                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <button class="search-option-btn" :class="searchMode === 'fast' ? 'border-blue-500 bg-blue-50' : ''" @click="searchMode = 'fast'" style="padding: 8px 16px; border: 1px solid #e2e8f0; background: white; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531A3.374 3.374 0 006.38 16.854l-.547-.547z"></path>
+                                </svg>
+                                Fast Research
+                                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <button @click="performSearch()" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #e2e8f0; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: auto;">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="space-y-3">
                         @forelse ($notebook->sources as $source)
                             <div class="border border-gray-100 bg-white rounded-2xl px-4 py-4 flex items-center justify-between">
@@ -931,12 +993,25 @@
 
                 <div id="chat-scroll" class="panel-content">
                     <template x-if="messages.length === 0">
-                        <div class="chat-welcome">
-                            <h3>Hello! I'm so glad you're here.</h3>
-                            <p>I'm your guide to mastering NotebookLM. Think of me as your collaborative thought partner. NotebookLM is unique because it stays <strong>grounded</strong> in the information you provide, giving you citations for every answer and helping you synthesize complex ideas.</p>
-                            <p>To get started, the best first step is to add some content to the <strong>source panel</strong> on the left. You can upload PDFs, Google Docs, website links, or even YouTube videos. If you don't have a specific file ready, I can help you find some! We have <strong>"fast research"</strong> for quick web searches or <strong>"deep research"</strong> for a more comprehensive dive into a topic.</p>
-                            <p>Once your sources are in, we can chat about them, or you can jump into the <strong>studio panel</strong> to create things like podcasts, study guides, or even a full slide deck in seconds.</p>
-                            <p>What are you working on or hoping to learn about today? <strong>Would you like me to find some initial sources for you using a web search?</strong></p>
+                        <div class="chat-welcome" style="padding: 48px 64px;">
+                            <div style="font-size: 48px; margin-bottom: 24px;">👋</div>
+                            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 700; color: #1e293b; margin: 0 0 24px; line-height: 1.1;">Let's start your notebook...</h3>
+                            <p style="font-family: 'Manrope', sans-serif; font-size: 20px; color: #475569; line-height: 1.7; margin: 0 0 32px;">This is your blank canvas to understand, create, or make progress on something new. I can help you get started or you can go ahead and add your own sources.</p>
+                            <p style="font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; margin: 0 0 24px;">What would you like this notebook to help you do?</p>
+                            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 500px;">
+                                <button type="button" @click="prompt = 'Start a project'; sendPrompt()" style="padding: 12px 24px; border: 1px solid #e2e8f0; background: white; color: #1e293b; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; align-self: flex-start;">
+                                    Start a project
+                                </button>
+                                <button type="button" @click="prompt = 'Learn or understand something'; sendPrompt()" style="padding: 12px 24px; border: 1px solid #e2e8f0; background: white; color: #1e293b; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; align-self: flex-start;">
+                                    Learn or understand something
+                                </button>
+                                <button type="button" @click="prompt = 'Create a podcast, video, slide deck, etc.'; sendPrompt()" style="padding: 12px 24px; border: 1px solid #e2e8f0; background: white; color: #1e293b; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; align-self: flex-start;">
+                                    Create a podcast, video, slide deck, etc.
+                                </button>
+                                <button type="button" @click="prompt = 'Something else...'; sendPrompt()" style="padding: 12px 24px; border: 1px solid #e2e8f0; background: white; color: #1e293b; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; align-self: flex-start;">
+                                    Something else...
+                                </button>
+                            </div>
                         </div>
                     </template>
 

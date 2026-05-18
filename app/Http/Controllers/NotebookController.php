@@ -99,6 +99,49 @@ class NotebookController extends Controller
     }
 
     /**
+     * Create a quick notebook.
+     */
+    public function createQuick(Request $request): RedirectResponse
+    {
+        $workspaceUser = $this->workspaceUserResolver->resolve();
+
+        $notebook = Notebook::create([
+            'owner_id' => $workspaceUser->id,
+            'title' => 'Untitled notebook',
+            'summary' => 'Quick notebook workspace',
+            'description' => '',
+            'category_id' => null,
+            'status' => 'active',
+            'visibility' => 'private',
+            'icon' => 'sparkles',
+            'cover_color' => '#8b5cf6',
+            'slug' => $this->uniqueSlug('Untitled notebook'),
+            'last_activity_at' => now(),
+        ]);
+
+        $chat = $notebook->chats()->create([
+            'user_id' => null,
+            'title' => 'Primary workspace',
+            'mode' => 'qa',
+            'context_summary' => $notebook->summary,
+            'last_message_at' => now(),
+        ]);
+
+        $this->activityLogger->log(
+            null,
+            'notebook.created',
+            "Created notebook {$notebook->title}.",
+            $notebook,
+            null,
+            ['chat_id' => $chat->id],
+            $request->ip(),
+            $request->userAgent()
+        );
+
+        return redirect()->route('notebooks.show', $notebook);
+    }
+
+    /**
      * Display the specified notebook.
      */
     public function show(Request $request, Notebook $notebook): View

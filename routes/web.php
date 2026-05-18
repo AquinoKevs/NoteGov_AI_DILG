@@ -12,6 +12,8 @@ Route::redirect('/', '/dashboard')->name('home');
 Route::get('/dashboard', DashboardController::class)->name('dashboard');
 Route::get('/analytics', AdminAnalyticsController::class)->name('analytics');
 
+Route::post('/notebooks/create-quick', [NotebookController::class, 'createQuick'])->name('notebooks.create.quick');
+
 Route::resource('notebooks', NotebookController::class);
 
 Route::post('/notebooks/{notebook}/sources', [SourceController::class, 'store'])
