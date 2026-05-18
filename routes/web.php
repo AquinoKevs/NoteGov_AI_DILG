@@ -19,6 +19,8 @@ Route::resource('notebooks', NotebookController::class);
 Route::post('/notebooks/{notebook}/sources', [SourceController::class, 'store'])
     ->middleware('throttle:uploads')
     ->name('notebooks.sources.store');
+Route::get('/notebooks/{notebook}/sources/{source}', [SourceController::class, 'show'])
+    ->name('notebooks.sources.show');
 Route::delete('/notebooks/{notebook}/sources/{source}', [SourceController::class, 'destroy'])
     ->name('notebooks.sources.destroy');
 

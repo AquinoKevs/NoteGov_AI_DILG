@@ -155,6 +155,147 @@
                 line-height: 1.2;
                 border: 2px solid white;
             }
+            .sources-card {
+                margin-top: 24px;
+                padding: 18px;
+                background: #f8fafc;
+                border-radius: 24px;
+                border: 1px solid #e2e8f0;
+            }
+            .sources-card-title {
+                font-family: 'Manrope', sans-serif;
+                font-size: 15px;
+                font-weight: 800;
+                color: #0f172a;
+                margin: 0 0 4px;
+            }
+            .sources-card-subtitle {
+                font-family: 'Manrope', sans-serif;
+                font-size: 12px;
+                color: #64748b;
+                margin: 0 0 14px;
+                line-height: 1.4;
+            }
+            .sources-controls {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .sources-search-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 999px;
+                border: 1px solid #bfdbfe;
+                background: white;
+                color: #2563eb;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.15s ease;
+            }
+            .sources-search-btn:hover {
+                background: #eff6ff;
+                border-color: #93c5fd;
+            }
+            .sources-section-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 18px 6px 10px;
+            }
+            .sources-section-left {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 0;
+            }
+            .sources-count-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                height: 18px;
+                min-width: 18px;
+                padding: 0 6px;
+                border-radius: 999px;
+                background: #dbeafe;
+                color: #1d4ed8;
+                font-size: 11px;
+                font-weight: 800;
+            }
+            .source-row {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 12px;
+            }
+            .source-left {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                min-width: 0;
+            }
+            .source-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 14px;
+                background: #eff6ff;
+                border: 1px solid #dbeafe;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2563eb;
+                flex: 0 0 auto;
+            }
+            .source-meta {
+                min-width: 0;
+            }
+            .source-desc {
+                font-size: 12px;
+                color: #64748b;
+                margin-top: 2px;
+                line-height: 1.4;
+            }
+            .source-added {
+                font-size: 11px;
+                color: #94a3b8;
+                margin-top: 4px;
+            }
+            .source-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                justify-content: space-between;
+                flex: 0 0 auto;
+            }
+            .source-preview {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #2563eb;
+                border-radius: 999px;
+                padding: 6px 10px;
+                font-size: 12px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: all 0.15s ease;
+            }
+            .source-preview:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+            }
+            .sources-footer-note {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 10px 6px 0;
+                color: #94a3b8;
+                font-size: 11px;
+                font-weight: 600;
+            }
             .empty-state {
                 text-align: center;
                 padding: 60px 20px;
@@ -1017,62 +1158,85 @@
                         Add sources
                     </button>
 
-                    <div style="margin-top: 24px; padding: 20px; background: #f8fafc; border-radius: 24px; border: 1px solid #e2e8f0;">
-                        <p style="font-family: 'Manrope', sans-serif; font-size: 16px; color: #475569; margin: 0 0 16px;">Search the web for new sources</p>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button class="search-option-btn" :class="searchMode === 'web' ? 'border-blue-500 bg-blue-50' : ''" @click="searchMode = 'web'" style="padding: 8px 16px; border: 1px solid #e2e8f0; background: white; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="sources-card">
+                        <p class="sources-card-title">Find new sources</p>
+                        <p class="sources-card-subtitle">Search the web for high-quality, relevant sources</p>
+                        <div class="sources-controls">
+                            <button class="search-option-btn" :class="searchMode === 'web' ? 'border-blue-500 bg-blue-50' : ''" @click="searchMode = 'web'" style="padding: 8px 14px;">
+                                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c1.657 0 3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
                                 </svg>
                                 Web
-                                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <button class="search-option-btn" :class="searchMode === 'fast' ? 'border-blue-500 bg-blue-50' : ''" @click="searchMode = 'fast'" style="padding: 8px 16px; border: 1px solid #e2e8f0; background: white; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button class="search-option-btn" :class="searchMode === 'fast' ? 'border-blue-500 bg-blue-50' : ''" @click="searchMode = 'fast'" style="padding: 8px 14px;">
+                                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531A3.374 3.374 0 006.38 16.854l-.547-.547z"></path>
                                 </svg>
                                 Fast Research
-                                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <button @click="performSearch()" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #e2e8f0; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: auto;">
-                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="button" class="sources-search-btn" @click="performSearch()" title="Search">
+                                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </button>
                         </div>
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="sources-section-header">
+                        <div class="sources-section-left">
+                            <span style="font-size: 13px; font-weight: 800; color: #0f172a;">Sources</span>
+                            <span class="sources-count-badge">{{ $sourcesTotal }}</span>
+                        </div>
                         @if ($sources->count())
-                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 4px 6px;">
-                                <span style="font-size: 13px; font-weight: 700; color: #0f172a;">Select all</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 12px; font-weight: 700; color: #64748b;">Select all</span>
                                 <input type="checkbox" :checked="selectAllChecked" @change="toggleSelectAll()" style="width: 16px; height: 16px;">
                             </div>
                         @endif
+                    </div>
+
+                    <div class="space-y-3">
                         @forelse ($sources as $source)
-                            <div class="border border-gray-100 bg-white rounded-2xl px-4 py-4 flex items-center justify-between">
-                                <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
-                                    <div style="width: 22px; height: 22px; color: #2563eb; flex: 0 0 auto;">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h7l3 3v13a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"></path>
-                                        </svg>
+                            <div class="border border-gray-100 bg-white rounded-2xl px-4 py-4">
+                                <div class="source-row">
+                                    <div class="source-left">
+                                        <div class="source-icon" aria-hidden="true">
+                                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h7l3 3v13a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="source-meta">
+                                            <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
+                                            <p class="text-xs text-gray-500 mt-1">{{ strtoupper($source->type) }}</p>
+                                            @if (filled($source->summary))
+                                                <div class="source-desc">{{ str($source->summary)->limit(80) }}</div>
+                                            @endif
+                                            <div class="source-added">Added {{ optional($source->created_at)->diffForHumans() }}</div>
+                                        </div>
                                     </div>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
-                                        <p class="text-xs text-gray-500 mt-1">{{ strtoupper($source->type) }}</p>
+                                    <div class="source-actions">
+                                        <input
+                                            type="checkbox"
+                                            :value="{{ $source->id }}"
+                                            x-model="selectedSourceIds"
+                                            style="width: 16px; height: 16px; margin-top: 2px;"
+                                            title="Include in chat context"
+                                        >
+                                        <a class="source-preview" href="{{ route('notebooks.sources.show', [$notebook, $source]) }}" target="_blank" rel="noopener">
+                                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            </svg>
+                                            Preview
+                                        </a>
                                     </div>
                                 </div>
-                                <input
-                                    type="checkbox"
-                                    :value="{{ $source->id }}"
-                                    x-model="selectedSourceIds"
-                                    style="width: 16px; height: 16px;"
-                                    title="Include in chat context"
-                                >
                             </div>
                         @empty
                             <div class="empty-state">
@@ -1083,6 +1247,11 @@
                                 <p>Click Add source above to add PDFs, websites, text, videos, or audio files.</p>
                             </div>
                         @endforelse
+                    </div>
+
+                    <div class="sources-footer-note">
+                        <span>Secure &amp; private</span>
+                        <span>Only selected sources will be used</span>
                     </div>
 
                     @if ($sources->hasPages())

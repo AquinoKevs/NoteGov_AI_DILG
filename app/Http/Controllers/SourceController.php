@@ -8,7 +8,9 @@ use App\Models\Source;
 use App\Services\ActivityLogger;
 use App\Services\DocumentIngestionService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SourceController extends Controller
 {
@@ -32,6 +34,37 @@ class SourceController extends Controller
         return redirect()
             ->route('notebooks.show', $notebook)
             ->with('status', "Source {$source->name} uploaded and queued for indexing.");
+    }
+
+    /**
+     * Preview the specified source.
+     */
+    public function show(Notebook $notebook, Source $source): Response
+    {
+        abort_unless($source->notebook_id === $notebook->id, 404);
+
+        if (filled($source->source_url) && in_array($source->type, ['web', 'url', 'link'], true)) {
+            return response()->redirectTo($source->source_url);
+        }
+
+        if (blank($source->storage_disk) || blank($source->storage_path)) {
+            abort(404);
+        }
+
+        $disk = Storage::disk($source->storage_disk);
+
+        if (!$disk->exists($source->storage_path)) {
+            abort(404);
+        }
+
+        $path = $disk->path($source->storage_path);
+        $headers = [];
+
+        if (filled($source->mime_type)) {
+            $headers['Content-Type'] = $source->mime_type;
+        }
+
+        return response()->file($path, $headers);
     }
 
     /**
