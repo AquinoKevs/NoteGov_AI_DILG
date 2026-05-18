@@ -19,12 +19,13 @@
                 padding: 0;
                 color: #1e293b;
                 overflow: hidden;
-                height: 100vh;
+                height: 100dvh;
             }
             .notebook-layout {
                 display: grid;
                 grid-template-columns: 380px 1fr;
-                height: calc(100vh - 80px);
+                flex: 1;
+                min-height: 0;
                 gap: 0;
             }
             .panel-left, .panel-right {
@@ -33,6 +34,8 @@
                 display: flex;
                 flex-direction: column;
                 height: 100%;
+                min-height: 0;
+                overflow: hidden;
             }
             .panel-header {
                 padding: 20px 24px;
@@ -50,15 +53,23 @@
             }
             .panel-content {
                 flex: 1;
+                min-height: 0;
                 overflow-y: auto;
                 padding: 24px;
             }
             .panel-content::-webkit-scrollbar {
-                display: none;
+                width: 8px;
+            }
+            .panel-content::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .panel-content::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 999px;
             }
             .panel-content {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
+                scrollbar-width: thin;
+                scrollbar-color: #cbd5e1 transparent;
             }
             .add-sources-btn {
                 width: 100%;
@@ -487,6 +498,7 @@
     </head>
     <body>
         <div
+            style="display: flex; flex-direction: column; height: 100dvh;"
             x-data="{
                 ...workspaceChat({
                     endpoint: @js(route('api.notebooks.chats.messages.store', [$notebook, $activeChat])),
@@ -956,7 +968,7 @@
                     </div>
 
                     <div class="space-y-3">
-                        @forelse ($notebook->sources as $source)
+                        @forelse ($sources as $source)
                             <div class="border border-gray-100 bg-white rounded-2xl px-4 py-4 flex items-center justify-between">
                                 <div class="min-w-0">
                                     <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
@@ -978,6 +990,12 @@
                             </div>
                         @endforelse
                     </div>
+
+                    @if ($sources->hasPages())
+                        <div style="margin-top: 16px;">
+                            {{ $sources->onEachSide(1)->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -1035,7 +1053,7 @@
                             class="chat-textarea"
                             placeholder="Ask a question or create something"
                         ></textarea>
-                        <span class="source-count" x-text="`{{ $notebook->sources->count() }} sources`"></span>
+                        <span class="source-count" x-text="`{{ $sourcesTotal }} sources`"></span>
                         <button
                             type="button"
                             class="chat-send-btn"

@@ -40,11 +40,17 @@ class DashboardController extends Controller
 
         $notebook->load([
             'category',
-            'sources',
             'activityLogs.user',
             'chats.messages.user',
             'memberships.user',
         ]);
+
+        $sources = $notebook->sources()
+            ->latest()
+            ->paginate(3, ['*'], 'sources_page')
+            ->withQueryString();
+
+        $sourcesTotal = $notebook->sources()->count();
 
         $activeChat = $notebook->chats()
             ->with(['messages.user'])
@@ -61,6 +67,8 @@ class DashboardController extends Controller
 
         return view('notebooks.show', [
             'notebook' => $notebook,
+            'sources' => $sources,
+            'sourcesTotal' => $sourcesTotal,
             'activeChat' => $activeChat,
             'workspace' => $workspace,
         ]);
