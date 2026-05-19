@@ -1,285 +1,805 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="chip mb-2">Platform Administration</div>
-                <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">System Settings</h1>
-                <p class="mt-1 text-sm text-gray-500">Manage and configure the overall platform settings for NoteGov AI DILG.</p>
-            </div>
-            <button type="submit" form="settings-form" class="btn-primary">Save Changes</button>
-        </div>
-    </x-slot>
-
-    <div class="space-y-8 py-6" x-data="{ tab: 'general' }">
-        <!-- Settings Navigation -->
-        <div class="flex items-center gap-1 border-b border-gray-200 overflow-x-auto">
-            <button @click="tab = 'general'" :class="tab === 'general' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-6 border-b-2 text-sm font-medium transition">
-                1. General Settings
-            </button>
-            <button @click="tab = 'featured'" :class="tab === 'featured' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-6 border-b-2 text-sm font-medium transition">
-                2. Featured Notebooks ⭐
-            </button>
-            <button @click="tab = 'notifications'" :class="tab === 'notifications' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-6 border-b-2 text-sm font-medium transition">
-                3. Notification Settings 🔔
-            </button>
-            <button @click="tab = 'backup'" :class="tab === 'backup' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-6 border-b-2 text-sm font-medium transition">
-                4. Backup & Storage 💾
-            </button>
-        </div>
-
-        <form id="settings-form" method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data">
-            @csrf
-            @method('PATCH')
-
-            <!-- General Settings -->
-            <div x-show="tab === 'general'" class="space-y-6">
-                <div class="panel bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6">General Information</h3>
-                    <div class="grid gap-6 md:grid-cols-2">
-                        <div>
-                            <x-input-label for="system_name" value="System Name" />
-                            <x-text-input id="system_name" name="system_name" type="text" class="mt-1 block w-full" :value="$settings['system_name']" />
-                        </div>
-                        <div>
-                            <x-input-label for="organization_name" value="Organization Name" />
-                            <x-text-input id="organization_name" name="organization_name" type="text" class="mt-1 block w-full" :value="$settings['organization']" />
-                        </div>
-                        <div>
-                            <x-input-label for="timezone" value="Timezone" />
-                            <select id="timezone" name="timezone" class="mt-1 block w-full rounded-2xl border-gray-200 focus:border-sky-500 focus:ring-sky-500">
-                                <option value="Asia/Manila" {{ $settings['timezone'] === 'Asia/Manila' ? 'selected' : '' }}>Asia/Manila (UTC+08:00)</option>
-                                <option value="UTC">UTC</option>
-                            </select>
-                        </div>
-                        <div>
-                            <x-input-label for="default_language" value="Default Language" />
-                            <select id="default_language" name="default_language" class="mt-1 block w-full rounded-2xl border-gray-200 focus:border-sky-500 focus:ring-sky-500">
-                                <option value="English" {{ $settings['language'] === 'English' ? 'selected' : '' }}>English</option>
-                                <option value="Filipino">Filipino</option>
-                            </select>
-                        </div>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DILG NoteGov AI - System Settings</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            min-height: 100vh;
+            color: #0f172a;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #041B4D 0%, #06286b 100%);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            box-shadow: 4px 0 24px rgba(4, 27, 77, 0.2);
+        }
+        
+        .sidebar-header {
+            margin-bottom: 48px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .dilg-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fff 0%, #f0f4ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .dilg-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .brand-text .dilg {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+        
+        .brand-text .notegov {
+            font-size: 15px;
+            font-weight: 500;
+            color: #93c5fd;
+            letter-spacing: 0.3px;
+            line-height: 1;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: #cbd5e1;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1;
+        }
+        
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #ffffff;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+        }
+        
+        .profile-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .profile-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .profile-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1;
+        }
+        
+        .profile-role {
+            font-size: 11px;
+            color: #93c5fd;
+            font-weight: 500;
+            line-height: 1;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 32px 48px;
+        }
+        
+        .main-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        
+        .header-left {
+            flex: 1;
+        }
+        
+        .header-badges {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+        
+        .badge-label {
+            color: #3b82f6;
+        }
+        
+        .badge-platform {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1d4ed8;
+            padding: 6px 14px;
+            border-radius: 9999px;
+        }
+        
+        .header-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+        
+        .header-subtitle {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+        
+        .settings-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0;
+        }
+        
+        .tab {
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s ease;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        
+        .tab:hover {
+            color: #3b82f6;
+        }
+        
+        .tab.active {
+            color: #1d4ed8;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .settings-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1;
+        }
+        
+        .section-title svg {
+            color: #3b82f6;
+            flex-shrink: 0;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            line-height: 1;
+        }
+        
+        .form-input, .form-select {
+            padding: 12px 16px 12px 44px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            font-family: inherit;
+            color: #0f172a;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+            width: 100%;
+            line-height: 1.5;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+        
+        .input-icon-wrapper {
+            position: relative;
+        }
+        
+        .input-icon-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+            margin: 32px 0;
+        }
+        
+        .additional-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .additional-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-info {
+            flex: 1;
+        }
+        
+        .section-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        
+        .section-info p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        
+        .logo-upload-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .logo-preview {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .btn-secondary {
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #e2e8f0;
+            transition: 0.3s;
+            border-radius: 9999px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        [x-cloak] {
+            display: none !important;
+        }
+        
+        .tab-content {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        
+        .background-decoration {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-decoration"></div>
+    
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="dilg-logo">
+                        <img src="{{ asset('images/dilg-logo.png') }}" alt="DILG Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\"font-size:20px;font-weight:800;color:#041B4D;line-height:1;\">DILG</span>';">
                     </div>
-
-                    <div class="mt-8 pt-8 border-t border-gray-50 space-y-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">Logo Upload</h4>
-                                <p class="text-sm text-gray-500">Upload your organization's logo for the sidebar and emails.</p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 overflow-hidden">
-                                    <x-application-logo class="w-10 h-10" />
-                                </div>
-                                <button type="button" class="btn-secondary text-xs">Choose File</button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">Maintenance Mode</h4>
-                                <p class="text-sm text-gray-500">Put the platform in maintenance mode for updates.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="maintenance_mode" class="sr-only peer" {{ $settings['maintenance_mode'] ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
-                            </label>
-                        </div>
+                    <div class="brand-text">
+                        <span class="dilg">DILG</span>
+                        <span class="notegov">NoteGov AI</span>
                     </div>
                 </div>
             </div>
-
-            <!-- Featured Notebooks -->
-            <div x-show="tab === 'featured'" class="space-y-6">
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    @forelse($featuredNotebooks as $notebook)
-                        <div class="panel bg-white overflow-hidden rounded-3xl shadow-sm border border-gray-100 group">
-                            <div class="aspect-video bg-gray-100 relative overflow-hidden">
-                                @if($notebook->cover_image_path)
-                                    <img src="{{ Storage::url($notebook->cover_image_path) }}" alt="" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center text-gray-300" style="background-color: {{ $notebook->cover_color }}">
-                                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    </div>
-                                @endif
-                                <div class="absolute top-3 right-3 flex gap-2">
-                                    @if($notebook->is_pinned)
-                                        <button type="button" class="p-2 bg-white/90 backdrop-blur rounded-xl text-amber-500 shadow-sm hover:bg-white transition" title="Pinned to Homepage">
-                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 2z"></path></svg>
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="p-5">
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md">{{ $notebook->category->name ?? 'Governance' }}</span>
-                                    <span class="text-[10px] font-medium text-gray-400">Updated {{ $notebook->updated_at->diffForHumans() }}</span>
-                                </div>
-                                <h4 class="font-bold text-gray-900 truncate">{{ $notebook->title }}</h4>
-                                
-                                <div class="mt-4 flex flex-wrap gap-2">
-                                    <button type="button" class="btn-secondary py-1.5 px-3 text-xs">Featured Toggle</button>
-                                    <button type="button" class="btn-secondary py-1.5 px-3 text-xs">Pin to Home</button>
-                                    <a href="{{ route('notebooks.show', $notebook) }}" target="_blank" class="btn-secondary py-1.5 px-3 text-xs">View as User</a>
-                                </div>
-                                <div class="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                        <span class="text-xs font-semibold text-gray-500">Public Visibility</span>
-                                    </div>
-                                    <button type="button" class="text-gray-400 hover:text-gray-600 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-label">NAVIGATION</div>
+                
+                <a href="{{ route('dashboard') }}" class="nav-item">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    </svg>
+                    My Workspace
+                </a>
+                
+                <a href="{{ route('analytics') }}" class="nav-item">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Admin Dashboard
+                </a>
+                
+                <a href="{{ route('users.index') }}" class="nav-item">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    User Management
+                </a>
+                
+                <a href="{{ route('settings.index') }}" class="nav-item active">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    System Settings
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">{{ auth()->user()->name[0] ?? 'A' }}</div>
+                        <div class="profile-info">
+                            <div class="profile-name">Knowledge Admin</div>
+                            <div class="profile-role">Super Administrator</div>
                         </div>
-                    @empty
-                        <div class="col-span-full panel bg-white p-12 text-center rounded-3xl border border-dashed border-gray-200">
-                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            </div>
-                            <h4 class="font-bold text-gray-900">No Featured Notebooks</h4>
-                            <p class="text-sm text-gray-500 mt-1 max-w-xs mx-auto">Highlight "Top Governance Reports" or important workspaces for all users to see.</p>
-                            <button type="button" class="btn-primary mt-6">Select Notebooks to Feature</button>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
-
-            <!-- Notification Settings -->
-            <div x-show="tab === 'notifications'" class="space-y-6">
-                <div class="panel bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-900 mb-8">Notification Preferences</h3>
-                    
-                    <div class="space-y-8">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">Email Alerts</h4>
-                                <p class="text-sm text-gray-500">Global toggle for all system email notifications.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="notifications[email]" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">Workspace Updates</h4>
-                                <p class="text-sm text-gray-500">Notify when sources are added or members join workspaces.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="notifications[workspace]" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">AI Completion Alerts</h4>
-                                <p class="text-sm text-gray-500">Get notified when complex AI indexing or generation tasks finish.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="notifications[ai]" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">User Login Alerts</h4>
-                                <p class="text-sm text-gray-500">Security notifications for new device logins.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="notifications[login]" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-gray-900">System Maintenance Notifications</h4>
-                                <p class="text-sm text-gray-500">Alert users 24 hours before scheduled maintenance.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="notifications[maintenance]" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
-                            </label>
-                        </div>
+                        <svg style="width:16px;height:16px;color:#94a3b8;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
-
-            <!-- Backup & Storage -->
-            <div x-show="tab === 'backup'" class="space-y-6">
-                <div class="grid gap-6 md:grid-cols-2">
-                    <div class="panel bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                        <div class="flex items-center justify-between mb-8">
-                            <h3 class="text-lg font-bold text-gray-900">Storage Usage</h3>
-                            <span class="text-sm font-bold text-sky-600">{{ $storageUsage['used'] }} GB / {{ $storageUsage['total'] }} GB</span>
-                        </div>
-                        
-                        <div class="w-full h-4 bg-gray-50 rounded-full overflow-hidden mb-4">
-                            <div class="h-full bg-sky-500 rounded-full transition-all duration-1000" style="width: {{ $storageUsage['percentage'] }}%"></div>
-                        </div>
-                        <p class="text-sm text-gray-500 leading-relaxed">System file storage is currently at <strong>{{ $storageUsage['percentage'] }}%</strong> capacity. Automatic cleanup of old backups is enabled.</p>
-                        
-                        <div class="mt-8 pt-8 border-t border-gray-50">
-                            <h4 class="font-bold text-gray-900 mb-4">File Storage Monitoring</h4>
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-500">Uploaded Sources</span>
-                                    <span class="font-bold text-gray-900">32.4 GB</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-500">System Logs</span>
-                                    <span class="font-bold text-gray-900">1.2 GB</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-500">Database Backups</span>
-                                    <span class="font-bold text-gray-900">12.2 GB</span>
-                                </div>
-                            </div>
-                        </div>
+        </aside>
+        
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <div class="header-badges">
+                        <span class="badge badge-label">DILG KNOWLEDGE ASSISTANT</span>
+                        <span class="badge badge-platform">PLATFORM ADMINISTRATION</span>
                     </div>
-
-                    <div class="panel bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                        <h3 class="text-lg font-bold text-gray-900 mb-8">Backup Management</h3>
+                    <h1 class="header-title">System Settings</h1>
+                    <p class="header-subtitle">Manage and configure the overall platform settings for NoteGov AI DILG.</p>
+                </div>
+                
+                <button type="submit" form="settings-form" class="btn-primary">
+                    <svg style="width:18px;height:18px;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Save Changes
+                </button>
+            </header>
+            
+            <div class="settings-tabs" x-data="{ activeTab: 'general' }">
+                <button 
+                    class="tab" 
+                    :class="{ 'active': activeTab === 'general' }"
+                    @click="activeTab = 'general'"
+                >1. General Settings</button>
+                <button 
+                    class="tab" 
+                    :class="{ 'active': activeTab === 'featured' }"
+                    @click="activeTab = 'featured'"
+                >2. Featured Notebooks ⭐</button>
+                <button 
+                    class="tab" 
+                    :class="{ 'active': activeTab === 'notifications' }"
+                    @click="activeTab = 'notifications'"
+                >3. Notification Settings 🔔</button>
+                <button 
+                    class="tab" 
+                    :class="{ 'active': activeTab === 'backup' }"
+                    @click="activeTab = 'backup'"
+                >4. Backup & Storage 💾</button>
+            </div>
+            
+            <form id="settings-form" method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data">
+                @csrf
+                @method('PATCH')
+                
+                <div x-show="activeTab === 'general'">
+                    <div class="settings-card">
+                        <h3 class="section-title">
+                            <svg style="width:22px;height:22px;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            General Information
+                        </h3>
                         
-                        <div class="space-y-6">
-                            <div>
-                                <x-input-label for="backup_schedule" value="Backup Schedule" />
-                                <select id="backup_schedule" name="backup_schedule" class="mt-1 block w-full rounded-2xl border-gray-200 focus:border-sky-500 focus:ring-sky-500">
-                                    <option value="daily">Daily (3:00 AM)</option>
-                                    <option value="weekly">Weekly (Sunday Night)</option>
-                                    <option value="monthly">Monthly</option>
-                                </select>
-                            </div>
-
-                            <div class="flex items-center justify-between pt-4">
-                                <div>
-                                    <h4 class="font-bold text-gray-900">Automatic Backup</h4>
-                                    <p class="text-sm text-gray-500">Run scheduled database and file backups.</p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">System Name</label>
+                                <div class="input-icon-wrapper">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <input type="text" name="system_name" class="form-input" value="{{ $settings['system_name'] }}">
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="auto_backup" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Organization Name</label>
+                                <div class="input-icon-wrapper">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                    <input type="text" name="organization_name" class="form-input" value="{{ $settings['organization'] }}">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Timezone</label>
+                                <div class="input-icon-wrapper">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <select name="timezone" class="form-select">
+                                        <option value="Asia/Manila" {{ $settings['timezone'] === 'Asia/Manila' ? 'selected' : '' }}>Asia/Manila (UTC+08:00)</option>
+                                        <option value="UTC">UTC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Default Language</label>
+                                <div class="input-icon-wrapper">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 019-9"></path>
+                                    </svg>
+                                    <select name="default_language" class="form-select">
+                                        <option value="English" {{ $settings['language'] === 'English' ? 'selected' : '' }}>English</option>
+                                        <option value="Filipino">Filipino</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="additional-section">
+                            <div class="section-info">
+                                <h4>Logo Upload</h4>
+                                <p>Upload your organization's logo for the sidebar and emails.</p>
+                            </div>
+                            <div class="logo-upload-area">
+                                <div class="logo-preview">
+                                    <img src="{{ asset('images/dilg-logo.png') }}" alt="Logo" onerror="this.parentElement.innerHTML='<span style=\"font-size:24px;color:#94a3b8;\">📷</span>';">
+                                </div>
+                                <label class="btn-secondary" style="cursor:pointer;">
+                                    Choose File
+                                    <input type="file" name="logo" style="display:none;">
                                 </label>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-4 pt-8">
-                                <button type="button" class="btn-secondary py-3 text-sm font-bold flex items-center justify-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Export Data
-                                </button>
-                                <button type="button" class="btn-primary py-3 text-sm font-bold flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 border-emerald-600">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                                    Backup DB
-                                </button>
+                        </div>
+                        
+                        <div class="additional-section">
+                            <div class="section-info">
+                                <h4>Maintenance Mode</h4>
+                                <p>Put the platform in maintenance mode for updates.</p>
                             </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="maintenance_mode" {{ $settings['maintenance_mode'] ? 'checked' : '' }}>
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
                     </div>
                 </div>
+                
+                <div x-show="activeTab === 'featured'">
+                    <div class="settings-card">
+                        <h3 class="section-title">
+                            <svg style="width:22px;height:22px;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976-2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                            Featured Notebooks
+                        </h3>
+                        <p style="color:#64748b;font-size:14px;line-height:1.6;">Highlight important workspaces for all users to see.</p>
+                    </div>
+                </div>
+                
+                <div x-show="activeTab === 'notifications'">
+                    <div class="settings-card">
+                        <h3 class="section-title">
+                            <svg style="width:22px;height:22px;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            Notification Settings
+                        </h3>
+                        <p style="color:#64748b;font-size:14px;line-height:1.6;">Configure system-wide notification preferences.</p>
+                    </div>
+                </div>
+                
+                <div x-show="activeTab === 'backup'">
+                    <div class="settings-card">
+                        <h3 class="section-title">
+                            <svg style="width:22px;height:22px;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                            </svg>
+                            Backup & Storage
+                        </h3>
+                        <p style="color:#64748b;font-size:14px;line-height:1.6;">Manage backups and monitor storage usage.</p>
+                    </div>
+                </div>
+            </form>
+            
+            <div style="text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid #e2e8f0;">
+                <p style="color:#64748b;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;line-height:1.6;">
+                    <svg style="width:18px;height:18px;color:#3b82f6;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    Secured. Reliable. Government-Grade.
+                </p>
+                <p style="color:#94a3b8;font-size:12px;margin-top:8px;line-height:1.6;">NoteGov AI DILG Platform</p>
             </div>
-        </form>
+        </main>
     </div>
-</x-app-layout>
+    
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</body>
+</html>
