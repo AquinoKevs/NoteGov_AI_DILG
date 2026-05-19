@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -23,6 +24,12 @@ class GeminiService
      */
     public function answer(string $prompt, string $context, array $citations = [], string $mode = 'qa'): array
     {
+        Log::info('GeminiService: Generating answer', [
+            'prompt' => $prompt,
+            'context_length' => Str::length($context),
+            'citations_count' => count($citations),
+        ]);
+
         if (! $this->isConfigured()) {
             return [
                 'text' => $this->fallbackAnswer($prompt, $context, $mode),
@@ -31,34 +38,75 @@ class GeminiService
             ];
         }
 
+        if (trim($context) === '') {
+            return [
+                'text' => "The uploaded document does not contain enough information to answer this question.",
+                'citations' => $citations,
+                'provider' => 'gemini',
+            ];
+        }
+
         try {
             $apiKey = config('services.gemini.api_key');
             $model = config('services.gemini.chat_model', 'gemini-flash-latest');
             
+            $systemPrompt = <<<PROMPT
+You are an AI assistant for government and legal documents.
+
+You must answer ONLY using the provided document context.
+
+If the answer is not found in the document, respond with exactly:
+"The uploaded document does not contain enough information to answer this question."
+
+DO NOT use any external knowledge. DO NOT hallucinate. DO NOT make up information.
+
+DOCUMENT CONTEXT:
+{$context}
+
+QUESTION:
+{$prompt}
+PROMPT;
+
+            Log::info('GeminiService: Sending request to API', [
+                'prompt_preview' => Str::limit($systemPrompt, 500),
+            ]);
+            
             $response = Http::baseUrl('https://generativelanguage.googleapis.com/v1beta')
-                ->timeout(60)
+                ->timeout(120)
                 ->post("/models/{$model}:generateContent?key={$apiKey}", [
                     'contents' => [
                         [
                             'role' => 'user',
                             'parts' => [
-                                ['text' => "You are NoteGov AI DILG, an AI governance notebook assistant. Answer with clear government-ready language, cite source titles when possible, and keep your response grounded only in the provided notebook context.\n\nMode: {$mode}\n\nPrompt:\n{$prompt}\n\nNotebook context:\n{$context}"],
+                                ['text' => $systemPrompt],
                             ],
                         ],
                     ],
                     'generationConfig' => [
-                        'temperature' => 0.2,
+                        'temperature' => 0.1,
+                        'topK' => 40,
+                        'topP' => 0.95,
                     ],
                 ])
                 ->throw()
                 ->json();
 
+            Log::info('GeminiService: Received raw response', [
+                'raw_response' => $response,
+            ]);
+
+            $text = $this->extractResponseText($response);
+
             return [
-                'text' => $this->extractResponseText($response) ?: $this->fallbackAnswer($prompt, $context, $mode),
+                'text' => $text ?: $this->fallbackAnswer($prompt, $context, $mode),
                 'citations' => $citations,
                 'provider' => 'gemini',
             ];
         } catch (Throwable $exception) {
+            Log::error('GeminiService: API error', [
+                'error' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
             report($exception);
 
             return [
@@ -187,7 +235,7 @@ class GeminiService
         $context = trim($context);
 
         if ($context === '') {
-            return "I do not have indexed notebook context yet for this request. Upload or process more sources, then try again with a more specific question about policies, reports, or action items.";
+            return "The uploaded document does not contain enough information to answer this question.";
         }
 
         $opening = match ($mode) {
@@ -201,4 +249,3 @@ class GeminiService
         return $opening."\n\n".Str::limit($context, 900)."\n\nRequested prompt: ".$prompt;
     }
 }
-//test

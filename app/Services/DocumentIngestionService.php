@@ -7,13 +7,15 @@ use App\Models\Notebook;
 use App\Models\Source;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Smalot\PdfParser\Parser;
 use ZipArchive;
 
 class DocumentIngestionService
 {
-    public function __construct(protected ActivityLogger $activityLogger) {}
+    public function __construct(protected ActivityLogger $activityLogger, protected NotebookRagService $rag) {}
 
     /**
      * Create a new notebook source and queue it for processing.
@@ -27,6 +29,13 @@ class DocumentIngestionService
             ?? $file?->getClientOriginalName()
             ?? parse_url((string) $sourceUrl, PHP_URL_HOST)
             ?? Str::headline($type.' source');
+
+        Log::info('Creating source', [
+            'filename' => $file?->getClientOriginalName(),
+            'file_size' => $file?->getSize(),
+            'notebook_id' => $notebook->id,
+            'type' => $type,
+        ]);
 
         $source = $notebook->sources()->create([
             'uploaded_by' => $user?->id,
@@ -46,7 +55,23 @@ class DocumentIngestionService
             ],
         ]);
 
-        ProcessSourceJob::dispatch($source);
+        Log::info('Processing source immediately', ['source_id' => $source->id]);
+        
+        $source->update(['status' => 'processing']);
+        $payload = $this->extractContent($source);
+        
+        $source->update([
+            'status' => 'indexed',
+            'summary' => $payload['summary'],
+            'extracted_text' => $payload['text'],
+            'metadata' => array_merge($source->metadata ?? [], $payload['metadata']),
+            'indexed_at' => now(),
+            'last_processed_at' => now(),
+        ]);
+        
+        $this->rag->syncSourceEmbeddings($source);
+        
+        Log::info('Source processed and indexed', ['source_id' => $source->id]);
 
         $this->activityLogger->log(
             $user,
@@ -74,6 +99,12 @@ class DocumentIngestionService
             'audio', 'video' => $this->extractFromMedia($source),
             default => '',
         };
+
+        Log::info('Extracted content from source', [
+            'source_id' => $source->id,
+            'extracted_text_length' => Str::length($text),
+            'first_500_chars' => Str::limit($text, 500),
+        ]);
 
         $summary = Str::limit(preg_replace('/\s+/', ' ', $text) ?? $text, 420);
 
@@ -129,13 +160,28 @@ class DocumentIngestionService
         $path = $source->storage_path ? Storage::disk($source->storage_disk)->path($source->storage_path) : null;
 
         if (! $path || ! is_file($path)) {
+            Log::warning('PDF file not found for extraction', ['source_id' => $source->id, 'path' => $path]);
             return '';
         }
 
-        $binary = file_get_contents($path) ?: '';
-        preg_match_all('/\((.*?)\)/s', $binary, $matches);
-
-        return trim(preg_replace('/\s+/', ' ', implode(' ', $matches[1] ?? [])) ?? '');
+        try {
+            $parser = new Parser();
+            $pdf = $parser->parseFile($path);
+            $text = $pdf->getText();
+            
+            Log::info('PDF text extracted successfully', [
+                'source_id' => $source->id,
+                'text_length' => Str::length($text),
+            ]);
+            
+            return trim(preg_replace('/\s+/', ' ', $text) ?? $text);
+        } catch (\Exception $e) {
+            Log::error('Failed to extract PDF text', [
+                'source_id' => $source->id,
+                'error' => $e->getMessage(),
+            ]);
+            return '';
+        }
     }
 
     protected function extractFromUrl(Source $source): string

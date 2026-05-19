@@ -39,7 +39,7 @@ class SourceController extends Controller
     /**
      * Preview the specified source.
      */
-    public function show(Notebook $notebook, Source $source): Response
+    public function show(Notebook $notebook, Source $source)
     {
         abort_unless($source->notebook_id === $notebook->id, 404);
 

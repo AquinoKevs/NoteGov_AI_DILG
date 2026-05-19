@@ -6,6 +6,7 @@ use App\Models\AiEmbedding;
 use App\Models\Notebook;
 use App\Models\Source;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class NotebookRagService
@@ -54,52 +55,55 @@ class NotebookRagService
      */
     public function buildContext(Notebook $notebook, string $prompt, int $limit = 4, ?array $sourceIds = null): array
     {
-        $chunks = $this->searchRelevantChunks($notebook, $prompt, $limit, $sourceIds);
+        Log::info('Building RAG context', [
+            'notebook_id' => $notebook->id,
+            'prompt' => $prompt,
+            'selected_source_ids' => $sourceIds,
+        ]);
 
-        if ($chunks->isEmpty()) {
-            $fallbackSources = $notebook->sources()
-                ->whereNotNull('summary')
-                ->when(
-                    is_array($sourceIds) && $sourceIds !== [],
-                    fn ($query) => $query->whereIn('id', $sourceIds)
-                )
-                ->latest('updated_at')
-                ->limit($limit)
-                ->get();
+        $selectedSources = $notebook->sources()
+            ->when(
+                is_array($sourceIds) && $sourceIds !== [],
+                fn ($query) => $query->whereIn('id', $sourceIds),
+                fn ($query) => $query->whereNotNull('extracted_text')
+            )
+            ->latest('updated_at')
+            ->get();
 
-            $context = $fallbackSources
-                ->map(fn (Source $source) => "[{$source->name}] ".$source->summary)
-                ->implode("\n\n");
-
-            $citations = $fallbackSources
-                ->map(fn (Source $source) => [
-                    'source_id' => $source->id,
-                    'source_name' => $source->name,
-                    'type' => $source->type,
-                ])
-                ->all();
-
+        if ($selectedSources->isEmpty()) {
+            Log::warning('No sources found for RAG context', ['notebook_id' => $notebook->id]);
             return [
-                'context' => $context,
-                'citations' => $citations,
+                'context' => '',
+                'citations' => [],
                 'chunks' => collect(),
             ];
         }
 
+        $context = $selectedSources
+            ->map(function (Source $source) {
+                $text = $source->extracted_text ?: $source->summary;
+                $truncated = Str::limit($text, 15000);
+                return "[{$source->name}]\n{$truncated}";
+            })
+            ->implode("\n\n---\n\n");
+
+        $citations = $selectedSources
+            ->map(fn (Source $source) => [
+                'source_id' => $source->id,
+                'source_name' => $source->name,
+                'type' => $source->type,
+            ])
+            ->all();
+
+        Log::info('Generated RAG context preview', [
+            'context_length' => Str::length($context),
+            'context_preview' => Str::limit($context, 500),
+        ]);
+
         return [
-            'context' => $chunks
-                ->map(fn (AiEmbedding $chunk) => '['.data_get($chunk->metadata, 'source_name', 'Notebook source').'] '.$chunk->content)
-                ->implode("\n\n"),
-            'citations' => $chunks
-                ->map(fn (AiEmbedding $chunk) => [
-                    'source_id' => $chunk->source_id,
-                    'source_name' => data_get($chunk->metadata, 'source_name', 'Notebook source'),
-                    'chunk_index' => $chunk->chunk_index,
-                    'type' => data_get($chunk->metadata, 'type', 'document'),
-                ])
-                ->values()
-                ->all(),
-            'chunks' => $chunks,
+            'context' => $context,
+            'citations' => $citations,
+            'chunks' => collect(),
         ];
     }
 
