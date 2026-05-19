@@ -425,10 +425,92 @@
             .featured-card:hover .featured-open-btn {
                 transform: scale(1.1);
             }
+            .notebooks-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .notebook-list-item {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 16px 20px;
+                background: rgba(255,255,255,0.05);
+                border:1px solid rgba(255,255,255,0.1);
+                border-radius: 16px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .notebook-list-item:hover {
+                border-color: rgba(99,102,241,0.3);
+                background: rgba(99,102,241,0.05);
+            }
+            .notebook-list-cover {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:20px;
+            }
+            .notebook-list-info {
+                flex: 1;
+                display:flex;
+                flex-direction:column;
+                gap:4px;
+            }
+            .notebook-list-title {
+                font-family:'Space Grotesk', sans-serif;
+                font-size:16px;
+                font-weight:700;
+                color:white;
+            }
+            .notebook-list-meta {
+                display:flex;
+                gap:16px;
+                font-size:13px;
+                color:rgba(255,255,255,0.5);
+            }
         </style>
     </head>
     <body>
-        <div class="container-main">
+        <div class="container-main" x-data="notebookIndex()">
+            <script>
+                function notebookIndex() {
+                    return {
+                        userMenuOpen: false, 
+                        showRenameModal: false,
+                        renameNotebookId: null,
+                        renameTitle: '',
+                        searchQuery: '',
+                        viewMode: 'grid',
+                        sortBy: 'recent',
+                        allNotebooks: @json($userNotebooks),
+
+                        get filteredNotebooks() {
+                            let notebooks = [...this.allNotebooks];
+
+                            if (this.searchQuery.trim() !== '') {
+                                const q = this.searchQuery.toLowerCase();
+                                notebooks = notebooks.filter(n => 
+                                    n.title.toLowerCase().includes(q)
+                                );
+                            }
+
+                            if (this.sortBy === 'title') {
+                                notebooks.sort((a, b) => a.title.localeCompare(b.title));
+                            } else if (this.sortBy === 'oldest') {
+                                notebooks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                            } else {
+                                notebooks.sort((a, b) => new Date(b.last_activity_at) - new Date(a.last_activity_at));
+                            }
+
+                            return notebooks;
+                        }
+                    }
+                }
+            </script>
             <div class="header-top">
                 <a href="{{ route('profile.edit') }}" class="header-btn">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
@@ -436,7 +518,7 @@
                     </svg>
                     Settings
                 </a>
-                <div x-data="{ userMenuOpen: false }" class="relative">
+                <div class="relative">
                     <button @click="userMenuOpen = !userMenuOpen" class="header-btn">
                         <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
                             <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zM3 14h7v7H3v-7z"/>
@@ -472,21 +554,36 @@
                             <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <input type="text" class="search-input" placeholder="Search notebooks...">
+                            <input type="text" class="search-input" placeholder="Search notebooks..." x-model="searchQuery">
                         </div>
                         <div class="view-toggle">
-                            <button class="view-btn active">
+                            <button class="view-btn" :class="viewMode === 'grid' ? 'active' : ''" @click="viewMode = 'grid'">
                                 <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
                                     <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zM3 14h7v7H3v-7z"/>
                                 </svg>
                             </button>
-                            <button class="view-btn">
+                            <button class="view-btn" :class="viewMode === 'list' ? 'active' : ''" @click="viewMode = 'list'">
                                 <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
                                     <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
                                 </svg>
                             </button>
                         </div>
-                        <button class="sort-dropdown">Most recent ▾</button>
+                        <div x-data="{ sortDropdownOpen: false }" class="relative">
+                            <button @click="sortDropdownOpen = !sortDropdownOpen" class="sort-dropdown">
+                                <span x-text="sortBy === 'recent' ? 'Most recent' : (sortBy === 'title' ? 'Title' : 'Oldest')"></span> ▾
+                            </button>
+                            <div x-show="sortDropdownOpen" @click.outside="sortDropdownOpen = false" style="position:absolute; top:45px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
+                                <button @click="sortBy = 'recent'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                    Most recent
+                                </button>
+                                <button @click="sortBy = 'title'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                    Title
+                                </button>
+                                <button @click="sortBy = 'oldest'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8);">
+                                    Oldest
+                                </button>
+                            </div>
+                        </div>
                         <form method="POST" action="{{ route('notebooks.create.quick') }}">
                             @csrf
                             <button type="submit" class="create-btn">
@@ -499,50 +596,122 @@
                     </div>
                 </div>
 
-                <div class="notebooks-grid">
-                    <form method="POST" action="{{ route('notebooks.create.quick') }}" class="notebook-card create">
-                        @csrf
-                        <div class="create-icon-wrapper">
-                            <svg class="create-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                        </div>
-                        <div class="create-text">Create new notebook</div>
-                        <div class="create-subtext">Start from scratch</div>
-                    </form>
+                <template x-if="viewMode === 'grid'">
+                    <div class="notebooks-grid">
+                        <form method="POST" action="{{ route('notebooks.create.quick') }}" class="notebook-card create">
+                            @csrf
+                            <div class="create-icon-wrapper">
+                                <svg class="create-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </div>
+                            <div class="create-text">Create new notebook</div>
+                            <div class="create-subtext">Start from scratch</div>
+                        </form>
 
-                    @foreach ($userNotebooks as $notebook)
-                        <a href="{{ route('notebooks.show', $notebook) }}" class="notebook-card">
-                            <div class="notebook-header">
-                                <div class="notebook-cover" style="background: {{ $notebook->cover_color ?? '#6366f1' }};">
-                                    📓
-                                </div>
-                                <button class="notebook-menu-btn">
-                                    <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px;">
-                                        <circle cx="12" cy="6" r="2"/>
-                                        <circle cx="12" cy="12" r="2"/>
-                                        <circle cx="12" cy="18" r="2"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="notebook-title">{{ $notebook->title }}</div>
-                            <div class="notebook-meta">
-                                <div class="notebook-category">
-                                    <svg fill="currentColor" viewBox="0 0 24 24" style="width:14px; height:14px;">
-                                        <path d="M3 7V5c0-1.1.9-2 2-2h4l2 2h8c1.1 0 2 .9 2 2v2H3zm0 12h18V9H3v10z"/>
-                                    </svg>
-                                    {{ $notebook->category?->name ?? 'Projects' }}
-                                </div>
-                                <div class="notebook-owner">
-                                    <div class="owner-avatar">
-                                        {{ strtoupper(substr($notebook->owner->name ?? 'U', 0, 1)) }}
+                        <template x-for="notebook in filteredNotebooks" :key="notebook.id">
+                            <div class="notebook-card" style="cursor: default;">
+                                <div class="notebook-header">
+                                    <a :href="'/notebooks/' + notebook.id" class="notebook-cover" :style="{ background: notebook.cover_color ?? '#6366f1' }" style="text-decoration: none; color: inherit;">
+                                        📓
+                                    </a>
+                                    <div x-data="{ notebookMenuOpen: false }" class="relative">
+                                        <button @click="notebookMenuOpen = !notebookMenuOpen" class="notebook-menu-btn">
+                                            <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px;">
+                                                <circle cx="12" cy="6" r="2"/>
+                                                <circle cx="12" cy="12" r="2"/>
+                                                <circle cx="12" cy="18" r="2"/>
+                                            </svg>
+                                        </button>
+                                        <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
+                                            <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                                Rename
+                                            </button>
+                                            <form method="POST" :action="'/notebooks/' + notebook.id" onsubmit="return confirm('Are you sure you want to delete this notebook?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
+                                                    Remove
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <span>You</span>
+                                </div>
+                                <a :href="'/notebooks/' + notebook.id" style="text-decoration: none; color: inherit;">
+                                    <div class="notebook-title" x-text="notebook.title"></div>
+                                    <div class="notebook-meta">
+                                        <div class="notebook-category">
+                                            <svg fill="currentColor" viewBox="0 0 24 24" style="width:14px; height:14px;">
+                                                <path d="M3 7V5c0-1.1.9-2 2-2h4l2 2h8c1.1 0 2 .9 2 2v2H3zm0 12h18V9H3v10z"/>
+                                            </svg>
+                                            <span x-text="notebook.category?.name ?? 'Projects'"></span>
+                                        </div>
+                                        <div class="notebook-owner">
+                                            <div class="owner-avatar" x-text="notebook.owner?.name?.charAt(0).toUpperCase() ?? 'U'"></div>
+                                            <span>You</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <template x-if="viewMode === 'list'">
+                    <div class="notebooks-list">
+                        <form method="POST" action="{{ route('notebooks.create.quick') }}" class="notebook-list-item" style="display:flex; align-items:center; gap:16px; padding:20px; border:2px dashed rgba(99,102,241,0.4);">
+                            @csrf
+                            <div style="width:48px; height:48px; border-radius:12px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center;">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:24px; height:24px; color:#818cf8;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-family:'Space Grotesk', sans-serif; font-size:16px; font-weight:700; color:white;">Create new notebook</div>
+                                <div style="font-size:13px; color:rgba(255,255,255,0.5);">Start from scratch</div>
+                            </div>
+                        </form>
+
+                        <template x-for="notebook in filteredNotebooks" :key="notebook.id">
+                            <div class="notebook-list-item" style="cursor: default;">
+                                <a :href="'/notebooks/' + notebook.id" class="notebook-list-cover" :style="{ background: notebook.cover_color ?? '#6366f1' }" style="text-decoration: none; color: inherit;">
+                                    📓
+                                </a>
+                                <div class="notebook-list-info">
+                                    <a :href="'/notebooks/' + notebook.id" style="text-decoration: none;">
+                                        <div class="notebook-list-title" x-text="notebook.title"></div>
+                                    </a>
+                                    <div class="notebook-list-meta">
+                                        <span x-text="(notebook.sources_count ?? 0) + ' sources'"></span>
+                                        <span x-text="new Date(notebook.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })"></span>
+                                        <span>Owner</span>
+                                    </div>
+                                </div>
+                                <div x-data="{ notebookMenuOpen: false }" class="relative">
+                                    <button @click="notebookMenuOpen = !notebookMenuOpen" class="notebook-menu-btn">
+                                        <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px;">
+                                            <circle cx="12" cy="6" r="2"/>
+                                            <circle cx="12" cy="12" r="2"/>
+                                            <circle cx="12" cy="18" r="2"/>
+                                        </svg>
+                                    </button>
+                                    <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
+                                        <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                            Rename
+                                        </button>
+                                        <form method="POST" :action="'/notebooks/' + notebook.id" onsubmit="return confirm('Are you sure you want to delete this notebook?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </a>
-                    @endforeach
-                </div>
+                        </template>
+                    </div>
+                </template>
             </div>
 
             @if ($featuredNotebooks->isNotEmpty())
@@ -583,6 +752,24 @@
                     </div>
                 </div>
             @endif
+
+            <div x-show="showRenameModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:200;" x-transition>
+                <div style="background:#1a1a2e; border:1px solid rgba(255,255,255,0.15); border-radius:24px; padding:32px; max-width:500px; width:90%;">
+                    <h3 style="font-family:'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:white; margin:0 0 24px;">Rename Notebook</h3>
+                    <form method="POST" :action="`/notebooks/${renameNotebookId}`">
+                        @csrf
+                        @method('PATCH')
+                        <div style="margin-bottom:24px;">
+                            <label style="display:block; font-family:'Manrope', sans-serif; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); margin-bottom:8px;">Notebook Name</label>
+                            <input type="text" name="title" x-model="renameTitle" required style="width:100%; padding:16px 20px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:white; font-family:'Manrope', sans-serif; font-size:16px; border-radius:16px; outline:none;">
+                        </div>
+                        <div style="display:flex; gap:12px;">
+                            <button type="button" @click="showRenameModal = false" style="flex:1; padding:16px 32px; border:1px solid rgba(255,255,255,0.15); border-radius:16px; background:transparent; color:rgba(255,255,255,0.8); font-family:'Manrope', sans-serif; font-size:16px; font-weight:600; cursor:pointer;">Cancel</button>
+                            <button type="submit" style="flex:1; padding:16px 32px; border:none; border-radius:16px; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; font-family:'Manrope', sans-serif; font-size:16px; font-weight:600; cursor:pointer;">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </body>
 </html>
