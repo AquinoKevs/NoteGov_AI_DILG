@@ -37,6 +37,8 @@ class DocumentIngestionService
             'type' => $type,
         ]);
 
+        $comprehensiveMetadata = $this->scanFile($file, $type);
+
         $source = $notebook->sources()->create([
             'uploaded_by' => $user?->id,
             'type' => $type,
@@ -49,10 +51,10 @@ class DocumentIngestionService
             'file_size' => $file?->getSize(),
             'status' => 'queued',
             'content_hash' => $file ? sha1_file($file->getRealPath()) : sha1((string) $sourceUrl),
-            'metadata' => [
+            'metadata' => array_merge([
                 'notes' => $validated['notes'] ?? null,
                 'extension' => $file?->getClientOriginalExtension(),
-            ],
+            ], $comprehensiveMetadata),
         ]);
 
         Log::info('Processing source immediately', ['source_id' => $source->id]);
@@ -82,6 +84,234 @@ class DocumentIngestionService
         );
 
         return $source;
+    }
+
+    /**
+     * Comprehensive file scanning and analysis
+     *
+     * @param UploadedFile|null $file
+     * @param string $type
+     * @return array<string, mixed>
+     */
+    protected function scanFile(?UploadedFile $file, string $type): array
+    {
+        $metadata = [
+            'scan_completed_at' => now()->toIso8601String(),
+            'scan_status' => 'completed',
+        ];
+
+        if (!$file) {
+            return array_merge($metadata, [
+                'is_file_upload' => false,
+                'type' => $type,
+            ]);
+        }
+
+        $filePath = $file->getRealPath();
+        $fileSize = $file->getSize();
+        $extension = strtolower($file->getClientOriginalExtension());
+        $mimeType = $file->getClientMimeType();
+
+        $metadata = array_merge($metadata, [
+            'is_file_upload' => true,
+            'file_type_detected' => $type,
+            'file_extension' => $extension,
+            'mime_type' => $mimeType,
+            'file_size_bytes' => $fileSize,
+            'file_size_human' => $this->formatFileSize($fileSize),
+            'file_hash_sha1' => sha1_file($filePath),
+            'file_hash_md5' => md5_file($filePath),
+        ]);
+
+        $securityScan = $this->securityScan($file, $extension, $mimeType);
+        $metadata = array_merge($metadata, [
+            'security_scan' => $securityScan,
+        ]);
+
+        $formatSpecs = $this->analyzeFormatSpecs($file, $extension, $type);
+        $metadata = array_merge($metadata, [
+            'format_specifications' => $formatSpecs,
+        ]);
+
+        $contentStructure = $this->analyzeContentStructure($file, $type);
+        $metadata = array_merge($metadata, [
+            'content_structure' => $contentStructure,
+        ]);
+
+        $additionalAttributes = $this->extractAdditionalAttributes($file, $extension);
+        $metadata = array_merge($metadata, $additionalAttributes);
+
+        return $metadata;
+    }
+
+    /**
+     * Security threat detection scan
+     *
+     * @param UploadedFile $file
+     * @param string $extension
+     * @param string $mimeType
+     * @return array<string, mixed>
+     */
+    protected function securityScan(UploadedFile $file, string $extension, string $mimeType): array
+    {
+        $threats = [];
+        $warnings = [];
+        $safeExtensions = ['pdf', 'docx', 'doc', 'txt', 'xlsx', 'xls', 'pptx', 'ppt', 'csv', 'rtf'];
+        $dangerousExtensions = ['exe', 'bat', 'cmd', 'sh', 'php', 'js', 'vbs', 'scr', 'com', 'pif', 'application', 'gadget', 'msi', 'msp', 'mst', 'ps1', 'ps1xml', 'psc1', 'psc2', 'scf', 'lnk', 'inf', 'reg', 'ws', 'wsf', 'wsc', 'wsh'];
+
+        $extensionLower = strtolower($extension);
+
+        if (in_array($extensionLower, $dangerousExtensions)) {
+            $threats[] = "Potentially dangerous file extension detected: .{$extension}";
+        }
+
+        if (!in_array($extensionLower, array_merge($safeExtensions, $dangerousExtensions))) {
+            $warnings[] = "Uncommon file extension: .{$extension}";
+        }
+
+        $fileSize = $file->getSize();
+        $maxSize = 100 * 1024 * 1024;
+        if ($fileSize > $maxSize) {
+            $warnings[] = "Large file size detected (" . $this->formatFileSize($fileSize) . ")";
+        }
+
+        $filePath = $file->getRealPath();
+        $content = file_get_contents($filePath);
+        
+        $suspiciousPatterns = [
+            '/<script\b[^>]*>(.*?)<\/script>/is' => 'Potential script tags found',
+            '/eval\s*\(/i' => 'Potential eval() function found',
+            '/base64_decode\s*\(/i' => 'Potential base64_decode() found',
+            '/system\s*\(/i' => 'Potential system() function found',
+            '/shell_exec\s*\(/i' => 'Potential shell_exec() function found',
+            '/exec\s*\(/i' => 'Potential exec() function found',
+        ];
+
+        foreach ($suspiciousPatterns as $pattern => $description) {
+            if (preg_match($pattern, $content)) {
+                $warnings[] = $description;
+            }
+        }
+
+        return [
+            'status' => empty($threats) ? 'clean' : 'flagged',
+            'threats_found' => $threats,
+            'warnings' => $warnings,
+            'scan_timestamp' => now()->toIso8601String(),
+        ];
+    }
+
+    /**
+     * Analyze format specifications
+     *
+     * @param UploadedFile $file
+     * @param string $extension
+     * @param string $type
+     * @return array<string, mixed>
+     */
+    protected function analyzeFormatSpecs(UploadedFile $file, string $extension, string $type): array
+    {
+        $specs = [
+            'type' => $type,
+            'extension' => $extension,
+        ];
+
+        $filePath = $file->getRealPath();
+
+        if ($extension === 'pdf') {
+            try {
+                $parser = new Parser();
+                $pdf = $parser->parseFile($filePath);
+                $details = $pdf->getDetails();
+                
+                $specs = array_merge($specs, [
+                    'pdf_version' => $details['Producer'] ?? 'Unknown',
+                    'page_count' => count($pdf->getPages()),
+                    'title' => $details['Title'] ?? null,
+                    'author' => $details['Author'] ?? null,
+                    'subject' => $details['Subject'] ?? null,
+                    'keywords' => $details['Keywords'] ?? null,
+                    'creator' => $details['Creator'] ?? null,
+                    'creation_date' => $details['CreationDate'] ?? null,
+                    'modification_date' => $details['ModDate'] ?? null,
+                ]);
+            } catch (\Exception $e) {
+                $specs['pdf_parse_error'] = $e->getMessage();
+            }
+        }
+
+        return $specs;
+    }
+
+    /**
+     * Analyze content structure
+     *
+     * @param UploadedFile $file
+     * @param string $type
+     * @return array<string, mixed>
+     */
+    protected function analyzeContentStructure(UploadedFile $file, string $type): array
+    {
+        $structure = [
+            'type' => $type,
+        ];
+
+        $filePath = $file->getRealPath();
+        $content = file_get_contents($filePath);
+
+        $lineCount = substr_count($content, "\n") + 1;
+        $wordCount = str_word_count($content);
+        $charCount = strlen($content);
+
+        $structure = array_merge($structure, [
+            'line_count' => $lineCount,
+            'word_count' => $wordCount,
+            'character_count' => $charCount,
+            'estimated_reading_time_minutes' => ceil($wordCount / 200),
+        ]);
+
+        $headingCount = preg_match_all('/^#+\s+/m', $content);
+        if ($headingCount > 0) {
+            $structure['headings_detected'] = $headingCount;
+        }
+
+        return $structure;
+    }
+
+    /**
+     * Extract additional file attributes
+     *
+     * @param UploadedFile $file
+     * @param string $extension
+     * @return array<string, mixed>
+     */
+    protected function extractAdditionalAttributes(UploadedFile $file, string $extension): array
+    {
+        $attributes = [];
+        $filePath = $file->getRealPath();
+
+        $attributes['file_last_modified'] = date('c', filemtime($filePath));
+        $attributes['file_is_readable'] = is_readable($filePath);
+        $attributes['file_is_writable'] = is_writable($filePath);
+
+        return $attributes;
+    }
+
+    /**
+     * Format file size in human-readable format
+     *
+     * @param int $bytes
+     * @return string
+     */
+    protected function formatFileSize(int $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, 2) . ' ' . $units[$pow];
     }
 
     /**

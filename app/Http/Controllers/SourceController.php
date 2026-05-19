@@ -68,6 +68,33 @@ class SourceController extends Controller
     }
 
     /**
+     * Update the specified source in storage.
+     */
+    public function update(Request $request, Notebook $notebook, Source $source): RedirectResponse
+    {
+        abort_unless($source->notebook_id === $notebook->id, 404);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $oldName = $source->name;
+        $source->update(['name' => $request->name]);
+
+        $this->activityLogger->log(
+            $request->user(),
+            'source.updated',
+            "Renamed source from \"{$oldName}\" to \"{$source->name}\".",
+            $notebook,
+            $source
+        );
+
+        return redirect()
+            ->route('notebooks.show', $notebook)
+            ->with('status', 'Source renamed.');
+    }
+
+    /**
      * Remove the specified source.
      */
     public function destroy(Request $request, Notebook $notebook, Source $source): RedirectResponse

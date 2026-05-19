@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('notebooks.sources.store');
     Route::get('/notebooks/{notebook}/sources/{source}', [SourceController::class, 'show'])
         ->name('notebooks.sources.show');
+    Route::patch('/notebooks/{notebook}/sources/{source}', [SourceController::class, 'update'])
+        ->name('notebooks.sources.update');
     Route::delete('/notebooks/{notebook}/sources/{source}', [SourceController::class, 'destroy'])
         ->name('notebooks.sources.destroy');
 

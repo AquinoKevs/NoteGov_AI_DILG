@@ -1007,7 +1007,7 @@
                     ])->values()),
                 }),
                 sourcesCollapsed: false,
-                selectedSourceIds: [],
+                selectedSourceIds: @js($sources->getCollection()->pluck('id')->values()),
                 pageSourceIds: @js($sources->getCollection()->pluck('id')->values()),
                 get selectAllChecked() {
                     if (!this.pageSourceIds.length) return false;
@@ -1235,41 +1235,42 @@
                         @endif
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-2">
                         @forelse ($sources as $source)
-                            <div class="border border-gray-100 bg-white rounded-2xl px-4 py-4">
-                                <div class="source-row">
-                                    <div class="source-left">
-                                        <div class="source-icon" aria-hidden="true">
-                                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h7l3 3v13a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"></path>
+                            <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition" x-data="{ showSourceMenu{{ $source->id }}: false, showRenameModal{{ $source->id }}: false, renameName{{ $source->id }}: '{{ $source->name }}' }">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-sm">
+                                    {{ strtoupper($source->type) }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="relative">
+                                        <button @click="showSourceMenu{{ $source->id }} = !showSourceMenu{{ $source->id }}" class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700 transition">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                                             </svg>
-                                        </div>
-                                        <div class="source-meta">
-                                            <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
-                                            <p class="text-xs text-gray-500 mt-1">{{ strtoupper($source->type) }}</p>
-                                            @if (filled($source->summary))
-                                                <div class="source-desc">{{ str($source->summary)->limit(80) }}</div>
-                                            @endif
-                                            <div class="source-added">Added {{ optional($source->created_at)->diffForHumans() }}</div>
+                                        </button>
+                                        <div x-show="showSourceMenu{{ $source->id }}" @click.outside="showSourceMenu{{ $source->id }} = false" class="absolute right-0 top-12 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-[140px]">
+                                            <button @click="showSourceMenu{{ $source->id }} = false; showRenameModal{{ $source->id }} = true;" class="w-full px-4 py-2 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
+                                                Rename
+                                            </button>
+                                            <form method="POST" action="{{ route('notebooks.sources.destroy', [$notebook, $source]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-full px-4 py-2 text-left text-sm font-semibold text-red-600 hover:bg-gray-50 transition">
+                                                    Remove
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="source-actions">
-                                        <input
-                                            type="checkbox"
-                                            :value="{{ $source->id }}"
-                                            x-model="selectedSourceIds"
-                                            style="width: 16px; height: 16px; margin-top: 2px;"
-                                            title="Include in chat context"
-                                        >
-                                        <a class="source-preview" href="{{ route('notebooks.sources.show', [$notebook, $source]) }}" target="_blank" rel="noopener">
-                                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                            Preview
-                                        </a>
-                                    </div>
+                                    <input
+                                        type="checkbox"
+                                        :value="{{ $source->id }}"
+                                        x-model="selectedSourceIds"
+                                        class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        title="Include in chat context"
+                                    >
                                 </div>
                             </div>
                         @empty
@@ -1668,6 +1669,28 @@
                 </div>
             </div>
             </div>
+            @foreach($sources as $source)
+                <div x-show="showRenameModal{{ $source->id }}" class="modal-overlay" @click.self="showRenameModal{{ $source->id }} = false">
+                    <div class="modal-content" style="max-width: 500px; border-radius: 24px;" @click.stop>
+                        <button class="modal-close" @click="showRenameModal{{ $source->id }} = false">&times;</button>
+                        <div class="form-section">
+                            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 24px;">Rename Source</h2>
+                            <form method="POST" action="{{ route('notebooks.sources.update', [$notebook, $source]) }}">
+                                @csrf
+                                @method('PATCH')
+                                <div class="form-group">
+                                    <label style="display: block; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">New Name</label>
+                                    <input type="text" name="name" x-model="renameName{{ $source->id }}" required style="width: 100%; padding: 16px 20px; border: 2px solid #e2e8f0; border-radius: 16px; font-family: 'Manrope', sans-serif; font-size: 16px; color: #1e293b; outline: none;">
+                                </div>
+                                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                                    <button type="button" @click="showRenameModal{{ $source->id }} = false" style="flex: 1; padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; color: #1e293b; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;">Cancel</button>
+                                    <button type="submit" style="flex: 1; padding: 16px 32px; border: none; border-radius: 16px; background: #1e293b; color: white; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;">Rename</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
 
         <script>
