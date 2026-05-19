@@ -19,37 +19,42 @@
                     <a href="{{ route('dashboard') }}" class="panel flex items-center gap-4 px-4 py-4">
                         <x-application-logo class="h-12 w-12 shrink-0" />
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-sky-500">Governance AI</p>
-                            <p class="text-lg font-bold text-gray-900">NoteGov AI DILG</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-sky-500">Knowledge Hub</p>
+                            <p class="text-lg font-bold text-gray-900">NoteGov AI</p>
                         </div>
                     </a>
 
-                    <div class="mt-8 space-y-2 text-sm" x-data="{ systemSettingsOpen: false }">
-                        <a href="{{ route('dashboard') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('dashboard') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            <span>Dashboard</span>
-                            <span class="text-xs uppercase tracking-[0.22em] text-gray-400">01</span>
-                        </a>
-
-                        <a href="{{ route('users.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('users.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            <span>User Management</span>
-                            <span class="text-xs uppercase tracking-[0.22em] text-gray-400">02</span>
-                        </a>
-
+                    <div class="mt-8 space-y-2 text-sm">
                         <a href="{{ route('notebooks.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('notebooks.*') && !request()->routeIs('notebooks.show') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            <span>Workspace</span>
-                            <span class="text-xs uppercase tracking-[0.22em] text-gray-400">03</span>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                <span>My Workspace</span>
+                            </div>
                         </a>
 
-                        <button @click="systemSettingsOpen = !systemSettingsOpen" class="flex items-center justify-between rounded-2xl px-4 py-3 transition w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                            <span>System Settings</span>
-                            <span class="text-xs uppercase tracking-[0.22em] text-gray-400">04</span>
-                        </button>
-
-                        <div x-show="systemSettingsOpen" x-transition class="pl-4 space-y-1">
-                            <a href="{{ route('notebooks.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('notebooks.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                                <span>Feature Notebooks</span>
+                        @if(auth()->user()->role === 'admin')
+                            <div class="pt-4 pb-2">
+                                <p class="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Admin Tools</p>
+                            </div>
+                            <a href="{{ route('analytics') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('analytics') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    <span>Admin Dashboard</span>
+                                </div>
                             </a>
-                        </div>
+                            <a href="{{ route('users.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('users.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    <span>User Management</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('settings.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('settings.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <span>System Settings</span>
+                                </div>
+                            </a>
+                        @endif
                     </div>
                 </aside>
 
@@ -71,10 +76,6 @@
                             </div>
 
                             <div class="hidden flex-1 items-center justify-end gap-3 lg:flex">
-                                <form action="{{ route('dashboard') }}" method="GET" class="w-full max-w-sm">
-                                    <input type="search" name="search" value="{{ request('search') }}" placeholder="Search notebooks, reports, or source topics" class="input-shell">
-                                </form>
-                                <a href="{{ route('notebooks.create') }}" class="btn-primary">New Notebook</a>
                                 @auth
                                     <div x-data="{ appUserMenuOpen: false }" class="relative">
                                         <button @click="appUserMenuOpen = !appUserMenuOpen" class="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold cursor-pointer border-none">
@@ -110,16 +111,14 @@
                             </a>
                             <button type="button" class="btn-secondary" @click="navOpen = false">Close</button>
                         </div>
-                        <div class="mt-8 space-y-2" x-data="{ mobileSystemSettingsOpen: false }">
-                            <a href="{{ route('dashboard') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Dashboard</a>
-                            <a href="{{ route('users.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">User Management</a>
-                            <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Workspace</a>
-                            <button @click="mobileSystemSettingsOpen = !mobileSystemSettingsOpen" class="flex items-center justify-between rounded-2xl px-4 py-3 w-full text-left text-gray-700 hover:bg-gray-50 font-semibold">
-                                <span>System Settings</span>
-                            </button>
-                            <div x-show="mobileSystemSettingsOpen" x-transition class="pl-4 space-y-1">
-                                <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Feature Notebooks</a>
-                            </div>
+                        <div class="mt-8 space-y-2">
+                            <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('notebooks.*') ? 'bg-sky-50 text-sky-700' : '' }}">My Workspace</a>
+                            @if(auth()->user()->role === 'admin')
+                                <div class="pt-4 pb-2 px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Admin Tools</div>
+                                <a href="{{ route('analytics') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('analytics') ? 'bg-sky-50 text-sky-700' : '' }}">Admin Dashboard</a>
+                                <a href="{{ route('users.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('users.*') ? 'bg-sky-50 text-sky-700' : '' }}">User Management</a>
+                                <a href="{{ route('settings.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('settings.*') ? 'bg-sky-50 text-sky-700' : '' }}">System Settings</a>
+                            @endif
                         </div>
                     </aside>
 
@@ -135,5 +134,6 @@
                 </div>
             </div>
         </div>
+        @stack('scripts')
     </body>
 </html>

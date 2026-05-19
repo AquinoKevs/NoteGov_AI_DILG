@@ -6,6 +6,7 @@ use App\Http\Controllers\NotebookChatController;
 use App\Http\Controllers\NotebookController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SystemSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -37,5 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('users', UserController::class);
+        Route::get('/settings', [SystemSettingsController::class, 'index'])->name('settings.index');
+        Route::patch('/settings', [SystemSettingsController::class, 'update'])->name('settings.update');
     });
 });

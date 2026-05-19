@@ -33,6 +33,9 @@ class Notebook extends Model
         'summary',
         'description',
         'smart_tags',
+        'is_featured',
+        'is_pinned',
+        'display_order',
         'featured_at',
         'last_activity_at',
     ];
@@ -46,6 +49,9 @@ class Notebook extends Model
     {
         return [
             'smart_tags' => 'array',
+            'is_featured' => 'boolean',
+            'is_pinned' => 'boolean',
+            'display_order' => 'integer',
             'featured_at' => 'datetime',
             'last_activity_at' => 'datetime',
         ];
