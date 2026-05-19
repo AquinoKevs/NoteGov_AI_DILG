@@ -1045,7 +1045,7 @@
         >
             <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 24px;">
-                    <a href="{{ route('dashboard') }}" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: white; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='white'">
+                    <a href="{{ route('notebooks.index') }}" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: white; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='white'">
                         <svg style="width: 24px; height: 24px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>

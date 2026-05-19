@@ -29,22 +29,24 @@ class NotebookController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $search = trim((string) $request->input('search'));
-        $categoryId = $request->integer('category_id');
 
-        $notebooks = Notebook::query()
+        $featuredNotebooks = Notebook::query()
             ->with(['owner', 'category'])
             ->withCount(['sources', 'chats', 'members'])
-            ->accessibleBy($user)
-            ->when($search !== '', fn ($query) => $query->where('title', 'like', "%{$search}%"))
-            ->when($categoryId, fn ($query) => $query->where('category_id', $categoryId))
+            ->where('is_featured', true)
+            ->orWhere('is_pinned', true)
+            ->orderBy('display_order')
+            ->orderByDesc('featured_at')
+            ->get();
+
+        $userNotebooks = Notebook::query()
+            ->with(['owner', 'category'])
+            ->withCount(['sources', 'chats', 'members'])
+            ->where('owner_id', $user->id)
             ->orderByDesc('last_activity_at')
-            ->paginate(12)
-            ->withQueryString();
+            ->get();
 
-        $categories = Category::orderBy('name')->get();
-
-        return view('notebooks.index', compact('notebooks', 'categories', 'search', 'categoryId'));
+        return view('notebooks.index', compact('featuredNotebooks', 'userNotebooks'));
     }
 
     /**

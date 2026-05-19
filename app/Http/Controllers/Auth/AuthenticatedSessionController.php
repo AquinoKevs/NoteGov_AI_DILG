@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
             'last_active_at' => now(),
         ])->save();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('notebooks.index', absolute: false));
     }
 
     /**
