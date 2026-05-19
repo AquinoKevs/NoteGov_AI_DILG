@@ -1440,6 +1440,7 @@
                                 rows="1"
                                 class="chat-textarea"
                                 placeholder="Ask a question or create something..."
+                                @keydown.enter.prevent="if (! $event.shiftKey) { sendPrompt() } else { prompt += '\n' }"
                             ></textarea>
 
                             <div class="chat-tools">
@@ -1679,9 +1680,9 @@
                     suggestions: config.suggestions || [],
                     prompt: '',
                     isLoading: false,
-                    async sendPrompt() {
-                        const userPrompt = this.prompt.trim();
-                        if (! userPrompt || this.isLoading) return;
+                     async sendPrompt() {
+                         const userPrompt = this.prompt.trim();
+                         if (! userPrompt || this.isLoading) return;
 
                         this.messages.push({
                             role: 'user',
@@ -1702,61 +1703,75 @@
                         this.isLoading = true;
                         this.scrollToBottom();
 
-                        try {
-                            const response = await fetch(this.endpoint, {
-                                method: 'POST',
-                                headers: {
-                                    'Accept': 'text/event-stream',
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': this.csrf,
-                                },
-                                body: JSON.stringify({
-                                    prompt: userPrompt,
-                                    mode: this.mode,
-                                    stream: true,
-                                    selected_source_ids: (this.selectedSourceIds && this.selectedSourceIds.length) ? this.selectedSourceIds : null,
-                                }),
-                            });
+                         try {
+                             const response = await fetch(this.endpoint, {
+                                 method: 'POST',
+                                 headers: {
+                                     'Accept': 'text/event-stream',
+                                     'Content-Type': 'application/json',
+                                     'X-CSRF-TOKEN': this.csrf,
+                                 },
+                                 body: JSON.stringify({
+                                     prompt: userPrompt,
+                                     mode: this.mode,
+                                     stream: true,
+                                     selected_source_ids: (this.selectedSourceIds && this.selectedSourceIds.length) ? this.selectedSourceIds : null,
+                                 }),
+                             });
 
-                            const reader = response.body.getReader();
-                            const decoder = new TextDecoder();
-                            let buffer = '';
+                             if (!response.ok) {
+                                 throw new Error(`Request failed: ${response.status}`);
+                             }
+                             if (!response.body) {
+                                 throw new Error('No response body');
+                             }
+
+                             const reader = response.body.getReader();
+                             const decoder = new TextDecoder();
+                             let buffer = '';
 
                             while (true) {
                                 const { value, done } = await reader.read();
                                 if (done) break;
 
-                                buffer += decoder.decode(value, { stream: true });
-                                const chunks = buffer.split('\n\n');
-                                buffer = chunks.pop() || '';
+                                 buffer += decoder.decode(value, { stream: true });
+                                 const normalized = buffer.replace(/\r\n/g, '\n');
+                                 const chunks = normalized.split('\n\n');
+                                 buffer = chunks.pop() || '';
 
-                                chunks.forEach((eventChunk) => {
-                                    if (! eventChunk.startsWith('data: ')) {
-                                        return;
-                                    }
+                                 chunks.forEach((eventChunk) => {
+                                     const trimmed = eventChunk.trim();
+                                     if (! trimmed.startsWith('data:')) {
+                                         return;
+                                     }
 
-                                    const payload = JSON.parse(eventChunk.replace('data: ', ''));
+                                     const jsonText = trimmed.replace(/^data:\s*/, '');
+                                     if (jsonText === '[DONE]') return;
+                                     const payload = JSON.parse(jsonText);
 
-                                    if (payload.chunk) {
-                                        assistantMessage.content += payload.chunk;
-                                    }
+                                     if (payload.chunk) {
+                                         assistantMessage.content += payload.chunk;
+                                         this.messages = [...this.messages];
+                                     }
 
-                                    if (payload.message) {
-                                        assistantMessage.id = payload.message.id;
-                                        assistantMessage.content = payload.message.content;
-                                        assistantMessage.citations = payload.message.citations || [];
-                                    }
+                                     if (payload.message) {
+                                         assistantMessage.id = payload.message.id;
+                                         assistantMessage.content = payload.message.content;
+                                         assistantMessage.citations = payload.message.citations || [];
+                                         this.messages = [...this.messages];
+                                     }
 
-                                    this.scrollToBottom();
-                                });
-                            }
-                        } catch (error) {
-                            assistantMessage.content = 'The AI response could not be completed right now. Please try again after the current source processing finishes or after verifying the OpenAI configuration.';
-                        } finally {
-                            this.isLoading = false;
-                            this.scrollToBottom();
-                        }
-                    },
+                                     this.scrollToBottom();
+                                 });
+                             }
+                         } catch (error) {
+                             assistantMessage.content = 'The AI response could not be completed right now. Please try again after the current source processing finishes or after verifying the OpenAI configuration.';
+                             this.messages = [...this.messages];
+                         } finally {
+                             this.isLoading = false;
+                             this.scrollToBottom();
+                         }
+                     },
                     scrollToBottom() {
                         this.$nextTick(() => {
                             const container = document.getElementById('chat-scroll');
