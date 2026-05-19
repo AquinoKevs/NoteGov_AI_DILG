@@ -698,6 +698,295 @@
             .submit-btn:hover {
                 background: #2563eb;
             }
+
+            /* --- Chat UI (match reference screenshot) --- */
+            .chat-header-left {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                min-width: 0;
+            }
+            .chat-header-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 999px;
+                background: #eef2ff;
+                border: 1px solid #e2e8f0;
+                color: #2563eb;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 auto;
+            }
+            .chat-title-wrap {
+                min-width: 0;
+            }
+            .chat-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 20px;
+                font-weight: 700;
+                margin: 0;
+                color: #0f172a;
+                line-height: 1.1;
+            }
+            .chat-subtitle {
+                margin: 2px 0 0;
+                font-size: 12px;
+                font-weight: 600;
+                color: #94a3b8;
+                line-height: 1.2;
+            }
+
+            #chat-scroll.panel-content {
+                padding: 0;
+                background: #ffffff;
+            }
+            .chat-thread {
+                max-width: 820px;
+                margin: 0 auto;
+                padding: 24px 24px 28px;
+            }
+            .chat-message {
+                display: flex;
+                gap: 14px;
+                align-items: flex-start;
+                margin: 0 0 20px;
+            }
+            .chat-message.user {
+                justify-content: flex-end;
+            }
+            .chat-message.assistant {
+                justify-content: flex-start;
+            }
+            .chat-avatar {
+                width: 34px;
+                height: 34px;
+                border-radius: 999px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 auto;
+                border: 1px solid #e2e8f0;
+                background: #f8fafc;
+                color: #64748b;
+                overflow: hidden;
+            }
+            .chat-avatar.assistant {
+                background: #eef2ff;
+                color: #2563eb;
+            }
+            .chat-avatar.user {
+                background: #eff6ff;
+                color: #2563eb;
+            }
+            .chat-bubble {
+                position: relative;
+                max-width: 680px;
+                border-radius: 18px;
+                padding: 16px 18px;
+                border: 1px solid #e2e8f0;
+                background: #f1f5f9;
+                color: #0f172a;
+            }
+            .chat-message.user .chat-bubble {
+                border-bottom-right-radius: 6px;
+                padding-bottom: 34px;
+            }
+            .chat-message.assistant .chat-bubble {
+                background: #ffffff;
+            }
+            .chat-role {
+                font-size: 12px;
+                font-weight: 800;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #64748b;
+                margin: 0 0 8px;
+            }
+            .chat-content {
+                font-size: 16px;
+                line-height: 1.65;
+                margin: 0;
+                white-space: pre-wrap;
+            }
+            .chat-meta {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                position: absolute;
+                right: 12px;
+                bottom: 10px;
+                font-size: 12px;
+                font-weight: 700;
+                color: #94a3b8;
+            }
+            .assistant-footer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid #f1f5f9;
+                color: #94a3b8;
+                font-size: 12px;
+                font-weight: 700;
+            }
+            .assistant-footer-left {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 0;
+            }
+            .assistant-footer-right {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                flex: 0 0 auto;
+            }
+            .assistant-action-btn {
+                width: 28px;
+                height: 28px;
+                border-radius: 999px;
+                border: 1px solid #e2e8f0;
+                background: #ffffff;
+                color: #64748b;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.15s ease;
+            }
+            .assistant-action-btn:hover {
+                background: #f8fafc;
+                color: #0f172a;
+                border-color: #cbd5e1;
+            }
+
+            .chat-input-area {
+                border-top: 1px solid #e2e8f0;
+                padding: 18px 20px;
+                background: #ffffff;
+            }
+            .chat-input-wrapper {
+                max-width: 820px;
+                margin: 0 auto;
+                position: relative;
+            }
+            .chat-composer {
+                border: 1px solid #e2e8f0;
+                border-radius: 18px;
+                background: #ffffff;
+                padding: 10px 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+            }
+            .chat-textarea {
+                width: 100%;
+                border: none;
+                outline: none;
+                resize: none;
+                background: transparent;
+                padding: 10px 10px 6px;
+                font-family: 'Manrope', sans-serif;
+                font-size: 16px;
+                color: #0f172a;
+                min-height: 44px;
+                line-height: 1.5;
+            }
+            .chat-textarea::placeholder {
+                color: #94a3b8;
+                font-weight: 600;
+            }
+            .chat-composer:focus-within {
+                border-color: #60a5fa;
+                box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14);
+            }
+            .chat-tools {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 0 6px 4px;
+            }
+            .chat-tools-left {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .chat-tools-right {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                flex: 0 0 auto;
+            }
+            .chat-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                border: 1px solid #e2e8f0;
+                border-radius: 999px;
+                background: #ffffff;
+                color: #0f172a;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.15s ease;
+            }
+            .chat-pill:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+            }
+            .chat-icon-btn {
+                width: 34px;
+                height: 34px;
+                border-radius: 999px;
+                border: 1px solid #e2e8f0;
+                background: #ffffff;
+                color: #64748b;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.15s ease;
+            }
+            .chat-icon-btn:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+                color: #0f172a;
+            }
+            .source-count {
+                position: static;
+                font-size: 13px;
+                font-weight: 800;
+                color: #64748b;
+                white-space: nowrap;
+            }
+            .chat-send-btn {
+                position: static;
+                width: 40px;
+                height: 40px;
+                border-radius: 999px;
+                border: none;
+                background: #2563eb;
+                color: #ffffff;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.15s ease;
+            }
+            .chat-send-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+            .chat-send-btn:hover:not(:disabled) {
+                background: #1d4ed8;
+                color: #ffffff;
+            }
         </style>
     </head>
     <body>
@@ -714,7 +1003,7 @@
                         'role' => $message->role,
                         'content' => $message->content,
                         'citations' => $message->citations ?? [],
-                        'created_at' => $message->created_at?->format('M d, Y h:i A'),
+                        'created_at' => $message->created_at?->format('h:i A'),
                     ])->values()),
                 }),
                 sourcesCollapsed: false,
@@ -1286,8 +1575,18 @@
 
             <div class="panel-right">
                 <div class="panel-header">
-                    <h2>Chat</h2>
-                    <button class="text-gray-400 hover:text-gray-600">
+                    <div class="chat-header-left">
+                        <div class="chat-header-icon" aria-hidden="true">
+                            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-3.35-.59L3 20l1.2-3.18A7.86 7.86 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <div class="chat-title-wrap">
+                            <p class="chat-title">Chat</p>
+                            <p class="chat-subtitle">Ask questions about your sources</p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600" type="button" aria-label="Chat menu">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                         </svg>
@@ -1295,6 +1594,7 @@
                 </div>
 
                 <div id="chat-scroll" class="panel-content">
+                    <div class="chat-thread">
                     <template x-if="messages.length === 0">
                         <div class="chat-welcome" style="padding: 48px 64px;">
                             <div style="font-size: 48px; margin-bottom: 24px;">👋</div>
@@ -1319,36 +1619,130 @@
                     </template>
 
                     <template x-for="message in messages" :key="message.id ?? `${message.role}-${message.created_at}-${message.content.length}`">
-                        <div class="message" :class="message.role">
-                            <div class="bubble">
+                        <div class="chat-message" :class="message.role">
+                            <template x-if="message.role === 'assistant'">
+                                <div class="chat-avatar assistant" aria-hidden="true">
+                                    <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                    </svg>
+                                </div>
+                            </template>
+
+                            <div class="chat-bubble">
                                 <template x-if="message.role === 'assistant'">
-                                    <div class="message-role">NoteGov AI</div>
+                                    <div class="chat-role">Notegov AI</div>
                                 </template>
-                                <p class="message-content whitespace-pre-wrap" x-text="message.content"></p>
+
+                                <p class="chat-content" x-text="message.content"></p>
+
+                                <template x-if="message.role === 'user'">
+                                    <div class="chat-meta">
+                                        <span x-text="message.created_at ?? ''"></span>
+                                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                </template>
+
+                                <template x-if="message.role === 'assistant'">
+                                    <div class="assistant-footer">
+                                        <div class="assistant-footer-left">
+                                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span x-text="`Answer generated from ${(selectedSourceIds.length || {{ $sourcesTotal }})} sources`"></span>
+                                        </div>
+                                        <div class="assistant-footer-right">
+                                            <span x-text="message.created_at ?? ''"></span>
+                                            <button type="button" class="assistant-action-btn" title="Helpful">
+                                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9V5a3 3 0 00-6 0v4H5a2 2 0 00-2 2v7a2 2 0 002 2h9a2 2 0 002-2v-1m5-10h-5.5a2 2 0 00-2 2v8a2 2 0 002 2H21a2 2 0 002-2v-7a2 2 0 00-2-2z"></path>
+                                                </svg>
+                                            </button>
+                                            <button type="button" class="assistant-action-btn" title="Not helpful">
+                                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 15v4a3 3 0 006 0v-4h3a2 2 0 002-2V6a2 2 0 00-2-2H8.5a2 2 0 00-2 2v8a2 2 0 002 2H10zm-5 0H3a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                                                </svg>
+                                            </button>
+                                            <button type="button" class="assistant-action-btn" title="Copy">
+                                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8a2 2 0 012 2v10a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7V5a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h2"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
+
+                            <template x-if="message.role === 'user'">
+                                <div class="chat-avatar user" aria-hidden="true">
+                                    <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </template>
                         </div>
                     </template>
+                    </div>
                 </div>
 
                 <div class="chat-input-area">
                     <div class="chat-input-wrapper">
-                        <textarea
-                            x-model="prompt"
-                            rows="3"
-                            class="chat-textarea"
-                            placeholder="Ask a question or create something"
-                        ></textarea>
-                        <span class="source-count" x-text="selectedSourceIds.length ? `${selectedSourceIds.length} selected` : `{{ $sourcesTotal }} sources`"></span>
-                        <button
-                            type="button"
-                            class="chat-send-btn"
-                            @click="sendPrompt()"
-                            :disabled="isLoading"
-                        >
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
-                        </button>
+                        <div class="chat-composer">
+                            <textarea
+                                x-model="prompt"
+                                rows="1"
+                                class="chat-textarea"
+                                placeholder="Ask a question or create something..."
+                            ></textarea>
+
+                            <div class="chat-tools">
+                                <div class="chat-tools-left">
+                                    <button type="button" class="chat-icon-btn" title="Attach">
+                                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.44 11.05l-8.49 8.49a5 5 0 01-7.07-7.07l9.9-9.9a3.5 3.5 0 014.95 4.95l-9.19 9.19a2 2 0 01-2.83-2.83l8.49-8.49"></path>
+                                        </svg>
+                                    </button>
+
+                                    <button type="button" class="chat-pill">
+                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18"></path>
+                                        </svg>
+                                        Web
+                                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+
+                                    <button type="button" class="chat-pill">
+                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531A3.374 3.374 0 006.38 16.854l-.547-.547z"></path>
+                                        </svg>
+                                        Fast Research
+                                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="chat-tools-right">
+                                    <span class="source-count" x-text="`${selectedSourceIds.length || {{ $sourcesTotal }}} sources`"></span>
+                                    <button
+                                        type="button"
+                                        class="chat-send-btn"
+                                        @click="sendPrompt()"
+                                        :disabled="isLoading"
+                                        aria-label="Send"
+                                    >
+                                        <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
