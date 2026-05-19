@@ -503,8 +503,14 @@
     <div class="container">
         <!-- Left Section -->
         <div class="left-section">
-            <div class="logo-placeholder" style="background: transparent; border: none;">
-                <img src="{{ asset('images/dilg-logo.png') }}" alt="DILG Logo" style="width: 120px; height: 120px; object-fit: contain;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 48px;">
+                <div class="logo-placeholder" style="background: transparent; border: none; margin-bottom: 0;">
+                    <img src="{{ asset('images/dilg-logo.png') }}" alt="DILG Logo" style="width: 120px; height: 120px; object-fit: contain;">
+                </div>
+                <div>
+                    <p style="font-size: 13px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin: 0 0 4px 0;">GOVERNMENT AI</p>
+                    <p style="font-size: 32px; font-weight: 700; color: white; letter-spacing: -0.02em; margin: 0;">NoteGov AI DILG</p>
+                </div>
             </div>
 
             <h1 class="main-headline">
@@ -644,20 +650,22 @@
                     <div class="divider-line"></div>
                 </div>
 
-                <button class="btn-secondary">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                    </svg>
-                    Continue with Government SSO
-                </button>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="btn-secondary" style="flex: 1;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                        Continue with Government SSO
+                    </button>
 
-                <div class="mt-6 text-center">
-                    <p style="font-size: 14px; color: rgba(255,255,255,0.6);">
-                        Don't have an account?
-                        <a href="{{ route('register') }}" style="color: #60A5FA; text-decoration: none; font-weight: 600; transition: color 0.3s ease;" onmouseover="this.style.color='#93C5FD'" onmouseout="this.style.color='#60A5FA'">
-                            Register
-                        </a>
-                    </p>
+                    <div style="text-align: right; white-space: nowrap;">
+                        <p style="font-size: 14px; color: rgba(255,255,255,0.6); margin: 0;">
+                            Don't have an account?
+                            <a href="{{ route('register') }}" style="color: #60A5FA; text-decoration: none; font-weight: 600; transition: color 0.3s ease;" onmouseover="this.style.color='#93C5FD'" onmouseout="this.style.color='#60A5FA'">
+                                Register
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
