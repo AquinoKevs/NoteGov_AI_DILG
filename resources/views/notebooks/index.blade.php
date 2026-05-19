@@ -624,13 +624,19 @@
                     <div class="notebooks-grid">
                         <form method="POST" action="{{ route('notebooks.create.quick') }}" class="notebook-card create">
                             @csrf
-                            <div class="create-icon-wrapper">
-                                <svg class="create-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                            </div>
-                            <div class="create-text">Create new notebook</div>
-                            <div class="create-subtext">Start from scratch</div>
+                            <button
+                                type="submit"
+                                style="all: unset; width: 100%; height: 100%; cursor: pointer; display: flex; flex-direction: column; align-items: center;"
+                                aria-label="Create new notebook"
+                            >
+                                <div class="create-icon-wrapper">
+                                    <svg class="create-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </div>
+                                <div class="create-text">Create new notebook</div>
+                                <div class="create-subtext">Start from scratch</div>
+                            </button>
                         </form>
 
                         <template x-for="notebook in filteredNotebooks" :key="notebook.id">
@@ -697,15 +703,21 @@
                                 <td colspan="5">
                                     <form method="POST" action="{{ route('notebooks.create.quick') }}" style="display:flex; align-items:center; gap:16px; padding:16px; border:2px dashed rgba(99,102,241,0.4); border-radius:12px;">
                                         @csrf
-                                        <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center;">
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px; color:#818cf8;">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <div style="font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:white;">Create new notebook</div>
-                                            <div style="font-size:13px; color:rgba(255,255,255,0.5);">Start from scratch</div>
-                                        </div>
+                                        <button
+                                            type="submit"
+                                            style="all: unset; width: 100%; cursor: pointer; display: flex; align-items: center; gap: 16px;"
+                                            aria-label="Create new notebook"
+                                        >
+                                            <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center;">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px; color:#818cf8;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <div style="font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:white;">Create new notebook</div>
+                                                <div style="font-size:13px; color:rgba(255,255,255,0.5);">Start from scratch</div>
+                                            </div>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
