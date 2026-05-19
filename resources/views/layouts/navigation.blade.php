@@ -15,9 +15,6 @@
                     <x-nav-link :href="route('notebooks.index')" :active="request()->routeIs('notebooks.*')">
                         {{ __('Notebooks') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('analytics')" :active="request()->routeIs('analytics')">
-                        {{ __('Analytics') }}
-                    </x-nav-link>
                 </div>
             </div>
 
@@ -39,9 +36,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('notebooks.index')" :active="request()->routeIs('notebooks.*')">
                 {{ __('Notebooks') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('analytics')" :active="request()->routeIs('analytics')">
-                {{ __('Analytics') }}
             </x-responsive-nav-link>
         </div>
     </div>

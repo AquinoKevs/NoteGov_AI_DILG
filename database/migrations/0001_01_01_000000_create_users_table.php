@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('role')->default('staff')->index();
+            $table->string('role')->default('user')->index();
             $table->string('job_title')->nullable();
             $table->string('office')->nullable();
             $table->string('avatar_path')->nullable();

@@ -34,20 +34,12 @@ class DatabaseSeeder extends Seeder
             'office' => 'DILG Central Office',
         ]);
 
-        $staff = User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'Policy Staff',
-            'email' => 'staff@notegov.test',
-            'role' => User::ROLE_STAFF,
+            'email' => 'user@notegov.test',
+            'role' => User::ROLE_USER,
             'job_title' => 'Policy Analyst',
             'office' => 'Policy and Planning Unit',
-        ]);
-
-        $viewer = User::factory()->create([
-            'name' => 'Regional Viewer',
-            'email' => 'viewer@notegov.test',
-            'role' => User::ROLE_VIEWER,
-            'job_title' => 'Monitoring Officer',
-            'office' => 'Regional Operations',
         ]);
 
         $categories = collect([
@@ -58,7 +50,7 @@ class DatabaseSeeder extends Seeder
         ])->map(fn (array $category) => Category::create($category));
 
         $notebook = Notebook::create([
-            'owner_id' => $staff->id,
+            'owner_id' => $user->id,
             'category_id' => $categories->firstWhere('slug', 'project-governance')->id,
             'title' => 'Flood Resilience Coordination',
             'slug' => 'flood-resilience-coordination',
@@ -76,16 +68,8 @@ class DatabaseSeeder extends Seeder
 
         NotebookMember::create([
             'notebook_id' => $notebook->id,
-            'user_id' => $viewer->id,
-            'invited_by' => $staff->id,
-            'permission' => 'viewer',
-            'can_share' => false,
-        ]);
-
-        NotebookMember::create([
-            'notebook_id' => $notebook->id,
             'user_id' => $admin->id,
-            'invited_by' => $staff->id,
+            'invited_by' => $user->id,
             'permission' => 'editor',
             'can_share' => true,
         ]);
@@ -109,10 +93,10 @@ class DatabaseSeeder extends Seeder
                 'summary' => 'Meeting discussion emphasized communication bottlenecks, public advisory timing, and the need for a concise action tracker for local implementers.',
                 'extracted_text' => 'Meeting discussion emphasized communication bottlenecks, public advisory timing, and the need for an action tracker for field implementers. Participants requested a concise brief with lead offices and deadlines.',
             ],
-        ])->map(function (array $payload) use ($notebook, $staff) {
+        ])->map(function (array $payload) use ($notebook, $user) {
             return Source::create([
                 'notebook_id' => $notebook->id,
-                'uploaded_by' => $staff->id,
+                'uploaded_by' => $user->id,
                 'type' => $payload['type'],
                 'name' => $payload['name'],
                 'storage_disk' => 'public',
@@ -140,7 +124,7 @@ class DatabaseSeeder extends Seeder
 
         $chat = Chat::create([
             'notebook_id' => $notebook->id,
-            'user_id' => $staff->id,
+            'user_id' => $user->id,
             'title' => 'Flood coordination briefing',
             'mode' => 'qa',
             'context_summary' => $notebook->summary,
@@ -149,7 +133,7 @@ class DatabaseSeeder extends Seeder
 
         Message::create([
             'chat_id' => $chat->id,
-            'user_id' => $staff->id,
+            'user_id' => $user->id,
             'role' => 'user',
             'content' => 'Summarize the main governance issues across the uploaded sources.',
             'token_count' => 14,
@@ -169,7 +153,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         ActivityLog::create([
-            'user_id' => $staff->id,
+            'user_id' => $user->id,
             'notebook_id' => $notebook->id,
             'action' => 'notebook.created',
             'description' => 'Created notebook Flood Resilience Coordination.',
@@ -178,7 +162,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         ActivityLog::create([
-            'user_id' => $staff->id,
+            'user_id' => $user->id,
             'notebook_id' => $notebook->id,
             'source_id' => $sources->first()->id,
             'action' => 'source.uploaded',
@@ -191,12 +175,11 @@ class DatabaseSeeder extends Seeder
             'user_id' => $admin->id,
             'notebook_id' => $notebook->id,
             'action' => 'notebook.shared',
-            'description' => 'Shared notebook Flood Resilience Coordination with Regional Viewer.',
+            'description' => 'Shared notebook Flood Resilience Coordination with admin.',
             'properties' => ['seeded' => true],
             'created_at' => now()->subHours(10),
         ]);
 
-        $viewer->notify(new NotebookSharedNotification($notebook, $staff, 'viewer'));
-        $staff->notify(new SourceProcessedNotification($sources->first()));
+        $user->notify(new SourceProcessedNotification($sources->first()));
     }
 }

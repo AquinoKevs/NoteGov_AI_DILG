@@ -27,7 +27,7 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'role' => User::ROLE_STAFF,
+            'role' => User::ROLE_USER,
             'job_title' => fake()->jobTitle(),
             'office' => fake()->randomElement(['DILG Central Office', 'Regional Operations', 'Policy and Planning Unit']),
             'email_verified_at' => now(),

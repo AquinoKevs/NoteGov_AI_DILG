@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chat;
+use App\Models\Category;
 use App\Models\Notebook;
 use App\Services\NotebookInsightsService;
 use Illuminate\Http\Request;
@@ -17,60 +17,20 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         
-        $notebook = Notebook::query()
+        $notebooks = Notebook::query()
             ->with(['owner', 'category'])
+            ->withCount(['sources', 'chats', 'members'])
             ->accessibleBy($user)
-            ->latest('last_activity_at')
-            ->latest('updated_at')
-            ->first();
+            ->orderByDesc('last_activity_at')
+            ->take(6)
+            ->get();
 
-        if (!$notebook) {
-            $notebook = Notebook::create([
-                'user_id' => $user->id,
-                'title' => 'My Workspace',
-                'summary' => 'Your personal AI workspace',
-                'description' => 'A place for your notes, documents, and AI-powered insights',
-                'category_id' => null,
-                'status' => 'active',
-                'icon' => 'sparkles',
-                'cover_color' => '#8b5cf6',
-                'last_activity_at' => now(),
-            ]);
-        }
+        $categories = Category::orderBy('name')->get();
 
-        $notebook->load([
-            'category',
-            'activityLogs.user',
-            'chats.messages.user',
-            'memberships.user',
-        ]);
-
-        $sources = $notebook->sources()
-            ->latest()
-            ->paginate(3, ['*'], 'sources_page')
-            ->withQueryString();
-
-        $sourcesTotal = $notebook->sources()->count();
-
-        $activeChat = $notebook->chats()
-            ->with(['messages.user'])
-            ->find($request->integer('chat'))
-            ?? $notebook->chats()->with(['messages.user'])->latest('updated_at')->first()
-            ?? $notebook->chats()->create([
-                'user_id' => null,
-                'title' => 'Primary workspace',
-                'mode' => 'qa',
-                'last_message_at' => now(),
-            ]);
-
-        $workspace = $insights->buildWorkspace($notebook);
-
-        return view('notebooks.show', [
-            'notebook' => $notebook,
-            'sources' => $sources,
-            'sourcesTotal' => $sourcesTotal,
-            'activeChat' => $activeChat,
-            'workspace' => $workspace,
+        return view('dashboard', [
+            'notebooks' => $notebooks,
+            'categories' => $categories,
+            'user' => $user,
         ]);
     }
 }

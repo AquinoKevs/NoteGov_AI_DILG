@@ -24,42 +24,32 @@
                         </div>
                     </a>
 
-                    <div class="mt-8 space-y-2 text-sm">
+                    <div class="mt-8 space-y-2 text-sm" x-data="{ systemSettingsOpen: false }">
                         <a href="{{ route('dashboard') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('dashboard') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                             <span>Dashboard</span>
                             <span class="text-xs uppercase tracking-[0.22em] text-gray-400">01</span>
                         </a>
-                        <a href="{{ route('notebooks.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('notebooks.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            <span>Notebooks</span>
+
+                        <a href="{{ route('users.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('users.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            <span>User Management</span>
                             <span class="text-xs uppercase tracking-[0.22em] text-gray-400">02</span>
                         </a>
-                        <a href="{{ route('analytics') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('analytics') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            <span>Analytics</span>
+
+                        <a href="{{ route('notebooks.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('notebooks.*') && !request()->routeIs('notebooks.show') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            <span>Workspace</span>
                             <span class="text-xs uppercase tracking-[0.22em] text-gray-400">03</span>
                         </a>
-                    </div>
 
-                    <div class="panel mt-8 space-y-4 p-5">
-                        <div class="flex items-center justify-between">
-                            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500">Workspace</p>
-                            <span class="chip bg-emerald-50 text-emerald-700 border-emerald-200">Open Access</span>
-                        </div>
-                        <div class="grid gap-3">
-                            <div class="border border-gray-100 rounded-2xl px-4 py-3 bg-gray-50">
-                                <p class="text-xs uppercase tracking-[0.22em] text-gray-500">Mode</p>
-                                <p class="mt-2 text-lg font-semibold text-gray-900">Shared knowledge workspace</p>
-                            </div>
-                            <div class="border border-gray-100 rounded-2xl px-4 py-3 bg-gray-50">
-                                <p class="text-xs uppercase tracking-[0.22em] text-gray-500">Office</p>
-                                <p class="mt-2 text-sm text-gray-700">DILG Knowledge Operations</p>
-                            </div>
-                        </div>
-                    </div>
+                        <button @click="systemSettingsOpen = !systemSettingsOpen" class="flex items-center justify-between rounded-2xl px-4 py-3 transition w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                            <span>System Settings</span>
+                            <span class="text-xs uppercase tracking-[0.22em] text-gray-400">04</span>
+                        </button>
 
-                    <div class="panel mt-auto overflow-hidden px-5 py-5">
-                        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500">Mission Focus</p>
-                        <h3 class="mt-3 text-xl font-bold text-gray-900 leading-tight">Policy-grade answers, built from your own notebook sources.</h3>
-                        <p class="mt-3 text-sm leading-6 text-gray-600">Upload documents, websites, audio, and videos. Then ask for reports, action items, comparisons, and governance insights in one workspace.</p>
+                        <div x-show="systemSettingsOpen" x-transition class="pl-4 space-y-1">
+                            <a href="{{ route('notebooks.index') }}" class="flex items-center justify-between rounded-2xl px-4 py-3 transition {{ request()->routeIs('notebooks.*') ? 'bg-sky-50 text-sky-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <span>Feature Notebooks</span>
+                            </a>
+                        </div>
                     </div>
                 </aside>
 
@@ -85,7 +75,25 @@
                                     <input type="search" name="search" value="{{ request('search') }}" placeholder="Search notebooks, reports, or source topics" class="input-shell">
                                 </form>
                                 <a href="{{ route('notebooks.create') }}" class="btn-primary">New Notebook</a>
-                                <a href="{{ route('analytics') }}" class="btn-secondary">Analytics</a>
+                                @auth
+                                    <div x-data="{ appUserMenuOpen: false }" class="relative">
+                                        <button @click="appUserMenuOpen = !appUserMenuOpen" class="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold cursor-pointer border-none">
+                                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                                        </button>
+                                        <div x-show="appUserMenuOpen" @click.outside="appUserMenuOpen = false" class="absolute top-12 right-0 bg-white border border-gray-200 rounded-2xl shadow-xl min-w-[200px] z-50">
+                                            <div class="px-5 py-4 border-b border-gray-200">
+                                                <p class="font-bold text-gray-900 text-sm">{{ Auth::user()->name ?? 'User' }}</p>
+                                                <p class="text-sm text-gray-500 mt-1">{{ Auth::user()->email ?? '' }}</p>
+                                            </div>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="w-full text-left px-5 py-3 text-red-500 font-semibold text-sm hover:bg-gray-50 transition">
+                                                    Log out
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endauth
                             </div>
                         </div>
                     </header>
@@ -102,10 +110,16 @@
                             </a>
                             <button type="button" class="btn-secondary" @click="navOpen = false">Close</button>
                         </div>
-                        <div class="mt-8 space-y-2">
+                        <div class="mt-8 space-y-2" x-data="{ mobileSystemSettingsOpen: false }">
                             <a href="{{ route('dashboard') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Dashboard</a>
-                            <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Notebooks</a>
-                            <a href="{{ route('analytics') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Analytics</a>
+                            <a href="{{ route('users.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">User Management</a>
+                            <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Workspace</a>
+                            <button @click="mobileSystemSettingsOpen = !mobileSystemSettingsOpen" class="flex items-center justify-between rounded-2xl px-4 py-3 w-full text-left text-gray-700 hover:bg-gray-50 font-semibold">
+                                <span>System Settings</span>
+                            </button>
+                            <div x-show="mobileSystemSettingsOpen" x-transition class="pl-4 space-y-1">
+                                <a href="{{ route('notebooks.index') }}" class="block rounded-2xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold">Feature Notebooks</a>
+                            </div>
                         </div>
                     </aside>
 

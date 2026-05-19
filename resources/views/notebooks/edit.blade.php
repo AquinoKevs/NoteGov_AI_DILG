@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <div class="chip mb-2">Edit notebook</div>
-            <div class="text-2xl font-bold text-white sm:text-3xl">Refine notebook settings, scope, and presentation.</div>
+            <div class="text-2xl font-bold text-gray-900 sm:text-3xl">Refine notebook settings, scope, and presentation.</div>
         </div>
     </x-slot>
 

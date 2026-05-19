@@ -48,13 +48,11 @@ class NotebookController extends Controller
     }
 
     /**
-     * Show the form for creating a new notebook.
+     * Create a quick notebook.
      */
-    public function create(): View
+    public function create(Request $request): RedirectResponse
     {
-        return view('notebooks.create', [
-            'categories' => Category::orderBy('name')->get(),
-        ]);
+        return $this->createQuick($request);
     }
 
     /**
