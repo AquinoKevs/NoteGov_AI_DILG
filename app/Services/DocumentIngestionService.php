@@ -15,6 +15,8 @@ use ZipArchive;
 
 class DocumentIngestionService
 {
+    protected const DEFAULT_MAX_EXTRACTED_TEXT_CHARS = 200_000;
+
     public function __construct(protected ActivityLogger $activityLogger, protected NotebookRagService $rag) {}
 
     /**
@@ -57,23 +59,7 @@ class DocumentIngestionService
             ], $comprehensiveMetadata),
         ]);
 
-        Log::info('Processing source immediately', ['source_id' => $source->id]);
-        
-        $source->update(['status' => 'processing']);
-        $payload = $this->extractContent($source);
-        
-        $source->update([
-            'status' => 'indexed',
-            'summary' => $payload['summary'],
-            'extracted_text' => $payload['text'],
-            'metadata' => array_merge($source->metadata ?? [], $payload['metadata']),
-            'indexed_at' => now(),
-            'last_processed_at' => now(),
-        ]);
-        
-        $this->rag->syncSourceEmbeddings($source);
-        
-        Log::info('Source processed and indexed', ['source_id' => $source->id]);
+        ProcessSourceJob::dispatch($source);
 
         $this->activityLogger->log(
             $user,
@@ -330,21 +316,25 @@ class DocumentIngestionService
             default => '',
         };
 
+        $normalized = trim(preg_replace('/\s+/', ' ', $text) ?? $text);
+        $payload = $this->persistAndLimitExtractedText($source, $normalized);
+        $limitedText = $payload['text'];
+
         Log::info('Extracted content from source', [
             'source_id' => $source->id,
-            'extracted_text_length' => Str::length($text),
-            'first_500_chars' => Str::limit($text, 500),
+            'extracted_text_length' => Str::length($limitedText),
+            'first_500_chars' => Str::limit($limitedText, 500),
         ]);
 
-        $summary = Str::limit(preg_replace('/\s+/', ' ', $text) ?? $text, 420);
+        $summary = Str::limit($limitedText, 420);
 
         return [
-            'text' => $text,
+            'text' => $limitedText,
             'summary' => $summary !== '' ? $summary : 'Source queued for deeper indexing.',
-            'metadata' => array_filter([
-                'word_count' => str_word_count($text),
-                'character_count' => Str::length($text),
-            ]),
+            'metadata' => array_filter(array_merge([
+                'word_count' => str_word_count($limitedText),
+                'character_count' => Str::length($limitedText),
+            ], $payload['metadata'])),
         ];
     }
 
@@ -394,6 +384,19 @@ class DocumentIngestionService
             return '';
         }
 
+        $maxBytes = (int) (config('notegov.sources.max_pdf_parse_bytes') ?? env('SOURCES_MAX_PDF_PARSE_BYTES') ?? 15 * 1024 * 1024);
+        $fileSize = @filesize($path) ?: $source->file_size;
+
+        if ($maxBytes > 0 && is_int($fileSize) && $fileSize > $maxBytes) {
+            Log::warning('Skipping PDF extraction due to file size', [
+                'source_id' => $source->id,
+                'file_size' => $fileSize,
+                'max_bytes' => $maxBytes,
+            ]);
+
+            return "PDF too large to parse (".number_format((float) $fileSize / 1024 / 1024, 1)." MB).";
+        }
+
         try {
             $parser = new Parser();
             $pdf = $parser->parseFile($path);
@@ -412,6 +415,40 @@ class DocumentIngestionService
             ]);
             return '';
         }
+    }
+
+    /**
+     * Persist full extracted text to local storage (when needed) and return a DB-safe payload.
+     *
+     * @return array{text:string,metadata:array<string,mixed>}
+     */
+    protected function persistAndLimitExtractedText(Source $source, string $text): array
+    {
+        $maxChars = (int) (config('notegov.sources.max_extracted_text_chars')
+            ?? env('SOURCES_MAX_EXTRACTED_TEXT_CHARS')
+            ?? self::DEFAULT_MAX_EXTRACTED_TEXT_CHARS);
+
+        if ($maxChars <= 0 || $text === '') {
+            return ['text' => $text, 'metadata' => []];
+        }
+
+        $length = Str::length($text);
+
+        if ($length <= $maxChars) {
+            return ['text' => $text, 'metadata' => ['extracted_text_full_length' => $length]];
+        }
+
+        $path = "notebooks/{$source->notebook_id}/sources/{$source->id}/extracted_text.txt";
+        Storage::disk('local')->put($path, $text);
+
+        return [
+            'text' => Str::substr($text, 0, $maxChars),
+            'metadata' => [
+                'extracted_text_truncated' => true,
+                'extracted_text_full_length' => $length,
+                'extracted_text_path' => $path,
+            ],
+        ];
     }
 
     protected function extractFromUrl(Source $source): string
