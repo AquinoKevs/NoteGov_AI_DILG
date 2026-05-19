@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect()->route('notebooks.index');
+        return redirect()->route(auth()->user()->isAdmin() ? 'dashboard' : 'notebooks.index');
     }
     return view('welcome');
 })->name('home');

@@ -71,6 +71,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('notebooks.index', absolute: false));
+        $redirectTo = $user->isAdmin() ? route('dashboard', absolute: false) : route('notebooks.index', absolute: false);
+        return redirect($redirectTo);
     }
 }
