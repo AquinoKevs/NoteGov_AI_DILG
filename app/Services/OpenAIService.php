@@ -199,3 +199,4 @@ class OpenAIService
         return $opening."\n\n".Str::limit($context, 900)."\n\nRequested prompt: ".$prompt;
     }
 }
+//test
