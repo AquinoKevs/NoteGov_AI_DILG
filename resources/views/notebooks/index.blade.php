@@ -472,6 +472,30 @@
                 font-size:13px;
                 color:rgba(255,255,255,0.5);
             }
+            .notebooks-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .notebooks-table th {
+                text-align: left;
+                padding: 12px 16px;
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 14px;
+                font-weight: 700;
+                color: rgba(255,255,255,0.7);
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            .notebooks-table td {
+                padding: 16px;
+                vertical-align: middle;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            .notebooks-table tbody tr {
+                transition: background 0.2s ease;
+            }
+            .notebooks-table tbody tr:hover {
+                background: rgba(99,102,241,0.05);
+            }
         </style>
     </head>
     <body>
@@ -658,59 +682,73 @@
                 </template>
 
                 <template x-if="viewMode === 'list'">
-                    <div class="notebooks-list">
-                        <form method="POST" action="{{ route('notebooks.create.quick') }}" class="notebook-list-item" style="display:flex; align-items:center; gap:16px; padding:20px; border:2px dashed rgba(99,102,241,0.4);">
-                            @csrf
-                            <div style="width:48px; height:48px; border-radius:12px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center;">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:24px; height:24px; color:#818cf8;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                            </div>
-                            <div style="flex:1;">
-                                <div style="font-family:'Space Grotesk', sans-serif; font-size:16px; font-weight:700; color:white;">Create new notebook</div>
-                                <div style="font-size:13px; color:rgba(255,255,255,0.5);">Start from scratch</div>
-                            </div>
-                        </form>
-
-                        <template x-for="notebook in filteredNotebooks" :key="notebook.id">
-                            <div class="notebook-list-item" style="cursor: default;">
-                                <a :href="'/notebooks/' + notebook.id" class="notebook-list-cover" :style="{ background: notebook.cover_color ?? '#6366f1' }" style="text-decoration: none; color: inherit;">
-                                    📓
-                                </a>
-                                <div class="notebook-list-info">
-                                    <a :href="'/notebooks/' + notebook.id" style="text-decoration: none;">
-                                        <div class="notebook-list-title" x-text="notebook.title"></div>
-                                    </a>
-                                    <div class="notebook-list-meta">
-                                        <span x-text="(notebook.sources_count ?? 0) + ' sources'"></span>
-                                        <span x-text="new Date(notebook.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })"></span>
-                                        <span>Owner</span>
-                                    </div>
-                                </div>
-                                <div x-data="{ notebookMenuOpen: false }" class="relative">
-                                    <button @click="notebookMenuOpen = !notebookMenuOpen" class="notebook-menu-btn">
-                                        <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px;">
-                                            <circle cx="12" cy="6" r="2"/>
-                                            <circle cx="12" cy="12" r="2"/>
-                                            <circle cx="12" cy="18" r="2"/>
-                                        </svg>
-                                    </button>
-                                    <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
-                                        <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
-                                            Rename
-                                        </button>
-                                        <form method="POST" :action="'/notebooks/' + notebook.id" onsubmit="return confirm('Are you sure you want to delete this notebook?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
-                                                Remove
+                    <table class="notebooks-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Sources</th>
+                                <th>Created</th>
+                                <th>Role</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5">
+                                    <form method="POST" action="{{ route('notebooks.create.quick') }}" style="display:flex; align-items:center; gap:16px; padding:16px; border:2px dashed rgba(99,102,241,0.4); border-radius:12px;">
+                                        @csrf
+                                        <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center;">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px; color:#818cf8;">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div style="font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:white;">Create new notebook</div>
+                                            <div style="font-size:13px; color:rgba(255,255,255,0.5);">Start from scratch</div>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            <template x-for="notebook in filteredNotebooks" :key="notebook.id">
+                                <tr>
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <a :href="'/notebooks/' + notebook.id" class="notebook-list-cover" :style="{ background: notebook.cover_color ?? '#6366f1' }" style="text-decoration: none; color: inherit; width:36px; height:36px; border-radius:8px; font-size:18px;">
+                                                📓
+                                            </a>
+                                            <a :href="'/notebooks/' + notebook.id" style="text-decoration: none; font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:white;" x-text="notebook.title"></a>
+                                        </div>
+                                    </td>
+                                    <td style="font-size:14px; color:rgba(255,255,255,0.7);" x-text="(notebook.sources_count ?? 0) + ' Sources'"></td>
+                                    <td style="font-size:14px; color:rgba(255,255,255,0.7);" x-text="new Date(notebook.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })"></td>
+                                    <td style="font-size:14px; color:rgba(255,255,255,0.7);">Owner</td>
+                                    <td style="text-align: right;">
+                                        <div x-data="{ notebookMenuOpen: false }" class="relative" style="display:inline-block;">
+                                            <button @click="notebookMenuOpen = !notebookMenuOpen" class="notebook-menu-btn">
+                                                <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px;">
+                                                    <circle cx="12" cy="6" r="2"/>
+                                                    <circle cx="12" cy="12" r="2"/>
+                                                    <circle cx="12" cy="18" r="2"/>
+                                                </svg>
                                             </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+                                            <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
+                                                <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                                    Rename
+                                                </button>
+                                                <form method="POST" :action="'/notebooks/' + notebook.id" onsubmit="return confirm('Are you sure you want to delete this notebook?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
+                                                        Remove
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
                 </template>
             </div>
 
