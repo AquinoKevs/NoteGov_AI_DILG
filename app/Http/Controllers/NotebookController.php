@@ -63,11 +63,11 @@ class NotebookController extends Controller
     public function store(StoreNotebookRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        $workspaceUser = $this->workspaceUserResolver->resolve();
+        $user = $request->user();
 
         $notebook = Notebook::create([
             ...$data,
-            'owner_id' => $workspaceUser->id,
+            'owner_id' => $user->id,
             'slug' => $this->uniqueSlug($data['title']),
             'shared_token' => ($data['visibility'] ?? 'private') === 'shared' ? Str::random(40) : null,
             'smart_tags' => $data['smart_tags'] ?? null,
@@ -103,10 +103,10 @@ class NotebookController extends Controller
      */
     public function createQuick(Request $request): RedirectResponse
     {
-        $workspaceUser = $this->workspaceUserResolver->resolve();
+        $user = $request->user();
 
         $notebook = Notebook::create([
-            'owner_id' => $workspaceUser->id,
+            'owner_id' => $user->id,
             'title' => 'Untitled notebook',
             'summary' => 'Quick notebook workspace',
             'description' => '',
@@ -198,16 +198,18 @@ class NotebookController extends Controller
     /**
      * Update the specified notebook.
      */
-    public function update(UpdateNotebookRequest $request, Notebook $notebook): RedirectResponse
+    public function update(Request $request, Notebook $notebook): RedirectResponse
     {
-        $data = $request->validated();
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
 
-        if (($data['title'] ?? $notebook->title) !== $notebook->title) {
+        $data = [
+            'title' => $request->title,
+        ];
+
+        if ($data['title'] !== $notebook->title) {
             $data['slug'] = $this->uniqueSlug($data['title'], $notebook->id);
-        }
-
-        if (($data['visibility'] ?? 'private') === 'shared' && blank($notebook->shared_token)) {
-            $data['shared_token'] = Str::random(40);
         }
 
         $notebook->update($data);
@@ -215,7 +217,7 @@ class NotebookController extends Controller
         $this->activityLogger->log(
             null,
             'notebook.updated',
-            "Updated notebook {$notebook->title}.",
+            "Renamed notebook to {$notebook->title}.",
             $notebook,
             null,
             [],
@@ -224,8 +226,8 @@ class NotebookController extends Controller
         );
 
         return redirect()
-            ->route('notebooks.show', $notebook)
-            ->with('status', 'Notebook updated successfully.');
+            ->route('notebooks.index')
+            ->with('status', 'Notebook renamed successfully.');
     }
 
     /**
