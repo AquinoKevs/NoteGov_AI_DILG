@@ -58,6 +58,9 @@ class SystemSettingsController extends Controller
             'import_mode' => 'required|string|in:upsert,insert_only,update_only,refresh',
         ]);
 
+        ini_set('max_execution_time', 300); // 5 minutes max
+        set_time_limit(300);
+
         $mode = $request->import_mode;
 
         if ($mode === 'refresh') {
@@ -69,54 +72,75 @@ class SystemSettingsController extends Controller
         $file = $request->file('psgc_csv');
         $handle = fopen($file->getRealPath(), 'r');
         
+        if ($handle === false) {
+            return back()->withErrors(['psgc_csv' => 'Failed to read the uploaded file.']);
+        }
+
         // Skip header if it exists
         $header = fgetcsv($handle);
         
         $rowCount = 0;
-        while (($data = fgetcsv($handle)) !== false) {
-            // Expected CSV structure: Region, Province, City/Municipality
-            $regionName = trim($data[0] ?? '');
-            $provinceName = trim($data[1] ?? '');
-            $cityName = trim($data[2] ?? '');
+        $errors = [];
+        $batchSize = 100;
+        $batchCount = 0;
 
-            if (empty($regionName)) continue;
+        try {
+            while (($data = fgetcsv($handle)) !== false) {
+                // Expected CSV structure: Region, Province, City/Municipality
+                $regionName = trim($data[0] ?? '');
+                $provinceName = trim($data[1] ?? '');
+                $cityName = trim($data[2] ?? '');
 
-            // Handle Region
-            $region = Region::where('name', $regionName)->first();
-            if (!$region) {
-                if ($mode === 'upsert' || $mode === 'insert_only' || $mode === 'refresh') {
-                    $region = Region::create(['name' => $regionName]);
-                } else {
-                    continue; // Skip if update_only and doesn't exist
+                if (empty($regionName)) {
+                    continue;
                 }
-            }
 
-            if (!empty($provinceName)) {
-                // Handle Province
-                $province = Province::where('name', $provinceName)->where('region_id', $region->id)->first();
-                if (!$province) {
+                // Handle Region
+                $region = Region::where('name', $regionName)->first();
+                if (!$region) {
                     if ($mode === 'upsert' || $mode === 'insert_only' || $mode === 'refresh') {
-                        $province = Province::create(['name' => $provinceName, 'region_id' => $region->id]);
+                        $region = Region::create(['name' => $regionName]);
                     } else {
-                        continue;
+                        continue; // Skip if update_only and doesn't exist
                     }
-                } else if ($mode === 'upsert' || $mode === 'update_only') {
-                    $province->update(['region_id' => $region->id]);
                 }
 
-                if (!empty($cityName)) {
-                    // Handle City
-                    $city = CityMunicipality::where('name', $cityName)->where('province_id', $province->id)->first();
-                    if (!$city) {
+                if (!empty($provinceName)) {
+                    // Handle Province
+                    $province = Province::where('name', $provinceName)->where('region_id', $region->id)->first();
+                    if (!$province) {
                         if ($mode === 'upsert' || $mode === 'insert_only' || $mode === 'refresh') {
-                            CityMunicipality::create(['name' => $cityName, 'province_id' => $province->id]);
+                            $province = Province::create(['name' => $provinceName, 'region_id' => $region->id]);
+                        } else {
+                            continue;
                         }
                     } else if ($mode === 'upsert' || $mode === 'update_only') {
-                        $city->update(['province_id' => $province->id]);
+                        $province->update(['region_id' => $region->id]);
+                    }
+
+                    if (!empty($cityName)) {
+                        // Handle City
+                        $city = CityMunicipality::where('name', $cityName)->where('province_id', $province->id)->first();
+                        if (!$city) {
+                            if ($mode === 'upsert' || $mode === 'insert_only' || $mode === 'refresh') {
+                                CityMunicipality::create(['name' => $cityName, 'province_id' => $province->id]);
+                            }
+                        } else if ($mode === 'upsert' || $mode === 'update_only') {
+                            $city->update(['province_id' => $province->id]);
+                        }
                     }
                 }
+                $rowCount++;
+                $batchCount++;
+
+                // Commit batch to database periodically
+                if ($batchCount % $batchSize === 0) {
+                    // Optional: can add database flush/transaction commit here if using transactions
+                }
             }
-            $rowCount++;
+        } catch (\Exception $e) {
+            fclose($handle);
+            return back()->withErrors(['psgc_csv' => 'Import failed: ' . $e->getMessage()]);
         }
 
         fclose($handle);
@@ -129,7 +153,8 @@ class SystemSettingsController extends Controller
                     'regions' => Region::count(),
                     'provinces' => Province::count(),
                     'cities' => CityMunicipality::count(),
-                ]
+                ],
+                'errors' => $errors
             ]);
         }
 
