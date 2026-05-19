@@ -37,6 +37,7 @@ class User extends Authenticatable
         'office_type',
         'office_name',
         'office_id',
+        'google_id',
     ];
 
     /**
