@@ -9,13 +9,22 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SystemSettingsController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('notebooks.index');
+    }
+    return view('welcome');
+})->name('home');
 Route::view('/terms-of-service', 'legal.terms')->name('terms');
 Route::view('/privacy-policy', 'legal.privacy')->name('privacy');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/analytics', AdminAnalyticsController::class)->name('analytics');
+    
+    Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/notebooks/create-quick', [NotebookController::class, 'createQuick'])->name('notebooks.create.quick');
     Route::resource('notebooks', NotebookController::class);

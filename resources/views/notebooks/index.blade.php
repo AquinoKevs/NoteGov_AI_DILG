@@ -1,172 +1,588 @@
-<x-app-layout>
-    <div class="space-y-8">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <p class="text-xs font-bold uppercase tracking-[0.3em] text-blue-600 mb-2">DILG KNOWLEDGE ASSISTANT</p>
-                <h1 class="text-3xl font-bold text-gray-900">Notebooks</h1>
-                <p class="text-gray-500 mt-2">Create, manage, and collaborate on AI-powered notebooks.</p>
-            </div>
-            <form method="POST" action="{{ route('notebooks.create.quick') }}">
-                @csrf
-                <button type="submit" class="btn-premium text-sm">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <title>Notebooks - {{ config('app.name', 'NoteGov AI DILG') }}</title>
+
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|space-grotesk:400,500,700&display=swap" rel="stylesheet" />
+
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: 'Manrope', sans-serif;
+                background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+                margin: 0;
+                padding: 0;
+                color: white;
+                min-height: 100vh;
+            }
+            .container-main {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 32px 48px;
+            }
+            .header-top {
+                display: flex;
+                justify-content: flex-end;
+                gap: 16px;
+                margin-bottom: 48px;
+            }
+            .header-btn {
+                padding: 10px 20px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(255,255,255,0.05);
+                color: rgba(255,255,255,0.8);
+                font-family: 'Manrope', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.2s ease;
+            }
+            .header-btn:hover {
+                background: rgba(255,255,255,0.1);
+                border-color: rgba(255,255,255,0.25);
+            }
+            .section-recent {
+                margin-bottom: 48px;
+            }
+            .section-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 24px;
+            }
+            .section-title-area {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .section-greeting {
+                font-size: 14px;
+                font-weight: 700;
+                color: #6366f1;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .section-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 32px;
+                font-weight: 700;
+                margin: 0;
+                color: white;
+            }
+            .section-actions {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+            .search-input {
+                padding: 10px 20px;
+                padding-left: 44px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(255,255,255,0.05);
+                color: white;
+                font-family: 'Manrope', sans-serif;
+                font-size: 14px;
+                min-width: 240px;
+                outline: none;
+                transition: all 0.2s ease;
+            }
+            .search-input:focus {
+                border-color: rgba(99,102,241,0.5);
+                box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+            }
+            .search-input::placeholder {
+                color: rgba(255,255,255,0.4);
+            }
+            .search-wrapper {
+                position: relative;
+            }
+            .search-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: rgba(255,255,255,0.5);
+                width: 18px;
+                height: 18px;
+            }
+            .view-toggle {
+                display: flex;
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            .view-btn {
+                padding: 8px 14px;
+                border: none;
+                background: transparent;
+                color: rgba(255,255,255,0.6);
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .view-btn.active {
+                background: rgba(99,102,241,0.2);
+                color: #818cf8;
+            }
+            .view-btn:hover:not(.active) {
+                background: rgba(255,255,255,0.05);
+            }
+            .sort-dropdown {
+                padding: 10px 16px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(255,255,255,0.05);
+                color: rgba(255,255,255,0.8);
+                font-family: 'Manrope', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .create-btn {
+                padding: 10px 24px;
+                border-radius: 12px;
+                border: none;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                color: white;
+                font-family: 'Manrope', sans-serif;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.2s ease;
+            }
+            .create-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+            }
+            .notebooks-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 24px;
+            }
+            .notebook-card {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 20px;
+                padding: 24px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            .notebook-card:hover {
+                border-color: rgba(99,102,241,0.3);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            }
+            .notebook-card.create {
+                border: 2px dashed rgba(99,102,241,0.4);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 260px;
+            }
+            .notebook-card.create:hover {
+                border-color: rgba(99,102,241,0.7);
+                background: rgba(99,102,241,0.05);
+            }
+            .create-icon-wrapper {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: rgba(99,102,241,0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 16px;
+                transition: all 0.3s ease;
+            }
+            .notebook-card.create:hover .create-icon-wrapper {
+                background: rgba(99,102,241,0.3);
+                transform: scale(1.1);
+            }
+            .create-icon {
+                width: 32px;
+                height: 32px;
+                color: #818cf8;
+            }
+            .create-text {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 18px;
+                font-weight: 700;
+                margin-bottom: 6px;
+            }
+            .create-subtext {
+                font-size: 13px;
+                color: rgba(255,255,255,0.5);
+            }
+            .notebook-cover {
+                width: 72px;
+                height: 72px;
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+            .notebook-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+            .notebook-menu-btn {
+                padding: 4px;
+                border-radius: 8px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                color: rgba(255,255,255,0.4);
+                transition: all 0.2s ease;
+            }
+            .notebook-menu-btn:hover {
+                background: rgba(255,255,255,0.1);
+            }
+            .notebook-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 12px;
+                color: white;
+            }
+            .notebook-meta {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding-top: 16px;
+                border-top: 1px solid rgba(255,255,255,0.08);
+            }
+            .notebook-category {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                border-radius: 10px;
+                background: rgba(255,255,255,0.05);
+                font-size: 13px;
+                font-weight: 600;
+                color: rgba(255,255,255,0.7);
+            }
+            .notebook-owner {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                color: rgba(255,255,255,0.5);
+            }
+            .owner-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: 700;
+            }
+            .section-featured {
+                padding-top: 32px;
+                border-top: 1px solid rgba(255,255,255,0.08);
+            }
+            .featured-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 24px;
+            }
+            .featured-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 18px;
+                font-weight: 700;
+                color: rgba(255,255,255,0.8);
+            }
+            .view-all {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #818cf8;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .view-all:hover {
+                color: #a5b4fc;
+            }
+            .featured-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 20px;
+            }
+            .featured-card {
+                position: relative;
+                border-radius: 20px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                height: 260px;
+            }
+            .featured-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            }
+            .featured-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-size: cover;
+                background-position: center;
+                filter: brightness(0.5);
+            }
+            .featured-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(to top, rgba(15,15,35,0.95) 0%, rgba(15,15,35,0.4) 50%, transparent 100%);
+            }
+            .featured-content {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 24px;
+            }
+            .featured-source {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 600;
+                color: rgba(255,255,255,0.7);
+            }
+            .featured-source-icon {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 800;
+                color: #1a1a2e;
+            }
+            .featured-card-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 12px;
+            }
+            .featured-card-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .featured-date {
+                font-size: 13px;
+                color: rgba(255,255,255,0.6);
+            }
+            .featured-open-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #1a1a2e;
+                transition: all 0.2s ease;
+            }
+            .featured-card:hover .featured-open-btn {
+                transform: scale(1.1);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-main">
+            <div class="header-top">
+                <a href="{{ route('profile.edit') }}" class="header-btn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                     </svg>
-                    Create notebook
-                </button>
-            </form>
-        </div>
-
-        <!-- Top Statistics Section -->
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="glass-panel bg-white p-5 border border-gray-100 rounded-2xl shadow-sm">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    Settings
+                </a>
+                <div x-data="{ userMenuOpen: false }" class="relative">
+                    <button @click="userMenuOpen = !userMenuOpen" class="header-btn">
+                        <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                            <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zM3 14h7v7H3v-7z"/>
                         </svg>
+                        <div style="width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg, #8b5cf6, #a855f7); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;">
+                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                        </div>
+                    </button>
+                    <div x-show="userMenuOpen" @click.outside="userMenuOpen = false" style="position:absolute; top:50px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.4); min-width:220px; z-index:100;">
+                        <div style="padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                            <p style="font-size:14px; font-weight:700; margin:0;">{{ Auth::user()->name ?? 'User' }}</p>
+                            <p style="font-size:13px; color:rgba(255,255,255,0.5); margin:4px 0 0;">{{ Auth::user()->email ?? '' }}</p>
+                        </div>
+                        <a href="{{ route('profile.edit') }}" style="display:block; padding:12px 20px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.7); text-decoration:none;">Profile</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" style="width:100%; padding:12px 20px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
+                                Log out
+                            </button>
+                        </form>
                     </div>
-                </div>
-                <p class="text-xs font-semibold text-gray-500 mt-3">Total Notebooks</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($totals['notebooks'] ?? $notebooks->count()) }}</h3>
-                <p class="text-[11px] text-gray-400 mt-2">All notebooks in workspace</p>
-            </div>
-
-            <div class="glass-panel bg-white p-5 border border-gray-100 rounded-2xl shadow-sm">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="p-3 bg-violet-50 rounded-xl text-violet-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-xs font-semibold text-gray-500 mt-3">Categories</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($categories->count()) }}</h3>
-                <p class="text-[11px] text-gray-400 mt-2">Notebook categories</p>
-            </div>
-
-            <div class="glass-panel bg-white p-5 border border-gray-100 rounded-2xl shadow-sm">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="p-3 bg-green-50 rounded-xl text-green-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-xs font-semibold text-gray-500 mt-3">Your Role</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ ucfirst(auth()->user()->role ?? 'User') }}</h3>
-                <div class="mt-2">
-                    <span class="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-[10px] font-semibold text-green-700">Full Access</span>
                 </div>
             </div>
 
-            <div class="glass-panel bg-white p-5 border border-gray-100 rounded-2xl shadow-sm">
-                <div class="flex items-start justify-between gap-3">
-                    <div class="p-3 bg-amber-50 rounded-xl text-amber-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
+            <div class="section-recent">
+                <div class="section-header">
+                    <div class="section-title-area">
+                        <div class="section-greeting">Good morning, {{ explode(' ', Auth::user()->name)[0] ?? 'User' }}</div>
+                        <h2 class="section-title">Recent notebooks</h2>
                     </div>
-                </div>
-                <p class="text-xs font-semibold text-gray-500 mt-3">Last Active</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ now()->format('M d, Y') }}</h3>
-                <p class="text-[11px] text-gray-400 mt-2">Your last active date</p>
-            </div>
-        </div>
-
-        <!-- Search and Filters -->
-        <div class="flex items-center gap-4 flex-wrap">
-            <form method="GET" class="flex items-center gap-4 flex-1 min-w-[300px]">
-                <div class="relative flex-1 max-w-md">
-                    <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <input type="search" name="search" value="{{ $search }}" placeholder="Search notebook titles..." class="search-input !py-3">
-                </div>
-                <select name="category_id" class="btn-premium-glass min-w-[180px]">
-                    <option value="">All categories</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" @selected((string) $categoryId === (string) $category->id)>{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                <button type="submit" class="btn-premium-glass px-4 py-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                    </svg>
-                    Filters
-                </button>
-            </form>
-        </div>
-
-        <!-- Recent Notebooks Section -->
-        <div>
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-base font-semibold text-gray-900">Recent Notebooks</h2>
-                <div class="flex items-center gap-3">
-                    <a href="#" class="text-xs font-semibold text-blue-600 hover:text-blue-700">View all</a>
-                    <div class="flex items-center gap-2">
-                        <button class="p-2 rounded-lg bg-blue-50 text-blue-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"></path>
+                    <div class="section-actions">
+                        <div class="search-wrapper">
+                            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                        </button>
-                        <button class="p-2 rounded-lg text-gray-400 hover:bg-gray-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                            </svg>
-                        </button>
+                            <input type="text" class="search-input" placeholder="Search notebooks...">
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active">
+                                <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                                    <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zM3 14h7v7H3v-7z"/>
+                                </svg>
+                            </button>
+                            <button class="view-btn">
+                                <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <button class="sort-dropdown">Most recent ▾</button>
+                        <form method="POST" action="{{ route('notebooks.create.quick') }}">
+                            @csrf
+                            <button type="submit" class="create-btn">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Create new
+                            </button>
+                        </form>
                     </div>
                 </div>
-            </div>
 
-            @if($notebooks->count() > 0)
-                <div class="max-w-md">
-                    <x-notebook-card :notebook="$notebooks->first()" />
-                </div>
-            @else
-                <div class="glass-panel col-span-full px-10 py-16 text-center rounded-3xl">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.831 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <p class="text-xl font-semibold text-gray-900">No notebooks matched your filters.</p>
-                    <p class="mt-2 text-sm text-gray-600">Try a broader search or create a new governance notebook.</p>
-                    <form method="POST" action="{{ route('notebooks.create') }}" class="inline-block mt-8">
+                <div class="notebooks-grid">
+                    <form method="POST" action="{{ route('notebooks.create.quick') }}" class="notebook-card create">
                         @csrf
-                        <button type="submit" class="btn-premium">Create Notebook</button>
+                        <div class="create-icon-wrapper">
+                            <svg class="create-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </div>
+                        <div class="create-text">Create new notebook</div>
+                        <div class="create-subtext">Start from scratch</div>
                     </form>
+
+                    @foreach ($userNotebooks as $notebook)
+                        <a href="{{ route('notebooks.show', $notebook) }}" class="notebook-card">
+                            <div class="notebook-header">
+                                <div class="notebook-cover" style="background: {{ $notebook->cover_color ?? '#6366f1' }};">
+                                    📓
+                                </div>
+                                <button class="notebook-menu-btn">
+                                    <svg fill="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px;">
+                                        <circle cx="12" cy="6" r="2"/>
+                                        <circle cx="12" cy="12" r="2"/>
+                                        <circle cx="12" cy="18" r="2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="notebook-title">{{ $notebook->title }}</div>
+                            <div class="notebook-meta">
+                                <div class="notebook-category">
+                                    <svg fill="currentColor" viewBox="0 0 24 24" style="width:14px; height:14px;">
+                                        <path d="M3 7V5c0-1.1.9-2 2-2h4l2 2h8c1.1 0 2 .9 2 2v2H3zm0 12h18V9H3v10z"/>
+                                    </svg>
+                                    {{ $notebook->category?->name ?? 'Projects' }}
+                                </div>
+                                <div class="notebook-owner">
+                                    <div class="owner-avatar">
+                                        {{ strtoupper(substr($notebook->owner->name ?? 'U', 0, 1)) }}
+                                    </div>
+                                    <span>You</span>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            @if ($featuredNotebooks->isNotEmpty())
+                <div class="section-featured">
+                    <div class="featured-header">
+                        <div class="featured-title">Featured notebooks</div>
+                        <div class="view-all">
+                            View all
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px; height:16px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="featured-grid">
+                        @foreach ($featuredNotebooks as $index => $notebook)
+                            <a href="{{ route('notebooks.show', $notebook) }}" class="featured-card">
+                                <div class="featured-bg" style="background: linear-gradient(135deg, {{ $notebook->cover_color ?? '#6366f1' }} 0%, #0f0f23 100%);"></div>
+                                <div class="featured-overlay"></div>
+                                <div class="featured-content">
+                                    <div class="featured-source">
+                                        <div class="featured-source-icon">
+                                            {{ strtoupper(substr($notebook->owner->name ?? 'N', 0, 1)) }}
+                                        </div>
+                                        {{ $notebook->owner->name ?? 'NoteGov' }}
+                                    </div>
+                                    <div class="featured-card-title">{{ $notebook->title }}</div>
+                                    <div class="featured-card-meta">
+                                        <div class="featured-date">{{ $notebook->created_at->format('d M Y') }} • {{ $notebook->sources_count }} sources</div>
+                                        <div class="featured-open-btn">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             @endif
         </div>
-
-        <!-- Security Section -->
-        <div class="mt-12 glass-panel rounded-3xl p-6 border border-gray-100">
-            <div class="flex items-center justify-between gap-6 flex-wrap">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-semibold text-gray-900">Secured. Reliable. Government-Grade.</h3>
-                        <p class="text-xs text-gray-500 mt-1">Your data is encrypted and protected with enterprise-grade security and compliance standards.</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 px-4 py-2 rounded-xl">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                        NoteGov AI DILG Platform
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            {{ $notebooks->links() }}
-        </div>
-    </div>
-</x-app-layout>
+    </body>
+</html>
