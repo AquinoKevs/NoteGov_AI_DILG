@@ -9,6 +9,14 @@
         <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|space-grotesk:400,500,700&display=swap" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>
+            @keyframes spin {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
             * {
                 box-sizing: border-box;
             }
@@ -1033,6 +1041,9 @@
                 showShareModal: false,
                 shareAccess: 'restricted',
                 showAccessDropdown: false,
+                isUploading: false,
+                uploadProgress: 0,
+                chatLoadingState: null, // 'thinking', 'loading', 'searching'
 
                 performSearch() {
                     if (!this.searchQuery.trim()) {
@@ -1040,7 +1051,41 @@
                         return;
                     }
                     alert(`Searching ${this.searchMode === 'web' ? 'the web' : 'Fast Research'} for: ${this.searchQuery}\n\nWeb search integration coming soon!`);
-                }
+                },
+
+                async handleFileUpload() {
+                    this.isUploading = true;
+                    this.uploadProgress = 0;
+
+                    const formData = new FormData(this.$refs.uploadForm);
+                    const xhr = new XMLHttpRequest();
+
+                    xhr.upload.addEventListener('progress', (e) => {
+                        if (e.lengthComputable) {
+                            this.uploadProgress = Math.round((e.loaded / e.total) * 100);
+                        }
+                    });
+
+                    xhr.addEventListener('load', () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            window.location.reload();
+                        } else {
+                            alert('Upload failed. Please try again.');
+                            this.isUploading = false;
+                            this.uploadProgress = 0;
+                        }
+                    });
+
+                    xhr.addEventListener('error', () => {
+                        alert('Upload failed. Please try again.');
+                        this.isUploading = false;
+                        this.uploadProgress = 0;
+                    });
+
+                    xhr.open('POST', '{{ route('notebooks.sources.store', $notebook) }}');
+                    xhr.setRequestHeader('X-CSRF-TOKEN', this.csrf);
+                    xhr.send(formData);
+                },
             }"
         >
             <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;">
@@ -1379,6 +1424,17 @@
                                     <div class="chat-role">Notegov AI</div>
                                 </template>
 
+                                <template x-if="message.content === '' && chatLoadingState">
+                                    <div style="padding: 8px 0;">
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <svg style="width: 20px; height: 20px; color: #3b82f6; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                            </svg>
+                                            <span x-text="chatLoadingState === 'thinking' ? 'Thinking...' : (chatLoadingState === 'loading' ? 'Loading...' : 'Searching for more information...')" style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #1e293b;"></span>
+                                        </div>
+                                    </div>
+                                </template>
+
                                 <p class="chat-content" x-text="message.content"></p>
 
                                 <template x-if="message.role === 'user'">
@@ -1390,7 +1446,7 @@
                                     </div>
                                 </template>
 
-                                <template x-if="message.role === 'assistant'">
+                                <template x-if="message.role === 'assistant' && message.content !== ''">
                                     <div class="assistant-footer">
                                         <div class="assistant-footer-left">
                                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -1574,7 +1630,7 @@
                     <template x-if="modalStep === 'upload'">
                         <div class="form-section">
                             <button class="back-btn" @click="modalStep = 'main'">&larr; Back</button>
-                            <form method="POST" action="{{ route('notebooks.sources.store', $notebook) }}" enctype="multipart/form-data">
+                            <form @submit.prevent="handleFileUpload" enctype="multipart/form-data" x-ref="uploadForm">
                                 @csrf
                                 <input type="hidden" name="source_type" :value="sourceType">
                                 
@@ -1585,13 +1641,23 @@
 
                                 <div class="form-group">
                                     <label>Upload File</label>
-                                    <label class="file-label">
-                                        <input type="file" name="upload_file" class="hidden" @change="fileName = $event.target.files[0]?.name || ''">
+                                    <label class="file-label" :class="isUploading ? 'opacity-50 pointer-events-none' : ''">
+                                        <input type="file" name="upload_file" class="hidden" @change="fileName = $event.target.files[0]?.name || ''" :disabled="isUploading">
                                         <span x-text="fileName || 'Click to select or drag file here'"></span>
                                     </label>
                                 </div>
 
-                                <button type="submit" class="submit-btn">Add Source</button>
+                                <div x-show="isUploading" style="margin-bottom: 24px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; color: #1e293b;">Uploading...</span>
+                                        <span style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; color: #3b82f6;" x-text="uploadProgress + '%'"></span>
+                                    </div>
+                                    <div style="height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+                                        <div style="height: 100%; background: linear-gradient(90deg, #3b82f6, #1d4ed8); border-radius: 999px; transition: width 0.2s ease;" :style="{ width: uploadProgress + '%' }"></div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="submit-btn" :disabled="isUploading" x-text="isUploading ? 'Processing...' : 'Add Source'"></button>
                             </form>
                         </div>
                     </template>
@@ -1724,7 +1790,14 @@
                         this.messages.push(assistantMessage);
                         this.prompt = '';
                         this.isLoading = true;
+                        this.chatLoadingState = 'thinking';
                         this.scrollToBottom();
+
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        this.chatLoadingState = 'loading';
+                        
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        this.chatLoadingState = 'searching';
 
                          try {
                              const response = await fetch(this.endpoint, {
@@ -1792,6 +1865,7 @@
                              this.messages = [...this.messages];
                          } finally {
                              this.isLoading = false;
+                             this.chatLoadingState = null;
                              this.scrollToBottom();
                          }
                      },
