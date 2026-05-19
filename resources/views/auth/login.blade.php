@@ -16,385 +16,416 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a192f;
-            min-height: 100vh;
-            color: #FFFFFF;
-            position: relative;
+            background: #F5F1EA;
+            height: 100vh;
+            overflow: hidden;
+            color: #1F2937;
             overflow-x: hidden;
-        }
-
-        /* Animated scanning lines */
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                transparent 50%,
-                rgba(0, 212, 255, 0.02) 50%
-            );
-            background-size: 100% 4px;
-            animation: scan 8s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        @keyframes scan {
-            from { background-position: 0 0; }
-            to { background-position: 0 100%; }
-        }
-
-        /* Futuristic grid background */
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 80px 80px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Ambient neon glow */
-        .glow-top-right {
-            position: fixed;
-            top: -300px;
-            right: -300px;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.25) 0%, transparent 70%);
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .glow-bottom-left {
-            position: fixed;
-            bottom: -300px;
-            left: -300px;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.18) 0%, transparent 70%);
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
         }
 
         /* Main container */
         .container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 0.9fr;
             width: 100%;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 20px 40px;
-            gap: 40px;
-            position: relative;
-            z-index: 2;
-            min-height: 100vh;
-            align-items: center;
+            padding: 0;
+            height: 100vh;
         }
 
         /* Left section */
         .left-section {
+            padding: 24px 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 20px 0;
+            align-items: center;
         }
 
         .logo-area {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .dilg-logo {
-            width: 70px;
-            height: 70px;
+            width: 64px;
+            height: 64px;
             object-fit: contain;
             border-radius: 50%;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            background: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
         .logo-text {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            align-items: center;
+            gap: 4px;
         }
 
         .logo-text .brand-label {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
             letter-spacing: 0.28em;
             text-transform: uppercase;
-            color: #00d4ff;
+            color: #6B5B4F;
         }
 
         .logo-text .brand-name {
             font-size: 20px;
             font-weight: 800;
-            color: #FFFFFF;
+            color: #111827;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 100px;
+            background: rgba(184, 134, 11, 0.08);
+            border: 1px solid rgba(184, 134, 11, 0.15);
+            margin-bottom: 14px;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #B8860B;
+        }
+
+        .badge-text {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #B8860B;
         }
 
         .hero-text {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 700;
             line-height: 1.2;
-            margin-bottom: 16px;
-            color: #e6f1ff;
+            margin-bottom: 10px;
+            color: #111827;
+            text-align: center;
+            max-width: 520px;
         }
 
         .hero-text .accent {
-            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            background: linear-gradient(135deg, #B8860B 0%, #C49A6C 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #6B7280;
             margin-bottom: 20px;
-            max-width: 550px;
+            max-width: 520px;
+            text-align: center;
         }
 
-        /* Feature cards */
+        /* Features grid */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+            max-width: 520px;
         }
 
-        .feature-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 212, 255, 0.6);
-            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2);
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
 
         .feature-icon {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 153, 204, 0.2) 100%);
             border-radius: 10px;
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.08) 0%, rgba(196, 154, 108, 0.08) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
+            border: 1px solid rgba(184, 134, 11, 0.12);
         }
 
         .feature-icon svg {
             width: 18px;
             height: 18px;
-            color: #00d4ff;
+            color: #B8860B;
         }
 
-        .feature-card h4 {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: #FFFFFF;
-        }
-
-        .feature-card p {
+        .feature-title {
             font-size: 11px;
-            line-height: 1.5;
-            color: #94a3b8;
+            font-weight: 700;
+            color: #374151;
         }
 
-        /* Right section */
-        .right-section {
+        .feature-desc {
+            font-size: 9px;
+            color: #9CA3AF;
+            text-align: center;
+        }
+
+        /* Trust banner */
+        .trust-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            border: 1px solid rgba(184, 134, 11, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .trust-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(184, 134, 11, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Glassmorphism login card */
-        .login-card {
+        .trust-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #B8860B;
+        }
+
+        .trust-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .trust-text h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .trust-text p {
+            font-size: 10px;
+            color: #9CA3AF;
+        }
+
+        /* Right section */
+        .right-section {
+            padding: 24px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Register card */
+        .register-card {
             width: 100%;
-            max-width: 520px;
-            background: rgba(17, 34, 64, 0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.15);
-            position: relative;
-            overflow: hidden;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            padding: 28px 28px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(184, 134, 11, 0.08);
         }
 
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.8), transparent);
+        .card-header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.1) 0%, rgba(196, 154, 108, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
         }
 
-        .card-header {
-            margin-bottom: 24px;
+        .card-header-icon svg {
+            width: 20px;
+            height: 20px;
+            color: #B8860B;
         }
 
         .card-title {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 800;
-            color: #FFFFFF;
-            margin-bottom: 8px;
+            color: #111827;
+            text-align: center;
+            margin-bottom: 4px;
         }
 
         .card-subtitle {
-            font-size: 14px;
-            color: #94a3b8;
+            font-size: 12px;
+            color: #6B7280;
+            text-align: center;
             line-height: 1.5;
+            margin-bottom: 20px;
         }
 
         /* Form styles */
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .form-label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #1F2937;
+        }
+
+        .form-label .required {
+            color: #B8860B;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(17, 34, 64, 0.8);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 9px 12px 9px 38px;
+            background: #FAF8F3;
+            border: 1px solid #E5E1DA;
             border-radius: 10px;
-            font-size: 14px;
-            color: #FFFFFF;
+            font-size: 13px;
+            color: #1F2937;
             font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             outline: none;
         }
 
         .form-input:focus {
-            border-color: rgba(0, 212, 255, 0.8);
-            box-shadow: 0 0 24px rgba(0, 212, 255, 0.25);
-            background: rgba(17, 34, 64, 0.95);
+            border-color: #B8860B;
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+            background: white;
         }
 
         .form-input::placeholder {
-            color: #64748b;
+            color: #9CA3AF;
         }
 
-        .password-wrapper {
+        .input-wrapper {
             position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+        }
+
+        .input-icon svg {
+            width: 16px;
+            height: 16px;
+            display: block;
         }
 
         .password-toggle {
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #64748b;
+            color: #9CA3AF;
             cursor: pointer;
-            padding: 6px;
-            transition: color 0.3s ease;
+            padding: 5px;
+            transition: color 0.2s ease;
             border-radius: 8px;
         }
 
         .password-toggle:hover {
-            color: #00d4ff;
-            background: rgba(0, 212, 255, 0.1);
+            color: #B8860B;
+            background: rgba(184, 134, 11, 0.08);
         }
 
         .password-toggle svg {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             display: block;
         }
 
+        /* Form options */
         .form-options {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            align-items: center;
+            margin: 12px 0;
         }
 
         .remember-me {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
-            color: #cbd5e1;
         }
 
         .remember-me input {
             width: 16px;
             height: 16px;
             border-radius: 4px;
-            border: 2px solid rgba(0, 212, 255, 0.4);
-            background: rgba(17, 34, 64, 0.5);
+            border: 2px solid #D1D5DB;
+            background: #FAF8F3;
             cursor: pointer;
-            accent-color: #00d4ff;
+            accent-color: #B8860B;
+        }
+
+        .remember-me label {
+            font-size: 11px;
+            color: #6B7280;
+            cursor: pointer;
         }
 
         .forgot-password {
-            font-size: 13px;
-            color: #00d4ff;
+            font-size: 11px;
+            color: #B8860B;
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s ease;
+            transition: color 0.2s ease;
         }
 
         .forgot-password:hover {
-            color: #1de0ff;
+            color: #9E7A0A;
             text-decoration: underline;
         }
 
         /* Buttons */
         .btn-primary {
             width: 100%;
-            padding: 14px 28px;
-            background: linear-gradient(135deg, #00d4ff 0%, #0077b3 100%);
+            padding: 11px 28px;
+            background: linear-gradient(135deg, #B8860B 0%, #9E7A0A 100%);
             border: none;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            color: #001122;
+            color: white;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+            gap: 8px;
+            box-shadow: 0 12px 32px rgba(184, 134, 11, 0.25);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.45);
-            background: linear-gradient(135deg, #1de0ff 0%, #0088cc 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 40px rgba(184, 134, 11, 0.3);
+            background: linear-gradient(135deg, #C49A6C 0%, #B8860B 100%);
         }
 
         .btn-primary:active {
@@ -402,59 +433,74 @@
         }
 
         .btn-primary svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 
-        .btn-secondary {
-            width: 100%;
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-            font-size: 14px;
+        .signin-link {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .signin-link a {
+            color: #B8860B;
+            text-decoration: none;
             font-weight: 700;
-            color: #FFFFFF;
+            transition: color 0.2s ease;
+        }
+
+        .signin-link a:hover {
+            color: #9E7A0A;
+            text-decoration: underline;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: #E5E1DA;
+        }
+
+        .divider-text {
+            font-size: 10px;
+            color: #9CA3AF;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* Google button */
+        .btn-google {
+            width: 100%;
+            padding: 11px 28px;
+            background: white;
+            border: 1px solid #E5E1DA;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
 
-        .btn-secondary:hover {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: rgba(0, 212, 255, 0.6);
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
-        }
-
-        /* Google button */
-        .btn-google {
-            width: 100%;
-            padding: 14px 28px;
-            background: #FFFFFF;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            color: #1e293b;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 12px;
-        }
-
         .btn-google:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+            border-color: #D1D5DB;
         }
 
         .btn-google:active {
@@ -474,125 +520,54 @@
             height: 20px;
         }
 
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: rgba(0, 212, 255, 0.25);
-        }
-
-        .divider-text {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .auth-links {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .register-link {
-            font-size: 13px;
-            color: #94a3b8;
-            white-space: nowrap;
-        }
-
-        .register-link a {
-            color: #00d4ff;
-            text-decoration: none;
-            font-weight: 700;
-            transition: color 0.3s ease;
-        }
-
-        .register-link a:hover {
-            color: #1de0ff;
-            text-decoration: underline;
-        }
-
         /* Error messages */
         .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            color: #fca5a5;
-            font-size: 14px;
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            color: #B91C1C;
+            font-size: 13px;
         }
 
         .status-message {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.4);
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            color: #86efac;
-            font-size: 14px;
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            color: #166534;
+            font-size: 13px;
         }
 
         /* Responsive */
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
-                padding: 32px 24px;
-                gap: 48px;
             }
 
             .left-section {
-                align-items: center;
-                text-align: center;
+                display: none;
             }
 
-            .hero-text {
-                font-size: 36px;
-            }
-
-            .description {
-                max-width: 100%;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                max-width: 500px;
-            }
-
-            .auth-links {
-                flex-direction: column;
-                gap: 12px;
+            .right-section {
+                padding: 48px 24px;
+                background: #F5F1EA;
             }
         }
 
         @media (max-width: 640px) {
-            .container {
-                padding: 24px 16px;
+            .right-section {
+                padding: 32px 16px;
             }
 
-            .logo-area {
-                flex-direction: column;
-            }
-
-            .hero-text {
-                font-size: 28px;
-            }
-
-            .login-card {
+            .register-card {
                 padding: 32px 24px;
             }
 
             .card-title {
-                font-size: 24px;
+                font-size: 20px;
             }
         }
 
@@ -609,20 +584,24 @@
     </style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    <div class="scanlines"></div>
-    <div class="glow-top-right"></div>
-    <div class="glow-bottom-left"></div>
-
     <div class="container">
         <!-- Left Section -->
         <div class="left-section">
             <div class="logo-area">
                 <img src="{{ asset('images/dilg-logo.png') }}" alt="DILG Logo" class="dilg-logo">
                 <div class="logo-text">
-                    <span class="brand-label">GOVERNMENT AI</span>
-                    <span class="brand-name">NoteGov AI DILG</span>
+                    <span class="brand-label">GOVERNMENT AI PLATFORM</span>
+                    <span class="brand-name">DILG • NoteGov AI</span>
                 </div>
+            </div>
+
+            <div class="badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                </svg>
+                <span class="badge-text">AI-POWERED GOVERNANCE</span>
             </div>
 
             <h1 class="hero-text">
@@ -633,43 +612,66 @@
                 NoteGov AI delivers enterprise-grade policy intelligence, document analysis, and collaborative workflows designed exclusively for Philippine government institutions. Built with the latest AI technology to drive smarter, evidence-based governance.
             </p>
 
-            <!-- Feature Cards -->
+            <!-- Features -->
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-item">
                     <div class="feature-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-4-4h-4a4 4 0 00-4 4v2"></path>
                         </svg>
                     </div>
-                    <h4>Policy Intelligence</h4>
-                    <p>Advanced ML-powered policy analysis for legislative and governance documents</p>
+                    <span class="feature-title">Secure</span>
+                    <span class="feature-desc">Enterprise-grade security</span>
                 </div>
 
-                <div class="feature-card">
+                <div class="feature-item">
                     <div class="feature-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                         </svg>
                     </div>
-                    <h4>Collaborative Workspaces</h4>
-                    <p>Secure team collaboration tools for cross-agency governance projects</p>
+                    <span class="feature-title">Intelligent</span>
+                    <span class="feature-desc">AI-powered policy analysis</span>
                 </div>
 
-                <div class="feature-card">
+                <div class="feature-item">
                     <div class="feature-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
-                    <h4>Secure. Compliant. Trusted.</h4>
-                    <p>Government-grade compliance with Philippine Data Privacy Act and security standards</p>
+                    <span class="feature-title">Collaborative</span>
+                    <span class="feature-desc">Built for government teams</span>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="feature-title">Compliant</span>
+                    <span class="feature-desc">PH Data Privacy Act compliant</span>
+                </div>
+            </div>
+
+            <!-- Trust Banner -->
+            <div class="trust-banner">
+                <div class="trust-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div class="trust-text">
+                    <h4>Trusted by Philippine Government Institutions</h4>
+                    <p>Secure. Compliant. Trusted.</p>
                 </div>
             </div>
         </div>
 
         <!-- Right Section -->
         <div class="right-section">
-            <div class="login-card">
+            <div class="register-card">
                 <!-- Session Status -->
                 @if (session('status'))
                     <div class="status-message">
@@ -686,34 +688,50 @@
                     </div>
                 @endif
 
-                <div class="card-header">
-                    <h1 class="card-title">Welcome back</h1>
-                    <p class="card-subtitle">Sign in to continue to NoteGov AI DILG</p>
+                <div class="card-header-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
                 </div>
+
+                <h1 class="card-title">Welcome back</h1>
+                <p class="card-subtitle">Sign in to continue to NoteGov AI DILG</p>
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
                     <!-- Email Address -->
                     <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input 
-                            id="email" 
-                            class="form-input" 
-                            type="email" 
-                            name="email" 
-                            value="{{ old('email') }}" 
-                            required 
-                            autofocus 
-                            autocomplete="username"
-                            placeholder="your.name@dilg.gov.ph"
-                        >
+                        <label class="form-label" for="email">Work Email <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </span>
+                            <input 
+                                id="email" 
+                                class="form-input" 
+                                type="email" 
+                                name="email" 
+                                value="{{ old('email') }}" 
+                                required 
+                                autofocus 
+                                autocomplete="username"
+                                placeholder="your.name@dilg.gov.ph"
+                            >
+                        </div>
                     </div>
 
                     <!-- Password -->
                     <div class="form-group">
-                        <label class="form-label" for="password">Password</label>
-                        <div class="password-wrapper">
+                        <label class="form-label" for="password">Password <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-4-4h-4a4 4 0 00-4 4v2"></path>
+                                </svg>
+                            </span>
                             <input 
                                 id="password" 
                                 class="form-input"
@@ -737,10 +755,10 @@
 
                     <!-- Remember Me & Forgot Password -->
                     <div class="form-options">
-                        <label class="remember-me" for="remember">
+                        <div class="remember-me">
                             <input id="remember" type="checkbox" name="remember">
-                            Remember me
-                        </label>
+                            <label for="remember">Remember me</label>
+                        </div>
 
                         @if (Route::has('password.request'))
                             <a class="forgot-password" href="{{ route('password.request') }}">
@@ -758,10 +776,15 @@
                     </button>
                 </form>
 
+                <!-- Register Link -->
+                <div class="signin-link">
+                    Don't have an account? <a href="{{ route('register') }}">Register</a>
+                </div>
+
                 <!-- Divider -->
                 <div class="divider">
                     <div class="divider-line"></div>
-                    <span class="divider-text">or</span>
+                    <span class="divider-text">or continue with</span>
                     <div class="divider-line"></div>
                 </div>
 
@@ -777,13 +800,6 @@
                     </div>
                     Continue with Google
                 </button>
-
-                <!-- Register Link -->
-                <div class="auth-links">
-                    <div class="register-link">
-                        Don't have an account? <a href="{{ route('register') }}">Register</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

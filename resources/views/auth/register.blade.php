@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         * {
@@ -17,389 +18,390 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a192f;
-            min-height: 100vh;
-            color: #FFFFFF;
-            position: relative;
+            background: #F5F1EA;
+            height: 100vh;
+            overflow: hidden;
+            color: #1F2937;
             overflow-x: hidden;
-        }
-
-        /* Animated scanning lines */
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                transparent 50%,
-                rgba(0, 212, 255, 0.02) 50%
-            );
-            background-size: 100% 4px;
-            animation: scan 8s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        @keyframes scan {
-            from { background-position: 0 0; }
-            to { background-position: 0 100%; }
-        }
-
-        /* Futuristic grid background */
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 80px 80px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Ambient neon glow */
-        .glow-top-right {
-            position: fixed;
-            top: -300px;
-            right: -300px;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.25) 0%, transparent 70%);
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .glow-bottom-left {
-            position: fixed;
-            bottom: -300px;
-            left: -300px;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.18) 0%, transparent 70%);
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
         }
 
         /* Main container */
         .container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 0.9fr;
             width: 100%;
             max-width: 1600px;
             margin: 0 auto;
-            padding: 20px 40px;
-            gap: 40px;
-            position: relative;
-            z-index: 2;
-            min-height: 100vh;
-            align-items: center;
+            padding: 0;
+            height: 100vh;
         }
 
         /* Left section */
         .left-section {
+            padding: 24px 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 20px 0;
+            align-items: center;
         }
 
         .logo-area {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .dilg-logo {
-            width: 70px;
-            height: 70px;
+            width: 64px;
+            height: 64px;
             object-fit: contain;
             border-radius: 50%;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            background: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
         .logo-text {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            align-items: center;
+            gap: 4px;
         }
 
         .logo-text .brand-label {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
             letter-spacing: 0.28em;
             text-transform: uppercase;
-            color: #00d4ff;
+            color: #6B5B4F;
         }
 
         .logo-text .brand-name {
             font-size: 20px;
             font-weight: 800;
-            color: #FFFFFF;
+            color: #111827;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 100px;
+            background: rgba(184, 134, 11, 0.08);
+            border: 1px solid rgba(184, 134, 11, 0.15);
+            margin-bottom: 14px;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #B8860B;
+        }
+
+        .badge-text {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #B8860B;
         }
 
         .hero-text {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 700;
             line-height: 1.2;
-            margin-bottom: 16px;
-            color: #e6f1ff;
+            margin-bottom: 10px;
+            color: #111827;
+            text-align: center;
+            max-width: 520px;
         }
 
         .hero-text .accent {
-            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            background: linear-gradient(135deg, #B8860B 0%, #C49A6C 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #6B7280;
             margin-bottom: 20px;
-            max-width: 550px;
+            max-width: 520px;
+            text-align: center;
         }
 
-        /* Holographic AI city illustration */
-        .holographic-illustration {
-            width: 100%;
-            max-width: 350px;
-            margin-bottom: 24px;
-        }
-
-        .holographic-illustration svg {
-            width: 100%;
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4)); }
-            50% { filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.7)); }
-        }
-
-        /* Feature cards */
+        /* Features grid */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+            max-width: 520px;
         }
 
-        .feature-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 212, 255, 0.6);
-            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2);
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
 
         .feature-icon {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 153, 204, 0.2) 100%);
             border-radius: 10px;
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.08) 0%, rgba(196, 154, 108, 0.08) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
+            border: 1px solid rgba(184, 134, 11, 0.12);
         }
 
         .feature-icon svg {
             width: 18px;
             height: 18px;
-            color: #00d4ff;
+            color: #B8860B;
         }
 
-        .feature-card h4 {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: #FFFFFF;
-        }
-
-        .feature-card p {
+        .feature-title {
             font-size: 11px;
-            line-height: 1.5;
-            color: #94a3b8;
+            font-weight: 700;
+            color: #374151;
         }
 
-        /* Right section */
-        .right-section {
+        .feature-desc {
+            font-size: 9px;
+            color: #9CA3AF;
+            text-align: center;
+        }
+
+        /* Trust banner */
+        .trust-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            border: 1px solid rgba(184, 134, 11, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .trust-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(184, 134, 11, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Glassmorphism register card */
+        .trust-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #B8860B;
+        }
+
+        .trust-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .trust-text h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .trust-text p {
+            font-size: 10px;
+            color: #9CA3AF;
+        }
+
+        /* Right section */
+        .right-section {
+            padding: 24px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Register card */
         .register-card {
             width: 100%;
-            max-width: 520px;
-            background: rgba(17, 34, 64, 0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.15);
-            position: relative;
-            overflow: hidden;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            padding: 28px 28px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(184, 134, 11, 0.08);
         }
 
-        .register-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.8), transparent);
+        .card-header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.1) 0%, rgba(196, 154, 108, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
         }
 
-        .card-header {
-            margin-bottom: 24px;
+        .card-header-icon svg {
+            width: 20px;
+            height: 20px;
+            color: #B8860B;
         }
 
         .card-title {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 800;
-            color: #FFFFFF;
-            margin-bottom: 8px;
+            color: #111827;
+            text-align: center;
+            margin-bottom: 4px;
         }
 
         .card-subtitle {
-            font-size: 14px;
-            color: #94a3b8;
+            font-size: 12px;
+            color: #6B7280;
+            text-align: center;
             line-height: 1.5;
+            margin-bottom: 20px;
         }
 
         /* Form styles */
         .form-row {
             display: grid;
-            grid-template-columns: 2fr 2fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
+            grid-template-columns: 1.5fr 1.5fr 0.7fr;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
 
         .form-label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #1F2937;
         }
 
         .form-label .required {
-            color: #00d4ff;
+            color: #B8860B;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(17, 34, 64, 0.8);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 9px 12px 9px 38px;
+            background: #FAF8F3;
+            border: 1px solid #E5E1DA;
             border-radius: 10px;
-            font-size: 14px;
-            color: #FFFFFF;
+            font-size: 13px;
+            color: #1F2937;
             font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             outline: none;
         }
 
         .form-input:focus {
-            border-color: rgba(0, 212, 255, 0.8);
-            box-shadow: 0 0 24px rgba(0, 212, 255, 0.25);
-            background: rgba(17, 34, 64, 0.95);
+            border-color: #B8860B;
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+            background: white;
         }
 
         .form-input option {
-            background: #0a192f;
-            color: #FFFFFF;
+            background: white;
+            color: #1F2937;
         }
 
         .form-input::placeholder {
-            color: #64748b;
+            color: #9CA3AF;
         }
 
-        .password-wrapper {
+        .input-wrapper {
             position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+        }
+
+        .input-icon svg {
+            width: 16px;
+            height: 16px;
+            display: block;
         }
 
         .password-toggle {
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #64748b;
+            color: #9CA3AF;
             cursor: pointer;
-            padding: 6px;
-            transition: color 0.3s ease;
+            padding: 5px;
+            transition: color 0.2s ease;
             border-radius: 8px;
         }
 
         .password-toggle:hover {
-            color: #00d4ff;
-            background: rgba(0, 212, 255, 0.1);
+            color: #B8860B;
+            background: rgba(184, 134, 11, 0.08);
         }
 
         .password-toggle svg {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             display: block;
         }
 
         /* Terms box */
         .terms-box {
             display: flex;
-            gap: 10px;
-            padding: 12px 16px;
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 10px;
-            margin: 16px 0;
+            gap: 8px;
+            margin: 12px 0;
         }
 
         .terms-checkbox {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 4px;
-            border: 2px solid rgba(0, 212, 255, 0.4);
-            background: rgba(17, 34, 64, 0.5);
+            border: 2px solid #D1D5DB;
+            background: #FAF8F3;
             cursor: pointer;
-            accent-color: #00d4ff;
+            accent-color: #B8860B;
             flex-shrink: 0;
             margin-top: 1px;
         }
 
         .terms-text {
-            font-size: 12px;
-            color: #94a3b8;
-            line-height: 1.5;
+            font-size: 10px;
+            color: #6B7280;
+            line-height: 1.4;
         }
 
         .terms-text a {
-            color: #00d4ff;
+            color: #B8860B;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .terms-text a:hover {
@@ -409,27 +411,27 @@
         /* Buttons */
         .btn-primary {
             width: 100%;
-            padding: 14px 28px;
-            background: linear-gradient(135deg, #00d4ff 0%, #0077b3 100%);
+            padding: 11px 28px;
+            background: linear-gradient(135deg, #B8860B 0%, #9E7A0A 100%);
             border: none;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            color: #001122;
+            color: white;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+            gap: 8px;
+            box-shadow: 0 12px 32px rgba(184, 134, 11, 0.25);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.45);
-            background: linear-gradient(135deg, #1de0ff 0%, #0088cc 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 40px rgba(184, 134, 11, 0.3);
+            background: linear-gradient(135deg, #C49A6C 0%, #B8860B 100%);
         }
 
         .btn-primary:active {
@@ -437,26 +439,26 @@
         }
 
         .btn-primary svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
 
         .signin-link {
             text-align: center;
-            margin-top: 16px;
-            font-size: 13px;
-            color: #94a3b8;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #6B7280;
         }
 
         .signin-link a {
-            color: #00d4ff;
+            color: #B8860B;
             text-decoration: none;
             font-weight: 700;
-            transition: color 0.3s ease;
+            transition: color 0.2s ease;
         }
 
         .signin-link a:hover {
-            color: #1de0ff;
+            color: #9E7A0A;
             text-decoration: underline;
         }
 
@@ -464,19 +466,19 @@
         .divider {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 20px 0;
+            gap: 10px;
+            margin: 18px 0;
         }
 
         .divider-line {
             flex: 1;
             height: 1px;
-            background: rgba(0, 212, 255, 0.25);
+            background: #E5E1DA;
         }
 
         .divider-text {
-            font-size: 12px;
-            color: #64748b;
+            font-size: 10px;
+            color: #9CA3AF;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -485,27 +487,26 @@
         /* Google button */
         .btn-google {
             width: 100%;
-            padding: 14px 28px;
-            background: #FFFFFF;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 11px 28px;
+            background: white;
+            border: 1px solid #E5E1DA;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            color: #1e293b;
+            color: #374151;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            gap: 8px;
         }
 
         .btn-google:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+            border-color: #D1D5DB;
         }
 
         .btn-google:active {
@@ -527,49 +528,38 @@
 
         /* Error messages */
         .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            color: #fca5a5;
-            font-size: 14px;
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            color: #B91C1C;
+            font-size: 13px;
         }
 
         .status-message {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.4);
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            color: #86efac;
-            font-size: 14px;
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            color: #166534;
+            font-size: 13px;
         }
 
         /* Responsive */
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
-                padding: 32px 24px;
-                gap: 48px;
             }
 
             .left-section {
-                align-items: center;
-                text-align: center;
+                display: none;
             }
 
-            .hero-text {
-                font-size: 36px;
-            }
-
-            .description {
-                max-width: 100%;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                max-width: 500px;
+            .right-section {
+                padding: 48px 24px;
+                background: #F5F1EA;
             }
 
             .form-row {
@@ -578,16 +568,8 @@
         }
 
         @media (max-width: 640px) {
-            .container {
-                padding: 24px 16px;
-            }
-
-            .logo-area {
-                flex-direction: column;
-            }
-
-            .hero-text {
-                font-size: 28px;
+            .right-section {
+                padding: 32px 16px;
             }
 
             .register-card {
@@ -595,7 +577,7 @@
             }
 
             .card-title {
-                font-size: 24px;
+                font-size: 20px;
             }
         }
 
@@ -612,20 +594,24 @@
     </style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    <div class="scanlines"></div>
-    <div class="glow-top-right"></div>
-    <div class="glow-bottom-left"></div>
-
     <div class="container">
         <!-- Left Section -->
         <div class="left-section">
             <div class="logo-area">
                 <img src="{{ asset('images/dilg-logo.png') }}" alt="DILG Logo" class="dilg-logo">
                 <div class="logo-text">
-                    <span class="brand-label">GOVERNMENT AI</span>
-                    <span class="brand-name">NoteGov AI DILG</span>
+                    <span class="brand-label">GOVERNMENT AI PLATFORM</span>
+                    <span class="brand-name">DILG • NoteGov AI</span>
                 </div>
+            </div>
+
+            <div class="badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                </svg>
+                <span class="badge-text">AI-POWERED GOVERNANCE</span>
             </div>
 
             <h1 class="hero-text">
@@ -636,97 +622,59 @@
                 NoteGov AI delivers enterprise-grade policy intelligence, document analysis, and collaborative workflows designed exclusively for Philippine government institutions. Built with the latest AI technology to drive smarter, evidence-based governance.
             </p>
 
-            <!-- Holographic AI City Illustration -->
-            <div class="holographic-illustration">
-                <svg viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="cityGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.8"/>
-                            <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0.1"/>
-                        </linearGradient>
-                        <linearGradient id="glowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.4"/>
-                            <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
-                        </linearGradient>
-                    </defs>
-                    
-                    <!-- Background glow -->
-                    <ellipse cx="250" cy="280" rx="200" ry="40" fill="url(#glowGrad)"/>
-                    
-                    <!-- Skyline buildings -->
-                    <rect x="50" y="120" width="40" height="180" fill="url(#cityGrad)" rx="4"/>
-                    <rect x="100" y="80" width="50" height="220" fill="url(#cityGrad)" rx="4"/>
-                    <rect x="160" y="140" width="35" height="160" fill="url(#cityGrad)" rx="4"/>
-                    <rect x="210" y="60" width="80" height="240" fill="url(#cityGrad)" rx="4"/>
-                    <rect x="300" y="100" width="45" height="200" fill="url(#cityGrad)" rx="4"/>
-                    <rect x="355" y="130" width="55" height="170" fill="url(#cityGrad)" rx="4"/>
-                    <rect x="420" y="90" width="40" height="210" fill="url(#cityGrad)" rx="4"/>
-                    
-                    <!-- Windows -->
-                    <g fill="#00d4ff" fill-opacity="0.6">
-                        <rect x="58" y="135" width="8" height="12" rx="2"/>
-                        <rect x="74" y="135" width="8" height="12" rx="2"/>
-                        <rect x="58" y="160" width="8" height="12" rx="2"/>
-                        <rect x="74" y="160" width="8" height="12" rx="2"/>
-                        
-                        <rect x="110" y="100" width="10" height="14" rx="2"/>
-                        <rect x="130" y="100" width="10" height="14" rx="2"/>
-                        <rect x="110" y="130" width="10" height="14" rx="2"/>
-                        <rect x="130" y="130" width="10" height="14" rx="2"/>
-                        
-                        <rect x="225" y="80" width="12" height="16" rx="2"/>
-                        <rect x="263" y="80" width="12" height="16" rx="2"/>
-                        <rect x="225" y="115" width="12" height="16" rx="2"/>
-                        <rect x="263" y="115" width="12" height="16" rx="2"/>
-                    </g>
-                    
-                    <!-- Tower antenna -->
-                    <line x1="250" y1="60" x2="250" y2="30" stroke="#00d4ff" stroke-width="2"/>
-                    <circle cx="250" cy="25" r="6" fill="#00d4ff"/>
-                    
-                    <!-- Floating particles -->
-                    <circle cx="150" cy="50" r="3" fill="#00d4ff" fill-opacity="0.7">
-                        <animate attributeName="cy" values="50;40;50" dur="3s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="350" cy="70" r="2" fill="#00d4ff" fill-opacity="0.6">
-                        <animate attributeName="cy" values="70;60;70" dur="2.5s" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="400" cy="40" r="3" fill="#00d4ff" fill-opacity="0.5">
-                        <animate attributeName="cy" values="40;30;40" dur="3.5s" repeatCount="indefinite"/>
-                    </circle>
-                </svg>
+            <!-- Features -->
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-4-4h-4a4 4 0 00-4 4v2"></path>
+                        </svg>
+                    </div>
+                    <span class="feature-title">Secure</span>
+                    <span class="feature-desc">Enterprise-grade security</span>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <span class="feature-title">Intelligent</span>
+                    <span class="feature-desc">AI-powered policy analysis</span>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="feature-title">Collaborative</span>
+                    <span class="feature-desc">Built for government teams</span>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="feature-title">Compliant</span>
+                    <span class="feature-desc">PH Data Privacy Act compliant</span>
+                </div>
             </div>
 
-            <!-- Feature Cards -->
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-                        </svg>
-                    </div>
-                    <h4>Policy Intelligence</h4>
-                    <p>Advanced ML-powered policy analysis for legislative and governance documents</p>
+            <!-- Trust Banner -->
+            <div class="trust-banner">
+                <div class="trust-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
                 </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                    </div>
-                    <h4>Collaborative Workspaces</h4>
-                    <p>Secure team collaboration tools for cross-agency governance projects</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                    </div>
-                    <h4>Secure. Compliant. Trusted.</h4>
-                    <p>Government-grade compliance with Philippine Data Privacy Act and security standards</p>
+                <div class="trust-text">
+                    <h4>Trusted by Philippine Government Institutions</h4>
+                    <p>Secure. Compliant. Trusted.</p>
                 </div>
             </div>
         </div>
@@ -750,10 +698,14 @@
                     </div>
                 @endif
 
-                <div class="card-header">
-                    <h1 class="card-title">Create your account</h1>
-                    <p class="card-subtitle">Build smarter, evidence-based governance for your local government unit</p>
+                <div class="card-header-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
                 </div>
+
+                <h1 class="card-title">Create your account</h1>
+                <p class="card-subtitle">Build smarter, evidence-based governance for your local government unit</p>
 
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
@@ -762,62 +714,213 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="last_name">Last Name <span class="required">*</span></label>
-                            <input 
-                                id="last_name" 
-                                class="form-input" 
-                                type="text" 
-                                name="last_name" 
-                                value="{{ old('last_name') }}" 
-                                required 
-                                placeholder="Dela Cruz"
-                            >
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </span>
+                                <input 
+                                    id="last_name" 
+                                    class="form-input" 
+                                    type="text" 
+                                    name="last_name" 
+                                    value="{{ old('last_name') }}" 
+                                    required 
+                                    placeholder="Dela Cruz"
+                                >
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="first_name">First Name <span class="required">*</span></label>
-                            <input 
-                                id="first_name" 
-                                class="form-input" 
-                                type="text" 
-                                name="first_name" 
-                                value="{{ old('first_name') }}" 
-                                required 
-                                placeholder="Juan"
-                            >
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </span>
+                                <input 
+                                    id="first_name" 
+                                    class="form-input" 
+                                    type="text" 
+                                    name="first_name" 
+                                    value="{{ old('first_name') }}" 
+                                    required 
+                                    placeholder="Juan"
+                                >
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="middle_initial">M.I.</label>
-                            <input 
-                                id="middle_initial" 
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </span>
+                                <input 
+                                    id="middle_initial" 
+                                    class="form-input" 
+                                    type="text" 
+                                    name="middle_initial" 
+                                    value="{{ old('middle_initial') }}" 
+                                    maxlength="1"
+                                    placeholder="A"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Office Selection (Full Width) -->
+                    <div class="form-group" x-data="{ 
+                        officeType: '{{ old('office_type') }}',
+                        selectedRegion: '{{ old('region') }}',
+                        selectedProvince: '{{ old('province') }}',
+                        regions: {{ $regions->toJson() }},
+                        provinces: {{ $provinces->toJson() }},
+                        cities: {{ $cities->toJson() }},
+                        selectedOfficeId: '{{ old('office_id') }}',
+                        get filteredProvinces() {
+                            if (!this.selectedRegion) return [];
+                            return this.provinces.filter(p => p.region_id == this.selectedRegion);
+                        },
+                        get filteredCities() {
+                            if (!this.selectedProvince) return [];
+                            return this.cities.filter(c => c.province_id == this.selectedProvince);
+                        }
+                    }">
+                        <label class="form-label" for="office_type">Select Office <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </span>
+                            <select 
+                                id="office_type" 
+                                name="office_type" 
                                 class="form-input" 
-                                type="text" 
-                                name="middle_initial" 
-                                value="{{ old('middle_initial') }}" 
-                                maxlength="1"
-                                placeholder="A"
+                                required 
+                                x-model="officeType"
+                                @change="selectedOfficeId = ''; selectedProvince = '';"
                             >
+                                <option value="" disabled selected>Choose your office type</option>
+                                <option value="Regional">Regional</option>
+                                <option value="Provincial">Provincial</option>
+                                <option value="City/Municipality">City/Municipality</option>
+                            </select>
+                        </div>
+
+                        <!-- Region Selection (Always show) -->
+                        <div class="form-group" style="margin-top: 8px;">
+                            <label class="form-label" for="region">Select Region <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314-11.314z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </span>
+                                <select 
+                                    id="region" 
+                                    name="region" 
+                                    class="form-input" 
+                                    required 
+                                    x-model="selectedRegion"
+                                    @change="selectedProvince = ''; if (officeType === 'Regional') selectedOfficeId = selectedRegion;"
+                                >
+                                    <option value="" disabled selected>Choose your region</option>
+                                    <template x-for="region in regions" :key="region.id">
+                                        <option :value="region.id" x-text="region.name" :selected="selectedRegion == region.id"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Province Selection (show if Provincial or City/Municipality) -->
+                        <div class="form-group" style="margin-top: 8px;" x-show="officeType === 'Provincial' || officeType === 'City/Municipality'">
+                            <label class="form-label" for="province">Select Province <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </span>
+                                <select 
+                                    id="province" 
+                                    name="province" 
+                                    class="form-input" 
+                                    :required="officeType === 'Provincial' || officeType === 'City/Municipality'"
+                                    x-model="selectedProvince"
+                                    @change="if (officeType === 'Provincial') selectedOfficeId = selectedProvince;"
+                                    x-bind:disabled="!selectedRegion"
+                                >
+                                    <option value="" disabled selected>Choose your province</option>
+                                    <template x-for="province in filteredProvinces" :key="province.id">
+                                        <option :value="province.id" x-text="province.name" :selected="selectedProvince == province.id"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- City/Municipality Selection (show if City/Municipality) -->
+                        <div class="form-group" style="margin-top: 8px;" x-show="officeType === 'City/Municipality'">
+                            <label class="form-label" for="office_id">Select City/Municipality <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </span>
+                                <select 
+                                    id="office_id" 
+                                    name="office_id" 
+                                    class="form-input" 
+                                    required 
+                                    x-model="selectedOfficeId"
+                                    x-bind:disabled="!selectedProvince"
+                                >
+                                    <option value="" disabled selected>Choose your city/municipality</option>
+                                    <template x-for="city in filteredCities" :key="city.id">
+                                        <option :value="city.id" x-text="city.name" :selected="selectedOfficeId == city.id"></option>
+                                    </template>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Work Email -->
                     <div class="form-group">
                         <label class="form-label" for="email">Work Email <span class="required">*</span></label>
-                        <input 
-                            id="email" 
-                            class="form-input" 
-                            type="email" 
-                            name="email" 
-                            value="{{ old('email') }}" 
-                            required 
-                            placeholder="your.name@dilg.gov.ph"
-                        >
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </span>
+                            <input 
+                                id="email" 
+                                class="form-input" 
+                                type="email" 
+                                name="email" 
+                                value="{{ old('email') }}" 
+                                required 
+                                placeholder="your.name@dilg.gov.ph"
+                            >
+                        </div>
                     </div>
 
                     <!-- Password -->
                     <div class="form-group">
                         <label class="form-label" for="password">Password <span class="required">*</span></label>
-                        <div class="password-wrapper">
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-4-4h-4a4 4 0 00-4 4v2"></path>
+                                </svg>
+                            </span>
                             <input 
                                 id="password" 
                                 class="form-input"
@@ -842,7 +945,12 @@
                     <!-- Confirm Password -->
                     <div class="form-group">
                         <label class="form-label" for="password_confirmation">Confirm Password <span class="required">*</span></label>
-                        <div class="password-wrapper">
+                        <div class="input-wrapper">
+                            <span class="input-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-4-4h-4a4 4 0 00-4 4v2"></path>
+                                </svg>
+                            </span>
                             <input 
                                 id="password_confirmation" 
                                 class="form-input"
@@ -860,64 +968,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
                                 </svg>
                             </button>
-                        </div>
-                    </div>
-
-                    <!-- Office Selection -->
-                    <div class="form-row" x-data="{ 
-                        officeType: '{{ old('office_type') }}',
-                        regions: {{ $regions->toJson() }},
-                        provinces: {{ $provinces->toJson() }},
-                        cities: {{ $cities->toJson() }},
-                        selectedOfficeId: '{{ old('office_id') }}'
-                    }">
-                        <div class="form-group">
-                            <label class="form-label" for="office_type">Select Office <span class="required">*</span></label>
-                            <select 
-                                id="office_type" 
-                                name="office_type" 
-                                class="form-input" 
-                                required 
-                                x-model="officeType"
-                                @change="selectedOfficeId = ''"
-                            >
-                                <option value="" disabled selected>Choose type</option>
-                                <option value="Regional">Regional</option>
-                                <option value="Provincial">Provincial</option>
-                                <option value="City/Municipality">City/Municipality</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="grid-column: span 2;" x-show="officeType">
-                            <label class="form-label">
-                                <span x-show="officeType === 'Regional'">Select Region</span>
-                                <span x-show="officeType === 'Provincial'">Select Province</span>
-                                <span x-show="officeType === 'City/Municipality'">Select City/Municipality</span>
-                                <span class="required">*</span>
-                            </label>
-                            <select 
-                                name="office_id" 
-                                class="form-input" 
-                                required 
-                                x-model="selectedOfficeId"
-                            >
-                                <option value="" disabled selected>Choose option</option>
-                                <template x-if="officeType === 'Regional'">
-                                    <template x-for="region in regions" :key="region.id">
-                                        <option :value="region.id" x-text="region.name" :selected="selectedOfficeId == region.id"></option>
-                                    </template>
-                                </template>
-                                <template x-if="officeType === 'Provincial'">
-                                    <template x-for="province in provinces" :key="province.id">
-                                        <option :value="province.id" x-text="province.name" :selected="selectedOfficeId == province.id"></option>
-                                    </template>
-                                </template>
-                                <template x-if="officeType === 'City/Municipality'">
-                                    <template x-for="city in cities" :key="city.id">
-                                        <option :value="city.id" x-text="city.name" :selected="selectedOfficeId == city.id"></option>
-                                    </template>
-                                </template>
-                            </select>
                         </div>
                     </div>
 
