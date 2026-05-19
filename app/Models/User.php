@@ -34,6 +34,9 @@ class User extends Authenticatable
         'last_active_at',
         'last_login_at',
         'password',
+        'office_type',
+        'office_name',
+        'office_id',
     ];
 
     /**

@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -326,6 +327,11 @@
             border-color: rgba(0, 212, 255, 0.8);
             box-shadow: 0 0 24px rgba(0, 212, 255, 0.25);
             background: rgba(17, 34, 64, 0.95);
+        }
+
+        .form-input option {
+            background: #0a192f;
+            color: #FFFFFF;
         }
 
         .form-input::placeholder {
@@ -854,6 +860,64 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
                                 </svg>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Office Selection -->
+                    <div class="form-row" x-data="{ 
+                        officeType: '{{ old('office_type') }}',
+                        regions: {{ $regions->toJson() }},
+                        provinces: {{ $provinces->toJson() }},
+                        cities: {{ $cities->toJson() }},
+                        selectedOfficeId: '{{ old('office_id') }}'
+                    }">
+                        <div class="form-group">
+                            <label class="form-label" for="office_type">Select Office <span class="required">*</span></label>
+                            <select 
+                                id="office_type" 
+                                name="office_type" 
+                                class="form-input" 
+                                required 
+                                x-model="officeType"
+                                @change="selectedOfficeId = ''"
+                            >
+                                <option value="" disabled selected>Choose type</option>
+                                <option value="Regional">Regional</option>
+                                <option value="Provincial">Provincial</option>
+                                <option value="City/Municipality">City/Municipality</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="grid-column: span 2;" x-show="officeType">
+                            <label class="form-label">
+                                <span x-show="officeType === 'Regional'">Select Region</span>
+                                <span x-show="officeType === 'Provincial'">Select Province</span>
+                                <span x-show="officeType === 'City/Municipality'">Select City/Municipality</span>
+                                <span class="required">*</span>
+                            </label>
+                            <select 
+                                name="office_id" 
+                                class="form-input" 
+                                required 
+                                x-model="selectedOfficeId"
+                            >
+                                <option value="" disabled selected>Choose option</option>
+                                <template x-if="officeType === 'Regional'">
+                                    <template x-for="region in regions" :key="region.id">
+                                        <option :value="region.id" x-text="region.name" :selected="selectedOfficeId == region.id"></option>
+                                    </template>
+                                </template>
+                                <template x-if="officeType === 'Provincial'">
+                                    <template x-for="province in provinces" :key="province.id">
+                                        <option :value="province.id" x-text="province.name" :selected="selectedOfficeId == province.id"></option>
+                                    </template>
+                                </template>
+                                <template x-if="officeType === 'City/Municipality'">
+                                    <template x-for="city in cities" :key="city.id">
+                                        <option :value="city.id" x-text="city.name" :selected="selectedOfficeId == city.id"></option>
+                                    </template>
+                                </template>
+                            </select>
                         </div>
                     </div>
 

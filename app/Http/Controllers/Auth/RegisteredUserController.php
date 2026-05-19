@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Region;
+use App\Models\Province;
+use App\Models\CityMunicipality;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +23,11 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'regions' => Region::orderBy('name')->get(),
+            'provinces' => Province::orderBy('name')->get(),
+            'cities' => CityMunicipality::orderBy('name')->get(),
+        ]);
     }
 
     /**
@@ -36,14 +43,28 @@ class RegisteredUserController extends Controller
             'middle_initial' => ['nullable', 'string', 'max:3'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'office_type' => ['required', 'string', 'in:Regional,Provincial,City/Municipality'],
+            'office_id' => ['required', 'integer'],
         ]);
 
         $fullName = trim($request->first_name . ' ' . ($request->middle_initial ? $request->middle_initial . '. ' : '') . $request->last_name);
+
+        $officeName = null;
+        if ($request->office_type === 'Regional') {
+            $officeName = Region::find($request->office_id)?->name;
+        } elseif ($request->office_type === 'Provincial') {
+            $officeName = Province::find($request->office_id)?->name;
+        } elseif ($request->office_type === 'City/Municipality') {
+            $officeName = CityMunicipality::find($request->office_id)?->name;
+        }
 
         $user = User::create([
             'name' => $fullName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'office_type' => $request->office_type,
+            'office_name' => $officeName,
+            'office_id' => $request->office_id,
         ]);
 
         event(new Registered($user));

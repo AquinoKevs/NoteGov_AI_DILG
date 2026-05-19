@@ -40,5 +40,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('users', UserController::class);
         Route::get('/settings', [SystemSettingsController::class, 'index'])->name('settings.index');
         Route::patch('/settings', [SystemSettingsController::class, 'update'])->name('settings.update');
+        Route::post('/settings/import-psgc', [SystemSettingsController::class, 'importPsgc'])->name('settings.import-psgc');
     });
 });
