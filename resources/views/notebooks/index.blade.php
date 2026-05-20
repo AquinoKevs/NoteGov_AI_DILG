@@ -18,29 +18,86 @@
             }
             body {
                 font-family: 'Manrope', sans-serif;
-                background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+                background: #f8fafc;
                 margin: 0;
                 padding: 0;
-                color: white;
+                color: #0f172a;
                 min-height: 100vh;
             }
             .container-main {
                 max-width: 1400px;
                 margin: 0 auto;
-                padding: 32px 48px;
+                padding: 0 48px 24px;
             }
             .header-top {
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
+                align-items: center;
                 gap: 16px;
-                margin-bottom: 48px;
+                margin: 0 -48px 28px;
+                /* padding: 14px 48px; */
+                padding: 19px 48px;
+                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+                border-bottom: 2px solid #e2e8f0;
+            }
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-decoration: none;
+                color: #0f172a;
+                min-width: 0;
+            }
+            .brand-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 999px;
+                background: #1e293b;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                font-size: 14px;
+                flex: 0 0 auto;
+            }
+            .brand-title {
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 30px;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .header-actions {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 16px;
+            }
+            .user-btn {
+                padding: 8px 12px;
+                border-radius: 12px;
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #0f172a;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                transition: all 0.2s ease;
+            }
+            .user-btn:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
             }
             .header-btn {
                 padding: 10px 20px;
                 border-radius: 12px;
-                border: 1px solid rgba(255,255,255,0.15);
-                background: rgba(255,255,255,0.05);
-                color: rgba(255,255,255,0.8);
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #0f172a;
                 font-family: 'Manrope', sans-serif;
                 font-size: 14px;
                 font-weight: 600;
@@ -51,8 +108,8 @@
                 transition: all 0.2s ease;
             }
             .header-btn:hover {
-                background: rgba(255,255,255,0.1);
-                border-color: rgba(255,255,255,0.25);
+                background: #f8fafc;
+                border-color: #cbd5e1;
             }
             .section-recent {
                 margin-bottom: 48px;
@@ -80,7 +137,7 @@
                 font-size: 32px;
                 font-weight: 700;
                 margin: 0;
-                color: white;
+                color: #0f172a;
             }
             .section-actions {
                 display: flex;
@@ -91,9 +148,9 @@
                 padding: 10px 20px;
                 padding-left: 44px;
                 border-radius: 12px;
-                border: 1px solid rgba(255,255,255,0.15);
-                background: rgba(255,255,255,0.05);
-                color: white;
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #0f172a;
                 font-family: 'Manrope', sans-serif;
                 font-size: 14px;
                 min-width: 240px;
@@ -105,7 +162,7 @@
                 box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
             }
             .search-input::placeholder {
-                color: rgba(255,255,255,0.4);
+                color: #94a3b8;
             }
             .search-wrapper {
                 position: relative;
@@ -115,37 +172,38 @@
                 left: 16px;
                 top: 50%;
                 transform: translateY(-50%);
-                color: rgba(255,255,255,0.5);
+                color: #94a3b8;
                 width: 18px;
                 height: 18px;
             }
             .view-toggle {
                 display: flex;
-                border: 1px solid rgba(255,255,255,0.15);
+                border: 1px solid #e2e8f0;
                 border-radius: 12px;
                 overflow: hidden;
+                background: white;
             }
             .view-btn {
                 padding: 8px 14px;
                 border: none;
                 background: transparent;
-                color: rgba(255,255,255,0.6);
+                color: #64748b;
                 cursor: pointer;
                 transition: all 0.2s ease;
             }
             .view-btn.active {
-                background: rgba(99,102,241,0.2);
-                color: #818cf8;
+                background: rgba(99,102,241,0.12);
+                color: #4f46e5;
             }
             .view-btn:hover:not(.active) {
-                background: rgba(255,255,255,0.05);
+                background: #f8fafc;
             }
             .sort-dropdown {
                 padding: 10px 16px;
                 border-radius: 12px;
-                border: 1px solid rgba(255,255,255,0.15);
-                background: rgba(255,255,255,0.05);
-                color: rgba(255,255,255,0.8);
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #0f172a;
                 font-family: 'Manrope', sans-serif;
                 font-size: 14px;
                 font-weight: 600;
@@ -177,19 +235,20 @@
                 gap: 24px;
             }
             .notebook-card {
-                background: rgba(255,255,255,0.05);
-                border: 1px solid rgba(255,255,255,0.1);
+                background: white;
+                border: 1px solid #e2e8f0;
                 border-radius: 20px;
                 padding: 24px;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 position: relative;
                 overflow: hidden;
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
             }
             .notebook-card:hover {
-                border-color: rgba(99,102,241,0.3);
+                border-color: rgba(99,102,241,0.35);
                 transform: translateY(-4px);
-                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
             }
             .notebook-card.create {
                 border: 2px dashed rgba(99,102,241,0.4);
@@ -201,7 +260,7 @@
             }
             .notebook-card.create:hover {
                 border-color: rgba(99,102,241,0.7);
-                background: rgba(99,102,241,0.05);
+                background: rgba(99,102,241,0.04);
             }
             .create-icon-wrapper {
                 width: 64px;
@@ -231,7 +290,7 @@
             }
             .create-subtext {
                 font-size: 13px;
-                color: rgba(255,255,255,0.5);
+                color: #64748b;
             }
             .notebook-cover {
                 width: 72px;
@@ -254,25 +313,25 @@
                 background: transparent;
                 border: none;
                 cursor: pointer;
-                color: rgba(255,255,255,0.4);
+                color: #94a3b8;
                 transition: all 0.2s ease;
             }
             .notebook-menu-btn:hover {
-                background: rgba(255,255,255,0.1);
+                background: #f1f5f9;
             }
             .notebook-title {
                 font-family: 'Space Grotesk', sans-serif;
                 font-size: 20px;
                 font-weight: 700;
                 margin-bottom: 12px;
-                color: white;
+                color: #0f172a;
             }
             .notebook-meta {
                 display: flex;
                 align-items: center;
                 gap: 12px;
                 padding-top: 16px;
-                border-top: 1px solid rgba(255,255,255,0.08);
+                border-top: 1px solid #e2e8f0;
             }
             .notebook-category {
                 display: flex;
@@ -280,10 +339,10 @@
                 gap: 6px;
                 padding: 6px 12px;
                 border-radius: 10px;
-                background: rgba(255,255,255,0.05);
+                background: #f1f5f9;
                 font-size: 13px;
                 font-weight: 600;
-                color: rgba(255,255,255,0.7);
+                color: #334155;
             }
             .notebook-owner {
                 margin-left: auto;
@@ -291,7 +350,7 @@
                 align-items: center;
                 gap: 8px;
                 font-size: 13px;
-                color: rgba(255,255,255,0.5);
+                color: #64748b;
             }
             .owner-avatar {
                 width: 32px;
@@ -306,7 +365,7 @@
             }
             .section-featured {
                 padding-top: 32px;
-                border-top: 1px solid rgba(255,255,255,0.08);
+                border-top: 1px solid #e2e8f0;
             }
             .featured-header {
                 display: flex;
@@ -318,7 +377,7 @@
                 font-family: 'Space Grotesk', sans-serif;
                 font-size: 18px;
                 font-weight: 700;
-                color: rgba(255,255,255,0.8);
+                color: #0f172a;
             }
             .view-all {
                 display: flex;
@@ -464,13 +523,13 @@
                 font-family:'Space Grotesk', sans-serif;
                 font-size:16px;
                 font-weight:700;
-                color:white;
+                color:#0f172a;
             }
             .notebook-list-meta {
                 display:flex;
                 gap:16px;
                 font-size:13px;
-                color:rgba(255,255,255,0.5);
+                color:#64748b;
             }
             .notebooks-table {
                 width: 100%;
@@ -482,19 +541,19 @@
                 font-family: 'Space Grotesk', sans-serif;
                 font-size: 14px;
                 font-weight: 700;
-                color: rgba(255,255,255,0.7);
-                border-bottom: 1px solid rgba(255,255,255,0.1);
+                color: #334155;
+                border-bottom: 1px solid #e2e8f0;
             }
             .notebooks-table td {
                 padding: 16px;
                 vertical-align: middle;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
+                border-bottom: 1px solid #f1f5f9;
             }
             .notebooks-table tbody tr {
                 transition: background 0.2s ease;
             }
             .notebooks-table tbody tr:hover {
-                background: rgba(99,102,241,0.05);
+                background: #f8fafc;
             }
         </style>
     </head>
@@ -536,33 +595,44 @@
                 }
             </script>
             <div class="header-top">
-                <a href="{{ route('profile.edit') }}" class="header-btn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    </svg>
-                    Settings
-                </a>
-                <div class="relative">
-                    <button @click="userMenuOpen = !userMenuOpen" class="header-btn">
-                        <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
-                            <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zM3 14h7v7H3v-7z"/>
+                <a href="{{ route('notebooks.index') }}" class="brand" aria-label="Notebooks">
+                    <div class="brand-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:30px; height:30px; color:white;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
-                        <div style="width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg, #8b5cf6, #a855f7); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;">
-                            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                    </div>
+                    <div class="brand-title">DILG | NoteGov AI</div>
+                </a>
+
+                <div class="header-actions">
+                    <a href="{{ route('profile.edit') }}" class="header-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        </svg>
+                        Settings
+                    </a>
+                    <div class="relative">
+                        <button @click="userMenuOpen = !userMenuOpen" class="user-btn" aria-label="User menu">
+                            <svg fill="currentColor" viewBox="0 0 24 24" style="width:18px; height:18px; color:#64748b;">
+                                <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zm0 11h7v7h-7v-7zM3 14h7v7H3v-7z"/>
+                            </svg>
+                            <div style="width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg, #8b5cf6, #a855f7); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:white;">
+                                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                            </div>
+                        </button>
+                        <div x-show="userMenuOpen" @click.outside="userMenuOpen = false" style="position:absolute; top:50px; right:0; background:white; border:1px solid #e2e8f0; border-radius:16px; box-shadow:0 20px 40px rgba(15,23,42,0.14); min-width:220px; z-index:100;">
+                            <div style="padding:16px 20px; border-bottom:1px solid #e2e8f0;">
+                                <p style="font-size:14px; font-weight:700; margin:0; color:#0f172a;">{{ Auth::user()->name ?? 'User' }}</p>
+                                <p style="font-size:13px; color:#64748b; margin:4px 0 0;">{{ Auth::user()->email ?? '' }}</p>
+                            </div>
+                            <a href="{{ route('profile.edit') }}" style="display:block; padding:12px 20px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#0f172a; text-decoration:none;">Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" style="width:100%; padding:12px 20px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
+                                    Log out
+                                </button>
+                            </form>
                         </div>
-                    </button>
-                    <div x-show="userMenuOpen" @click.outside="userMenuOpen = false" style="position:absolute; top:50px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.4); min-width:220px; z-index:100;">
-                        <div style="padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.1);">
-                            <p style="font-size:14px; font-weight:700; margin:0;">{{ Auth::user()->name ?? 'User' }}</p>
-                            <p style="font-size:13px; color:rgba(255,255,255,0.5); margin:4px 0 0;">{{ Auth::user()->email ?? '' }}</p>
-                        </div>
-                        <a href="{{ route('profile.edit') }}" style="display:block; padding:12px 20px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.7); text-decoration:none;">Profile</a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" style="width:100%; padding:12px 20px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#ef4444;">
-                                Log out
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -596,14 +666,14 @@
                             <button @click="sortDropdownOpen = !sortDropdownOpen" class="sort-dropdown">
                                 <span x-text="sortBy === 'recent' ? 'Most recent' : (sortBy === 'title' ? 'Title' : 'Oldest')"></span> ▾
                             </button>
-                            <div x-show="sortDropdownOpen" @click.outside="sortDropdownOpen = false" style="position:absolute; top:45px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
-                                <button @click="sortBy = 'recent'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                            <div x-show="sortDropdownOpen" @click.outside="sortDropdownOpen = false" style="position:absolute; top:45px; right:0; background:white; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 10px 30px rgba(15,23,42,0.12); min-width:160px; z-index:100;">
+                                <button @click="sortBy = 'recent'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0;">
                                     Most recent
                                 </button>
-                                <button @click="sortBy = 'title'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <button @click="sortBy = 'title'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0;">
                                     Title
                                 </button>
-                                <button @click="sortBy = 'oldest'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8);">
+                                <button @click="sortBy = 'oldest'; sortDropdownOpen = false;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#0f172a;">
                                     Oldest
                                 </button>
                             </div>
@@ -653,8 +723,8 @@
                                                 <circle cx="12" cy="18" r="2"/>
                                             </svg>
                                         </button>
-                                        <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
-                                            <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                        <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:white; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 10px 30px rgba(15,23,42,0.12); min-width:160px; z-index:100;">
+                                            <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0;">
                                                 Rename
                                             </button>
                                             <form method="POST" :action="'/notebooks/' + notebook.id" onsubmit="return confirm('Are you sure you want to delete this notebook?')">
@@ -701,21 +771,21 @@
                         <tbody>
                             <tr>
                                 <td colspan="5">
-                                    <form method="POST" action="{{ route('notebooks.create.quick') }}" style="display:flex; align-items:center; gap:16px; padding:16px; border:2px dashed rgba(99,102,241,0.4); border-radius:12px;">
+                                    <form method="POST" action="{{ route('notebooks.create.quick') }}" style="display:flex; align-items:center; gap:16px; padding:16px; border:2px dashed rgba(99,102,241,0.35); border-radius:12px; background:white;">
                                         @csrf
                                         <button
                                             type="submit"
                                             style="all: unset; width: 100%; cursor: pointer; display: flex; align-items: center; gap: 16px;"
                                             aria-label="Create new notebook"
                                         >
-                                            <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.2); display:flex; align-items:center; justify-content:center;">
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px; color:#818cf8;">
+                                            <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.12); display:flex; align-items:center; justify-content:center;">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px; height:20px; color:#4f46e5;">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                                 </svg>
                                             </div>
                                             <div>
-                                                <div style="font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:white;">Create new notebook</div>
-                                                <div style="font-size:13px; color:rgba(255,255,255,0.5);">Start from scratch</div>
+                                                <div style="font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:#0f172a;">Create new notebook</div>
+                                                <div style="font-size:13px; color:#64748b;">Start from scratch</div>
                                             </div>
                                         </button>
                                     </form>
@@ -728,12 +798,12 @@
                                             <a :href="'/notebooks/' + notebook.id" class="notebook-list-cover" :style="{ background: notebook.cover_color ?? '#6366f1' }" style="text-decoration: none; color: inherit; width:36px; height:36px; border-radius:8px; font-size:18px;">
                                                 📓
                                             </a>
-                                            <a :href="'/notebooks/' + notebook.id" style="text-decoration: none; font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:white;" x-text="notebook.title"></a>
+                                            <a :href="'/notebooks/' + notebook.id" style="text-decoration: none; font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; color:#0f172a;" x-text="notebook.title"></a>
                                         </div>
                                     </td>
-                                    <td style="font-size:14px; color:rgba(255,255,255,0.7);" x-text="(notebook.sources_count ?? 0) + ' Sources'"></td>
-                                    <td style="font-size:14px; color:rgba(255,255,255,0.7);" x-text="new Date(notebook.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })"></td>
-                                    <td style="font-size:14px; color:rgba(255,255,255,0.7);">Owner</td>
+                                    <td style="font-size:14px; color:#64748b;" x-text="(notebook.sources_count ?? 0) + ' Sources'"></td>
+                                    <td style="font-size:14px; color:#64748b;" x-text="new Date(notebook.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })"></td>
+                                    <td style="font-size:14px; color:#64748b;">Owner</td>
                                     <td style="text-align: right;">
                                         <div x-data="{ notebookMenuOpen: false }" class="relative" style="display:inline-block;">
                                             <button @click="notebookMenuOpen = !notebookMenuOpen" class="notebook-menu-btn">
@@ -743,8 +813,8 @@
                                                     <circle cx="12" cy="18" r="2"/>
                                                 </svg>
                                             </button>
-                                            <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:rgba(20,20,40,0.98); border:1px solid rgba(255,255,255,0.15); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.4); min-width:160px; z-index:100;">
-                                                <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.1);">
+                                            <div x-show="notebookMenuOpen" @click.outside="notebookMenuOpen = false" style="position:absolute; top:30px; right:0; background:white; border:1px solid #e2e8f0; border-radius:12px; box-shadow:0 10px 30px rgba(15,23,42,0.12); min-width:160px; z-index:100;">
+                                                <button @click="notebookMenuOpen = false; showRenameModal = true; renameNotebookId = notebook.id; renameTitle = notebook.title;" style="width:100%; padding:10px 16px; text-align:left; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0;">
                                                     Rename
                                                 </button>
                                                 <form method="POST" :action="'/notebooks/' + notebook.id" onsubmit="return confirm('Are you sure you want to delete this notebook?')">
@@ -803,18 +873,18 @@
                 </div>
             @endif
 
-            <div x-show="showRenameModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:200;" x-transition>
-                <div style="background:#1a1a2e; border:1px solid rgba(255,255,255,0.15); border-radius:24px; padding:32px; max-width:500px; width:90%;">
-                    <h3 style="font-family:'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:white; margin:0 0 24px;">Rename Notebook</h3>
+            <div x-show="showRenameModal" style="position:fixed; inset:0; background:rgba(15,23,42,0.45); display:flex; align-items:center; justify-content:center; z-index:200;" x-transition>
+                <div style="background:white; border:1px solid #e2e8f0; border-radius:24px; padding:32px; max-width:500px; width:90%; box-shadow:0 30px 60px rgba(15,23,42,0.18);">
+                    <h3 style="font-family:'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#0f172a; margin:0 0 24px;">Rename Notebook</h3>
                     <form method="POST" :action="`/notebooks/${renameNotebookId}`">
                         @csrf
                         @method('PATCH')
                         <div style="margin-bottom:24px;">
-                            <label style="display:block; font-family:'Manrope', sans-serif; font-size:14px; font-weight:600; color:rgba(255,255,255,0.8); margin-bottom:8px;">Notebook Name</label>
-                            <input type="text" name="title" x-model="renameTitle" required style="width:100%; padding:16px 20px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:white; font-family:'Manrope', sans-serif; font-size:16px; border-radius:16px; outline:none;">
+                            <label style="display:block; font-family:'Manrope', sans-serif; font-size:14px; font-weight:600; color:#334155; margin-bottom:8px;">Notebook Name</label>
+                            <input type="text" name="title" x-model="renameTitle" required style="width:100%; padding:16px 20px; border:1px solid #e2e8f0; background:white; color:#0f172a; font-family:'Manrope', sans-serif; font-size:16px; border-radius:16px; outline:none;">
                         </div>
                         <div style="display:flex; gap:12px;">
-                            <button type="button" @click="showRenameModal = false" style="flex:1; padding:16px 32px; border:1px solid rgba(255,255,255,0.15); border-radius:16px; background:transparent; color:rgba(255,255,255,0.8); font-family:'Manrope', sans-serif; font-size:16px; font-weight:600; cursor:pointer;">Cancel</button>
+                            <button type="button" @click="showRenameModal = false" style="flex:1; padding:16px 32px; border:1px solid #e2e8f0; border-radius:16px; background:white; color:#0f172a; font-family:'Manrope', sans-serif; font-size:16px; font-weight:600; cursor:pointer;">Cancel</button>
                             <button type="submit" style="flex:1; padding:16px 32px; border:none; border-radius:16px; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; font-family:'Manrope', sans-serif; font-size:16px; font-weight:600; cursor:pointer;">Save</button>
                         </div>
                     </form>
