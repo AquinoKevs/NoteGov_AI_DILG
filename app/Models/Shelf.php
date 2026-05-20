@@ -27,7 +27,7 @@ class Shelf extends Model
 
     public function notebooks(): BelongsToMany
     {
-        return $this->belongsToMany(Notebook::class)
+        return $this->belongsToMany(Notebook::class, 'shelf_notebook')
             ->withPivot('order')
             ->orderBy('shelf_notebook.order');
     }

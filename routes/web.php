@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notebooks/bulk', [\App\Http\Controllers\NotebookController::class, 'bulkActions'])->name('notebooks.bulk');
     Route::post('/notebooks/{notebook}/pin', [\App\Http\Controllers\NotebookController::class, 'pin'])->name('notebooks.pin');
     Route::delete('/notebooks/{notebook}/pin', [\App\Http\Controllers\NotebookController::class, 'unpin'])->name('notebooks.unpin');
+    Route::patch('/notebooks/{notebook}/visibility', [\App\Http\Controllers\NotebookController::class, 'updateVisibility'])->name('notebooks.visibility.update');
     
     Route::post('/shelves', [\App\Http\Controllers\ShelfController::class, 'store'])->name('shelves.store');
     Route::patch('/shelves/{shelf}', [\App\Http\Controllers\ShelfController::class, 'update'])->name('shelves.update');

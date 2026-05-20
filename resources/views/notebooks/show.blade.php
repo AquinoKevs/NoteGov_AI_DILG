@@ -1295,7 +1295,6 @@
                         <h1 x-show="!editingTitle" @click="editingTitle = true" style="font-family: 'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#1e293b; margin:0; cursor:pointer; border-bottom:2px dashed transparent; transition:border-color 0.2s ease;" x-text="newTitle" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='transparent'"></h1>
                     </div>
                 </div>
-                
                 <div style="display: flex; align-items: center; gap: 16px;">
                     <form method="POST" action="{{ route('notebooks.create.quick') }}">
                         @csrf
@@ -1335,27 +1334,42 @@
             </div>
             
             <div x-show="showShareModal" class="modal-overlay" @click.self="showShareModal = false">
-                <div class="modal-content" style="max-width: 640px; border-radius: 24px;" @click.stop>
-                    <form method="POST" action="{{ route('notebooks.members.store', $notebook) }}">
-                        @csrf
-                        <div style="padding: 24px 32px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <svg style="width: 28px; height: 28px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
-                                </svg>
-                                <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #1e293b; margin: 0;">Share "{{ $notebook->title }}"</h2>
+                <div class="modal-content" style="max-width: 680px; border-radius: 24px;" @click.stop>
+                    <div style="padding: 24px 32px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <svg style="width: 28px; height: 28px; color: #1e293b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                            </svg>
+                            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #1e293b; margin: 0;">Share "{{ $notebook->title }}"</h2>
+                        </div>
+                        <button type="button" class="modal-close" @click="showShareModal = false">&times;</button>
+                    </div>
+                    
+                    <div style="padding: 32px;">
+                        <form method="POST" action="{{ route('notebooks.members.store', $notebook) }}" style="margin-bottom: 32px;">
+                            @csrf
+                            <div style="margin-bottom: 0;">
+                                <input type="email" name="email" placeholder="Add people by email *" required style="width: 100%; padding: 20px 24px; border: 2px solid #e2e8f0; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 18px; color: #1e293b; outline: none; background: white; margin-bottom: 16px;">
+                                
+                                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                    <span style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #64748b;">Permission:</span>
+                                    <select name="permission" style="padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; color: #1e293b; outline: none; background: white;">
+                                        <option value="view">Viewer</option>
+                                        <option value="edit">Editor</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 16px;">
+                                    <button type="submit" style="flex: 1; padding: 16px 32px; border: none; border-radius: 999px; background: #1e293b; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; color: white; cursor: pointer;">
+                                        Share
+                                    </button>
+                                </div>
+                                
+                                @error('email')
+                                    <p style="color: #ef4444; font-size: 14px; margin-top: 8px;">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <button type="button" class="modal-close" @click="showShareModal = false">&times;</button>
-                        </div>
-                        
-                        <div style="padding: 32px;">
-                            <div style="margin-bottom: 32px;">
-                                <input type="email" name="email" placeholder="Add people by email *" required style="width: 100%; padding: 20px 24px; border: 2px solid #e2e8f0; border-radius: 999px; font-family: 'Manrope', sans-serif; font-size: 18px; color: #1e293b; outline: none; background: white;">
-                            <input type="hidden" name="permission" value="view">
-                            @error('email')
-                                <p style="color: #ef4444; font-size: 14px; margin-top: 8px;">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        </form>
                         
                         <div style="margin-bottom: 32px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
@@ -1396,6 +1410,76 @@
                             @endforeach
                         </div>
                         
+                        <!-- Notebook Access Section -->
+                        <div style="margin-bottom: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #1e293b; margin: 0 0 20px;">Notebook access</h3>
+                            
+                            <form method="POST" action="{{ route('notebooks.visibility.update', $notebook) }}" id="visibilityForm">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="visibility" id="visibilityInput" value="{{ ($notebook->visibility === 'private') ? 'restricted' : ($notebook->visibility ?? 'restricted') }}">
+                                <div x-data="{ 
+                                    showAccessDropdown: false, 
+                                    currentAccess: '{{ ($notebook->visibility === 'private') ? 'restricted' : ($notebook->visibility ?? 'restricted') }}' 
+                                }">
+                                <!-- Access Selector -->
+                                <div @click="showAccessDropdown = !showAccessDropdown" style="display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: 1px solid #e2e8f0; border-radius: 16px; cursor: pointer; background: white;">
+                                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center;">
+                                        <svg style="width: 24px; height: 24px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; margin: 0;" x-text="currentAccess === 'restricted' ? 'Restricted' : currentAccess === 'link' ? 'Anyone with link' : 'Public'"></p>
+                                        <p style="font-family: 'Manrope', sans-serif; font-size: 14px; color: #64748b; margin: 4px 0 0;" x-text="currentAccess === 'restricted' ? 'Only people with access can open with the link' : currentAccess === 'link' ? 'Anyone with the link can view this notebook' : 'Anyone can find and view this notebook'"></p>
+                                    </div>
+                                    <svg style="width: 20px; height: 20px; color: #94a3b8;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                                
+                                <!-- Dropdown -->
+                                <div x-show="showAccessDropdown" @click.outside="showAccessDropdown = false" style="margin-top: 12px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; overflow: hidden;">
+                                    <button type="button" @click="currentAccess = 'restricted'; document.getElementById('visibilityInput').value = 'restricted'; document.getElementById('visibilityForm').submit(); showAccessDropdown = false;" :style="{ background: currentAccess === 'restricted' ? '#f8fafc' : 'white' }" style="width: 100%; display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: none; cursor: pointer; text-align: left; border-bottom: 1px solid #e2e8f0;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <svg style="width: 20px; height: 20px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p style="font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 600; color: #1e293b; margin: 0;">Restricted</p>
+                                            <p style="font-family: 'Manrope', sans-serif; font-size: 12px; color: #64748b; margin: 2px 0 0;">Only people with access can open</p>
+                                        </div>
+                                    </button>
+                                    
+                                    <button type="button" @click="currentAccess = 'link'; document.getElementById('visibilityInput').value = 'link'; document.getElementById('visibilityForm').submit(); showAccessDropdown = false;" :style="{ background: currentAccess === 'link' ? '#f8fafc' : 'white' }" style="width: 100%; display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: none; cursor: pointer; text-align: left; border-bottom: 1px solid #e2e8f0;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <svg style="width: 20px; height: 20px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l1.1 1.1"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p style="font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 600; color: #1e293b; margin: 0;">Anyone with link</p>
+                                            <p style="font-family: 'Manrope', sans-serif; font-size: 12px; color: #64748b; margin: 2px 0 0;">Anyone with the link can view</p>
+                                        </div>
+                                    </button>
+                                    
+                                    <button type="button" @click="currentAccess = 'public'; document.getElementById('visibilityInput').value = 'public'; document.getElementById('visibilityForm').submit(); showAccessDropdown = false;" :style="{ background: currentAccess === 'public' ? '#f8fafc' : 'white' }" style="width: 100%; display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: none; cursor: pointer; text-align: left;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <svg style="width: 20px; height: 20px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c1.657 0 3-4.03 3-9s-1.343-9-3-9m-9 9a9 9 0 019-9"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p style="font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 600; color: #1e293b; margin: 0;">Public</p>
+                                            <p style="font-family: 'Manrope', sans-serif; font-size: 12px; color: #64748b; margin: 2px 0 0;">Anyone can find and view</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        
                         <div style="display: flex; align-items: center; gap: 16px;">
                             <button type="button" onclick="navigator.clipboard.writeText('{{ request()->url() }}')" style="flex: 1; padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 999px; background: white; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                                 <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1403,12 +1487,8 @@
                                 </svg>
                                 Copy link
                             </button>
-                            <button type="submit" style="padding: 16px 48px; border: none; border-radius: 999px; background: #1e293b; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 700; color: white; cursor: pointer;">
-                                Share
-                            </button>
                         </div>
                     </div>
-                    </form>
                 </div>
             </div>
             

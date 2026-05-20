@@ -144,11 +144,20 @@ class Notebook extends Model
      */
     public function isAccessibleBy(?User $user): bool
     {
+        $visibility = $this->visibility;
+        if ($visibility === 'private') {
+            $visibility = 'restricted';
+        }
+
         if (! $user) {
-            return true;
+            return in_array($visibility, ['link', 'public'], true);
         }
 
         if ($user->isAdmin() || $this->owner_id === $user->id) {
+            return true;
+        }
+
+        if (in_array($visibility, ['link', 'public'], true)) {
             return true;
         }
 
@@ -160,17 +169,32 @@ class Notebook extends Model
      */
     public function userPermission(?User $user): ?string
     {
+        $visibility = $this->visibility;
+        if ($visibility === 'private') {
+            $visibility = 'restricted';
+        }
+
         if (! $user) {
-            return 'owner';
+            return 'view';
         }
 
         if ($user->isAdmin() || $this->owner_id === $user->id) {
             return 'owner';
         }
 
-        return $this->members()
+        $memberPermission = $this->members()
             ->where('users.id', $user->id)
             ->value('permission');
+
+        if ($memberPermission) {
+            return $memberPermission;
+        }
+
+        if (in_array($visibility, ['link', 'public'], true)) {
+            return 'view';
+        }
+
+        return null;
     }
 
     /**
@@ -183,6 +207,6 @@ class Notebook extends Model
 
     public function shelves(): BelongsToMany
     {
-        return $this->belongsToMany(Shelf::class);
+        return $this->belongsToMany(Shelf::class, 'shelf_notebook');
     }
 }

@@ -426,6 +426,29 @@ class NotebookController extends Controller
         return redirect()->back()->with('status', "Notebook {$notebook->title} unpinned!");
     }
 
+    public function updateVisibility(Request $request, Notebook $notebook): RedirectResponse
+    {
+        if ($notebook->owner_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'visibility' => 'required|in:restricted,link,public',
+        ]);
+
+        $visibility = $request->visibility;
+        $sharedToken = $visibility === 'restricted' 
+            ? null 
+            : ($notebook->shared_token ?? Str::random(40));
+
+        $notebook->update([
+            'visibility' => $visibility,
+            'shared_token' => $sharedToken,
+        ]);
+
+        return redirect()->back()->with('status', 'Notebook visibility updated!');
+    }
+
     protected function uniqueSlug(string $title, ?int $ignoreId = null): string
     {
         $baseSlug = Str::slug($title);
