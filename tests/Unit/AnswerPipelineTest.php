@@ -21,7 +21,7 @@ class AnswerPipelineTest extends TestCase
 
         $result = $method->invoke($gemini, 'Test prompt', '', 'qa');
 
-        $this->assertEquals('The uploaded document does not contain enough information to answer this question.', $result);
+        $this->assertEquals('Hello! I\'m NoteGov AI. How can I help you today?', $result);
         $this->assertStringNotContainsString('Answer based on indexed notebook content', $result);
         $this->assertStringNotContainsString('Test prompt', $result);
     }
@@ -35,7 +35,7 @@ class AnswerPipelineTest extends TestCase
 
         $result = $method->invoke($gemini, 'Test prompt', 'Some sample context text', 'qa');
 
-        $this->assertStringStartsWith('The AI response could not be completed', $result);
+        $this->assertStringStartsWith('NoteGov AI is currently unavailable', $result);
         $this->assertStringNotContainsString('Answer based on indexed notebook content', $result);
         $this->assertStringNotContainsString('Some sample context text', $result);
         $this->assertStringNotContainsString('Test prompt', $result);
@@ -47,8 +47,8 @@ class AnswerPipelineTest extends TestCase
 
         $result = $gemini->answer('Test question', 'PDF too large to parse (19.6 MB).', [], 'qa');
 
-        $this->assertStringStartsWith('The uploaded document could not be processed', $result['text']);
+        $this->assertStringNotContainsString('The uploaded document could not be processed', $result['text']);
         $this->assertStringNotContainsString('Answer based on indexed notebook content', $result['text']);
-        $this->assertStringNotContainsString('PDF too large to parse', $result['text']);
+        $this->assertStringNotContainsString('PHP extensions like ZipArchive', $result['text']);
     }
 }

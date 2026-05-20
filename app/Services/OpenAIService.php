@@ -196,10 +196,9 @@ Answer with clear government-ready language, cite source titles when possible, a
         $context = trim($context);
 
         if ($context === '') {
-            return "The uploaded document does not contain enough information to answer this question.";
+            return "This document couldn't be analyzed, but you can still continue chatting with NoteGov AI.";
         }
 
-        return "The AI response could not be completed right now. Please try again after verifying the AI service configuration.";
+        return "NoteGov AI is currently unavailable. Please try again later.";
     }
 }
-//test

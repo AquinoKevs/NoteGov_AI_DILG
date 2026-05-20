@@ -39,12 +39,83 @@ class GeminiService
         }
 
         $trimmedContext = trim($context);
-        if ($trimmedContext === '' || str_starts_with($trimmedContext, 'PDF too large to parse') || str_starts_with($trimmedContext, 'File type')) {
-            return [
-                'text' => "The uploaded document could not be processed. Please try a different document, or ensure PHP extensions like ZipArchive (for DOCX files) are enabled.",
-                'citations' => $citations,
-                'provider' => 'gemini',
-            ];
+        
+        if (str_starts_with($trimmedContext, 'PDF too large to parse') || str_starts_with($trimmedContext, 'File type')) {
+            Log::info('GeminiService: Context contains failed source messages, filtering them out and proceeding with normal AI chat', [
+                'context_preview' => Str::limit($trimmedContext, 200),
+            ]);
+            $trimmedContext = '';
+        }
+
+        if ($trimmedContext === '') {
+            try {
+                $apiKey = config('services.gemini.api_key');
+                $model = config('services.gemini.chat_model', 'gemini-flash-latest');
+                
+                $systemPrompt = <<<PROMPT
+You are NoteGov AI, a general-purpose AI assistant with deep knowledge across many fields.
+- Respond conversationally and naturally to the user's message
+- Answer questions on any topic, from everyday conversations to technical/academic subjects
+- Sources are optional enhancements only; you can chat normally even without them
+- Keep responses friendly, helpful, comprehensive, and professional
+- Follow all safety and ethical guidelines while answering legitimate questions
+- Provide accurate, appropriate, and useful information in every response
+- Never mention document processing failures or technical issues
+- Focus on what the user is asking
+
+USER MESSAGE:
+{$prompt}
+PROMPT;
+
+                Log::info('GeminiService: Sending conversational request to API (no sources available)');
+                
+                $response = Http::baseUrl('https://generativelanguage.googleapis.com/v1beta')
+                    ->timeout(120)
+                    ->post("/models/{$model}:generateContent?key={$apiKey}", [
+                        'contents' => [
+                            [
+                                'role' => 'user',
+                                'parts' => [
+                                    ['text' => $systemPrompt],
+                                ],
+                            ],
+                        ],
+                        'generationConfig' => [
+                            'temperature' => 0.7,
+                        ],
+                    ]);
+
+                Log::info('GeminiService: Received conversational raw response', [
+                    'status' => $response->status(),
+                    'raw_response' => $response->json(),
+                ]);
+
+                if ($response->status() === 429) {
+                    $text = "You've exceeded your Gemini API free quota limit. Please try again tomorrow or upgrade your API plan.";
+                } elseif ($response->failed()) {
+                    $text = $this->friendlyFallbackAnswer($prompt);
+                } else {
+                    $responseJson = $response->json();
+                    $text = $this->extractResponseText($responseJson) ?: $this->friendlyFallbackAnswer($prompt);
+                }
+
+                $provider = $response->status() === 429 ? 'gemini-quota-error' : 'gemini-conversational';
+                return [
+                    'text' => $text,
+                    'citations' => [],
+                    'provider' => $provider,
+                ];
+            } catch (Throwable $exception) {
+                Log::error('GeminiService: Conversational API error', [
+                    'error' => $exception->getMessage(),
+                ]);
+                
+                return [
+                    'text' => $this->friendlyFallbackAnswer($prompt),
+                    'citations' => [],
+                    'provider' => 'local-fallback',
+                ];
+            }
         }
 
         try {
@@ -52,23 +123,20 @@ class GeminiService
             $model = config('services.gemini.chat_model', 'gemini-flash-latest');
             
             $systemPrompt = <<<PROMPT
-You are an AI assistant for government and legal documents.
+You are NoteGov AI, a general-purpose AI assistant that can use document context when available.
 
 GUIDELINES FOR ANSWERING:
-- Give a direct and concise answer first
+- If document context is available and relevant, prioritize using that information
+- If the answer isn't in the document, you can still answer using your general knowledge
+- Give direct, accurate, comprehensive answers
 - Use clean formatting (bullet points, numbered lists, etc. when appropriate)
 - Avoid repeating duplicated content
 - Ignore unrelated extracted preview text, document headers, or metadata
 - Answer only the requested question
 - Do NOT repeat raw extracted text, file preview, metadata, or document headers unless specifically asked
 - Do NOT include phrases like "Answer based on indexed notebook content"
-
-You must answer ONLY using the provided document context.
-
-If the answer is not found in the document, respond with exactly:
-"The uploaded document does not contain enough information to answer this question."
-
-DO NOT use any external knowledge. DO NOT hallucinate. DO NOT make up information.
+- Follow all safety and ethical guidelines while answering legitimate questions
+- Provide appropriate and useful information in every response
 
 DOCUMENT CONTEXT:
 {$context}
@@ -262,14 +330,29 @@ PROMPT;
     /**
      * Build a deterministic fallback answer.
      */
+    protected function friendlyFallbackAnswer(string $prompt): string
+    {
+        $lowerPrompt = strtolower(trim($prompt));
+        
+        if (str_contains($lowerPrompt, 'hi') || str_contains($lowerPrompt, 'hello') || str_contains($lowerPrompt, 'hey')) {
+            return "Hello! How can I help you today?";
+        }
+        
+        if (str_contains($lowerPrompt, 'how are you')) {
+            return "I'm doing well, thank you for asking! How can I assist you today?";
+        }
+        
+        return "Hello! I'm NoteGov AI. How can I help you today?";
+    }
+
     protected function fallbackAnswer(string $prompt, string $context, string $mode): string
     {
         $context = trim($context);
 
         if ($context === '') {
-            return "The uploaded document does not contain enough information to answer this question.";
+            return $this->friendlyFallbackAnswer($prompt);
         }
 
-        return "The AI response could not be completed right now. Please try again after verifying the AI service configuration.";
+        return "NoteGov AI is currently unavailable. Please try again later.";
     }
 }
