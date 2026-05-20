@@ -9,6 +9,7 @@
         <link href="https://fonts.bunny.net/css?family=manrope:400,500,600,700,800|space-grotesk:400,500,700&display=swap" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>
+            [x-cloak] { display: none !important; }
             @keyframes spin {
                 from {
                     transform: rotate(0deg);
@@ -208,28 +209,205 @@
             }
             .sources-section-header {
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: space-between;
-                margin: 18px 6px 10px;
+                margin: 20px 0 16px;
+                gap: 8px;
             }
             .sources-section-left {
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 gap: 10px;
                 min-width: 0;
+                flex: 1;
             }
-            .sources-count-badge {
-                display: inline-flex;
+            .sources-header-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                background: #eef2ff;
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                height: 18px;
-                min-width: 18px;
-                padding: 0 6px;
-                border-radius: 999px;
-                background: #dbeafe;
-                color: #1d4ed8;
-                font-size: 11px;
+                color: #4f46e5;
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+            .sources-count-badge {
+                 display: inline-flex;
+                 align-items: center;
+                 justify-content: center;
+                 height: 18px;
+                 min-width: 18px;
+                 padding: 0 5px;
+                 border-radius: 5px;
+                 background: #dbeafe;
+                 color: #2563eb;
+                 font-size: 10px;
+                 font-weight: 800;
+                 margin-left: 6px;
+             }
+            .source-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 16px;
+                border-radius: 20px;
+                border: 1px solid #f1f5f9;
+                background: white;
+                transition: all 0.2s ease;
+                margin-bottom: 12px;
+            }
+            .source-item:hover {
+                border-color: #e2e8f0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            }
+            .source-icon-container {
+                width: 52px;
+                height: 52px;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                position: relative;
+                margin-top: 2px;
+            }
+            .source-icon-container.pdf { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
+            .source-icon-container.docx { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+            .source-icon-container.xlsx { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+            
+            .source-icon-text {
+                font-size: 10px;
                 font-weight: 800;
+                margin-top: -2px;
+                text-transform: uppercase;
+            }
+            .source-info {
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding-top: 2px;
+            }
+            .source-name {
+                font-size: 15px;
+                font-weight: 700;
+                color: #0f172a;
+                margin: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                line-height: 1.3;
+            }
+            .source-details {
+                font-size: 12px;
+                color: #64748b;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                white-space: nowrap;
+            }
+            .source-details span::after {
+                content: "•";
+                margin-left: 4px;
+                color: #cbd5e1;
+            }
+            .source-details span:last-child::after {
+                content: none;
+            }
+            .source-actions-right {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 12px;
+                flex-shrink: 0;
+                margin-left: 8px;
+            }
+            .source-top-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .source-preview-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 14px;
+                border-radius: 10px;
+                border: 1px solid #e2e8f0;
+                background: white;
+                color: #4f46e5;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+                margin-top: 5px;
+            }
+            .source-preview-btn:hover {
+                background: #f8fafc;
+                border-color: #cbd5e1;
+                color: #4338ca;
+                transform: translateY(-1px);
+            }
+            .secure-section {
+                margin-top: 16px;
+                padding: 14px;
+                border-radius: 14px;
+                border: 1px dashed #d1e5ff;
+                background: #f5faff;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .secure-icon-box {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                background: #e0efff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2563eb;
+                flex-shrink: 0;
+            }
+            .secure-content {
+                flex: 1;
+                min-width: 0;
+            }
+            .secure-title {
+                font-size: 13px;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 1px;
+            }
+            .secure-desc {
+                font-size: 11px;
+                color: #64748b;
+                line-height: 1.4;
+            }
+            .secure-lock {
+                color: #2563eb;
+                opacity: 0.4;
+                flex-shrink: 0;
+            }
+            .footer-info {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-top: 16px;
+                padding: 0 2px;
+                color: #64748b;
+                font-size: 11px;
+                font-weight: 600;
+            }
+            .footer-info-icon {
+                color: #2563eb;
+                flex-shrink: 0;
             }
             .source-row {
                 display: flex;
@@ -295,14 +473,7 @@
                 border-color: #cbd5e1;
             }
             .sources-footer-note {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                padding: 10px 6px 0;
-                color: #94a3b8;
-                font-size: 11px;
-                font-weight: 600;
+                display: none;
             }
             .empty-state {
                 text-align: center;
@@ -1047,6 +1218,12 @@
                 showRenameModal: false,
                 renameSourceId: null,
                 renameName: '',
+                showPreviewModal: false,
+                previewUrl: '',
+                previewTitle: '',
+                previewSize: '',
+                previewDate: '',
+                previewType: '',
 
                 performSearch() {
                     if (!this.searchQuery.trim()) {
@@ -1284,53 +1461,104 @@
 
                     <div class="sources-section-header">
                         <div class="sources-section-left">
-                            <span style="font-size: 13px; font-weight: 800; color: #0f172a;">Sources</span>
-                            <span class="sources-count-badge">{{ $sourcesTotal }}</span>
+                            <div class="sources-header-icon">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div style="display: flex; flex-direction: column; min-width: 0;">
+                                <div style="display: flex; align-items: center;">
+                                    <span style="font-size: 18px; font-weight: 800; color: #0f172a;">Sources</span>
+                                    <span class="sources-count-badge">{{ $sourcesTotal }}</span>
+                                </div>
+                                <span style="font-size: 11px; color: #64748b; font-weight: 500; line-height: 1.2;">Manage the documents used to generate results</span>
+                            </div>
                         </div>
                         @if ($sources->count())
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-top: 4px;">
                                 <span style="font-size: 12px; font-weight: 700; color: #64748b;">Select all</span>
-                                <input type="checkbox" :checked="selectAllChecked" @change="toggleSelectAll()" style="width: 16px; height: 16px;">
+                                <input type="checkbox" :checked="selectAllChecked" @change="toggleSelectAll()" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             </div>
                         @endif
                     </div>
 
-                    <div class="space-y-2">
+                    <div class="space-y-3">
                         @forelse ($sources as $source)
-                            <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition" x-data="{ showSourceMenu{{ $source->id }}: false }">
-                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-sm">
-                                    {{ strtoupper($source->type) }}
+                            <div class="source-item" x-data="{ showSourceMenu{{ $source->id }}: false }">
+                                <div class="source-icon-container {{ $source->type }}">
+                                    @if($source->type === 'pdf')
+                                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M7 2H14L19 7V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V4C5 2.89543 5.89543 2 7 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                            <path d="M14 2V7H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                            <rect x="7" y="12" width="10" height="6" rx="1" fill="currentColor"/>
+                                            <text x="12" y="16.5" font-family="Arial" font-size="4.5" font-weight="bold" fill="white" text-anchor="middle">PDF</text>
+                                        </svg>
+                                    @elseif($source->type === 'docx' || $source->type === 'doc')
+                                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M7 2H14L19 7V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V4C5 2.89543 5.89543 2 7 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                            <path d="M14 2V7H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                            <rect x="7" y="12" width="10" height="6" rx="1" fill="currentColor"/>
+                                            <text x="12" y="16.5" font-family="Arial" font-size="4.5" font-weight="bold" fill="white" text-anchor="middle">DOC</text>
+                                        </svg>
+                                    @else
+                                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M7 2H14L19 7V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V4C5 2.89543 5.89543 2 7 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                            <path d="M14 2V7H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                        </svg>
+                                    @endif
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $source->name }}</p>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="relative">
-                                        <button @click="showSourceMenu{{ $source->id }} = !showSourceMenu{{ $source->id }}" class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700 transition">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                                            </svg>
-                                        </button>
-                                        <div x-show="showSourceMenu{{ $source->id }}" @click.outside="showSourceMenu{{ $source->id }} = false" class="absolute right-0 top-12 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-[140px]">
-                                            <button @click="showSourceMenu{{ $source->id }} = false; showRenameModal = true; renameSourceId = {{ $source->id }}; renameName = '{{ $source->name }}';" class="w-full px-4 py-2 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
-                                                Rename
-                                            </button>
-                                            <form method="POST" action="{{ route('notebooks.sources.destroy', [$notebook, $source]) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="w-full px-4 py-2 text-left text-sm font-semibold text-red-600 hover:bg-gray-50 transition">
-                                                    Remove
-                                                </button>
-                                            </form>
-                                        </div>
+                                <div class="source-info">
+                                    <p class="source-name" style="font-size: 15px; font-weight: 700; color: #1e293b;" title="{{ $source->name }}">{{ $source->name }}</p>
+                                    <div class="source-details" style="font-size: 12px; color: #64748b;">
+                                        <span>{{ strtoupper($source->type) }}</span>
+                                        @if($source->file_size)
+                                            <span>{{ number_format($source->file_size / 1024 / 1024, 1) }} MB</span>
+                                        @endif
+                                        <span>Added today</span>
                                     </div>
-                                    <input
-                                        type="checkbox"
-                                        :value="{{ $source->id }}"
-                                        x-model="selectedSourceIds"
-                                        class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                        title="Include in chat context"
+                                </div>
+                                <div class="source-actions-right">
+                                    <div class="source-top-actions">
+                                        <div class="relative">
+                                            <button @click="showSourceMenu{{ $source->id }} = !showSourceMenu{{ $source->id }}" class="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center transition">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                                </svg>
+                                            </button>
+                                            <div x-show="showSourceMenu{{ $source->id }}" @click.outside="showSourceMenu{{ $source->id }} = false" class="absolute right-0 top-8 bg-white border border-gray-200 rounded-xl shadow-xl z-50 min-w-[120px]" x-cloak>
+                                                <button @click="showSourceMenu{{ $source->id }} = false; showRenameModal = true; renameSourceId = {{ $source->id }}; renameName = '{{ $source->name }}';" class="w-full px-3 py-1.5 text-left text-xs font-semibold text-gray-900 hover:bg-gray-50 transition">
+                                                    Rename
+                                                </button>
+                                                <form method="POST" action="{{ route('notebooks.sources.destroy', [$notebook, $source]) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="w-full px-3 py-1.5 text-left text-xs font-semibold text-red-600 hover:bg-gray-50 transition">
+                                                        Remove
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <input
+                                            type="checkbox"
+                                            :value="{{ $source->id }}"
+                                            x-model="selectedSourceIds"
+                                            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            title="Include in chat context"
+                                        >
+                                    </div>
+                                    
+                                    <button 
+                                        type="button"
+                                        @click="previewUrl = '{{ route('notebooks.sources.show', [$notebook, $source]) }}'; previewTitle = '{{ $source->name }}'; previewSize = '{{ $source->file_size ? number_format($source->file_size / 1024 / 1024, 1) . ' MB' : '' }}'; previewDate = 'Added {{ $source->created_at->diffForHumans() }}'; previewType = '{{ $source->type }}'; showPreviewModal = true;" 
+                                        class="source-preview-btn"
                                     >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Preview
+                                    </button>
                                 </div>
                             </div>
                         @empty
@@ -1344,8 +1572,27 @@
                         @endforelse
                     </div>
 
-                    <div class="sources-footer-note">
-                        <span>Secure &amp; private</span>
+                    <div class="secure-section">
+                        <div class="secure-icon-box">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <div class="secure-content">
+                            <p class="secure-title">Secure & private</p>
+                            <p class="secure-desc">Your files are encrypted and handled with strict privacy.</p>
+                        </div>
+                        <div class="secure-lock">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="footer-info">
+                        <svg class="w-4 h-4 footer-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
                         <span>Only selected sources will be used</span>
                     </div>
 
@@ -1771,6 +2018,105 @@
                                 </div>
                             </form>
                         </template>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="showPreviewModal" class="modal-overlay" @click.self="showPreviewModal = false" x-cloak>
+                <div class="modal-content" style="max-width: 95%; width: 1400px; height: 92vh; border-radius: 20px; display: flex; flex-direction: column; background: white; padding: 0;" @click.stop>
+                    <!-- Modal Header -->
+                    <div style="padding: 16px 24px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 16px; min-width: 0;">
+                            <div :class="`source-icon-container ${previewType}`" style="width: 44px; height: 44px; border-radius: 10px;">
+                                <template x-if="previewType === 'pdf'">
+                                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7 2H14L19 7V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V4C5 2.89543 5.89543 2 7 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                        <path d="M14 2V7H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                        <rect x="7" y="12" width="10" height="6" rx="1" fill="currentColor"/>
+                                        <text x="12" y="16.5" font-family="Arial" font-size="4.5" font-weight="bold" fill="white" text-anchor="middle">PDF</text>
+                                    </svg>
+                                </template>
+                                <template x-if="previewType !== 'pdf'">
+                                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7 2H14L19 7V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V4C5 2.89543 5.89543 2 7 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                        <path d="M14 2V7H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    </svg>
+                                </template>
+                            </div>
+                            <div style="min-width: 0;">
+                                <h2 x-text="previewTitle" style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></h2>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9;">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                                        <span x-text="previewSize" style="font-size: 12px; font-weight: 700; color: #64748b;"></span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9;">
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span x-text="previewDate" style="font-size: 12px; font-weight: 700; color: #64748b;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <a :href="previewUrl" download style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 12px; background: white; border: 1px solid #e2e8f0; color: #0f172a; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.2s;">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download
+                            </a>
+                            <a :href="previewUrl" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 12px; background: #6366f1; color: white; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.2s;">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                Open in new tab
+                            </a>
+                            <button @click="showPreviewModal = false" style="width: 40px; height: 40px; border-radius: 10px; background: #f8fafc; border: none; color: #64748b; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div style="flex: 1; display: flex; overflow: hidden;">
+                        <!-- Internal Sidebar -->
+                        <div style="width: 80px; border-right: 1px solid #f1f5f9; background: white; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 24px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #6366f1;">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; background: #eef2ff; display: flex; align-items: center; justify-content: center;">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 700;">Pages</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8;">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 700;">Bookmarks</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8;">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 700;">Comments</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8;">
+                                <div style="width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 700;">Attachments</span>
+                            </div>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div style="flex: 1; background: #f8fafc; overflow: hidden; position: relative;">
+                            <iframe :src="previewUrl" style="width: 100%; height: 100%; border: none;"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div style="padding: 16px 24px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; background: white; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;">
+                        <div style="display: flex; align-items: center; gap: 12px; color: #2563eb; font-size: 13px; font-weight: 600;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center;">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <span>Secure & private — Your files are encrypted and handled with strict privacy</span>
+                        </div>
+                        <button @click="showPreviewModal = false" style="padding: 10px 24px; border-radius: 12px; background: #f1f5f9; border: none; color: #0f172a; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                            Close
+                        </button>
                     </div>
                 </div>
             </div>
