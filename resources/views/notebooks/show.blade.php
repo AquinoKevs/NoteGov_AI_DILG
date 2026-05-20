@@ -1044,6 +1044,9 @@
                 isUploading: false,
                 uploadProgress: 0,
                 chatLoadingState: null, // 'thinking', 'loading', 'searching'
+                showRenameModal: false,
+                renameSourceId: null,
+                renameName: '',
 
                 performSearch() {
                     if (!this.searchQuery.trim()) {
@@ -1282,7 +1285,7 @@
 
                     <div class="space-y-2">
                         @forelse ($sources as $source)
-                            <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition" x-data="{ showSourceMenu{{ $source->id }}: false, showRenameModal{{ $source->id }}: false, renameName{{ $source->id }}: '{{ $source->name }}' }">
+                            <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition" x-data="{ showSourceMenu{{ $source->id }}: false }">
                                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-sm">
                                     {{ strtoupper($source->type) }}
                                 </div>
@@ -1297,7 +1300,7 @@
                                             </svg>
                                         </button>
                                         <div x-show="showSourceMenu{{ $source->id }}" @click.outside="showSourceMenu{{ $source->id }} = false" class="absolute right-0 top-12 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-[140px]">
-                                            <button @click="showSourceMenu{{ $source->id }} = false; showRenameModal{{ $source->id }} = true;" class="w-full px-4 py-2 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
+                                            <button @click="showSourceMenu{{ $source->id }} = false; showRenameModal = true; renameSourceId = {{ $source->id }}; renameName = '{{ $source->name }}';" class="w-full px-4 py-2 text-left text-sm font-semibold text-gray-900 hover:bg-gray-50 transition">
                                                 Rename
                                             </button>
                                             <form method="POST" action="{{ route('notebooks.sources.destroy', [$notebook, $source]) }}">
@@ -1735,28 +1738,28 @@
                 </div>
             </div>
             </div>
-            @foreach($sources as $source)
-                <div x-show="showRenameModal{{ $source->id }}" class="modal-overlay" @click.self="showRenameModal{{ $source->id }} = false">
-                    <div class="modal-content" style="max-width: 500px; border-radius: 24px;" @click.stop>
-                        <button class="modal-close" @click="showRenameModal{{ $source->id }} = false">&times;</button>
-                        <div class="form-section">
-                            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 24px;">Rename Source</h2>
-                            <form method="POST" action="{{ route('notebooks.sources.update', [$notebook, $source]) }}">
+            <div x-show="showRenameModal" class="modal-overlay" @click.self="showRenameModal = false">
+                <div class="modal-content" style="max-width: 500px; border-radius: 24px;" @click.stop>
+                    <button class="modal-close" @click="showRenameModal = false">&times;</button>
+                    <div class="form-section">
+                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 24px;">Rename Source</h2>
+                        <template x-for="source in @js($sources->getCollection())" :key="source.id">
+                            <form x-show="source.id === renameSourceId" method="POST" :action="`{{ route('notebooks.sources.update', [$notebook, ':id']) }}`.replace(':id', renameSourceId)">
                                 @csrf
                                 @method('PATCH')
                                 <div class="form-group">
                                     <label style="display: block; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">New Name</label>
-                                    <input type="text" name="name" x-model="renameName{{ $source->id }}" required style="width: 100%; padding: 16px 20px; border: 2px solid #e2e8f0; border-radius: 16px; font-family: 'Manrope', sans-serif; font-size: 16px; color: #1e293b; outline: none;">
+                                    <input type="text" name="name" x-model="renameName" required style="width: 100%; padding: 16px 20px; border: 2px solid #e2e8f0; border-radius: 16px; font-family: 'Manrope', sans-serif; font-size: 16px; color: #1e293b; outline: none;">
                                 </div>
                                 <div style="display: flex; gap: 12px; margin-top: 24px;">
-                                    <button type="button" @click="showRenameModal{{ $source->id }} = false" style="flex: 1; padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; color: #1e293b; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;">Cancel</button>
+                                    <button type="button" @click="showRenameModal = false; renameSourceId = null; renameName = '';" style="flex: 1; padding: 16px 32px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; color: #1e293b; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;">Cancel</button>
                                     <button type="submit" style="flex: 1; padding: 16px 32px; border: none; border-radius: 16px; background: #1e293b; color: white; font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;">Rename</button>
                                 </div>
                             </form>
-                        </div>
+                        </template>
                     </div>
                 </div>
-            @endforeach
+            </div>
         </div>
 
         <script>

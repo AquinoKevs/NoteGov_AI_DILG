@@ -308,11 +308,12 @@ class DocumentIngestionService
     public function extractContent(Source $source): array
     {
         $text = match ($source->type) {
-            'txt' => $this->extractFromTextFile($source),
-            'docx' => $this->extractFromDocx($source),
+            'txt', 'csv' => $this->extractFromTextFile($source),
+            'docx', 'doc' => $this->extractFromDocx($source),
             'pdf' => $this->extractFromPdf($source),
             'url', 'youtube' => $this->extractFromUrl($source),
             'audio', 'video' => $this->extractFromMedia($source),
+            'xlsx', 'xls', 'pptx', 'ppt' => 'File type ' . $source->type . ' support is coming soon!',
             default => '',
         };
 
@@ -384,7 +385,7 @@ class DocumentIngestionService
             return '';
         }
 
-        $maxBytes = (int) (config('notegov.sources.max_pdf_parse_bytes') ?? env('SOURCES_MAX_PDF_PARSE_BYTES') ?? 15 * 1024 * 1024);
+        $maxBytes = (int) (config('notegov.sources.max_pdf_parse_bytes') ?? env('SOURCES_MAX_PDF_PARSE_BYTES') ?? 50 * 1024 * 1024);
         $fileSize = @filesize($path) ?: $source->file_size;
 
         if ($maxBytes > 0 && is_int($fileSize) && $fileSize > $maxBytes) {

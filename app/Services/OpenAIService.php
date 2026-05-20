@@ -43,7 +43,18 @@ class OpenAIService
                             'role' => 'system',
                             'content' => [[
                                 'type' => 'input_text',
-                                'text' => 'You are NoteGov AI DILG, an AI governance notebook assistant. Answer with clear government-ready language, cite source titles when possible, and keep your response grounded only in the provided notebook context.',
+                                'text' => 'You are NoteGov AI DILG, an AI governance notebook assistant.
+
+GUIDELINES FOR ANSWERING:
+- Give a direct and concise answer first
+- Use clean formatting (bullet points, numbered lists, etc. when appropriate)
+- Avoid repeating duplicated content
+- Ignore unrelated extracted preview text, document headers, or metadata
+- Answer only the requested question
+- Do NOT repeat raw extracted text, file preview, metadata, or document headers unless specifically asked
+- Do NOT include phrases like "Answer based on indexed notebook content"
+
+Answer with clear government-ready language, cite source titles when possible, and keep your response grounded only in the provided notebook context.',
                             ]],
                         ],
                         [
@@ -185,18 +196,10 @@ class OpenAIService
         $context = trim($context);
 
         if ($context === '') {
-            return "I do not have indexed notebook context yet for this request. Upload or process more sources, then try again with a more specific question about policies, reports, or action items.";
+            return "The uploaded document does not contain enough information to answer this question.";
         }
 
-        $opening = match ($mode) {
-            'summary' => 'Notebook summary:',
-            'report' => 'Draft report response:',
-            'brief' => 'Policy brief response:',
-            'compare' => 'Cross-source comparison:',
-            default => 'Answer based on indexed notebook content:',
-        };
-
-        return $opening."\n\n".Str::limit($context, 900)."\n\nRequested prompt: ".$prompt;
+        return "The AI response could not be completed right now. Please try again after verifying the AI service configuration.";
     }
 }
 //test

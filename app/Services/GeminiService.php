@@ -38,9 +38,10 @@ class GeminiService
             ];
         }
 
-        if (trim($context) === '') {
+        $trimmedContext = trim($context);
+        if ($trimmedContext === '' || str_starts_with($trimmedContext, 'PDF too large to parse') || str_starts_with($trimmedContext, 'File type')) {
             return [
-                'text' => "The uploaded document does not contain enough information to answer this question.",
+                'text' => "The uploaded document could not be processed. Please try a different document, or ensure PHP extensions like ZipArchive (for DOCX files) are enabled.",
                 'citations' => $citations,
                 'provider' => 'gemini',
             ];
@@ -52,6 +53,15 @@ class GeminiService
             
             $systemPrompt = <<<PROMPT
 You are an AI assistant for government and legal documents.
+
+GUIDELINES FOR ANSWERING:
+- Give a direct and concise answer first
+- Use clean formatting (bullet points, numbered lists, etc. when appropriate)
+- Avoid repeating duplicated content
+- Ignore unrelated extracted preview text, document headers, or metadata
+- Answer only the requested question
+- Do NOT repeat raw extracted text, file preview, metadata, or document headers unless specifically asked
+- Do NOT include phrases like "Answer based on indexed notebook content"
 
 You must answer ONLY using the provided document context.
 
@@ -238,14 +248,6 @@ PROMPT;
             return "The uploaded document does not contain enough information to answer this question.";
         }
 
-        $opening = match ($mode) {
-            'summary' => 'Notebook summary:',
-            'report' => 'Draft report response:',
-            'brief' => 'Policy brief response:',
-            'compare' => 'Cross-source comparison:',
-            default => 'Answer based on indexed notebook content:',
-        };
-
-        return $opening."\n\n".Str::limit($context, 900)."\n\nRequested prompt: ".$prompt;
+        return "The AI response could not be completed right now. Please try again after verifying the AI service configuration.";
     }
 }

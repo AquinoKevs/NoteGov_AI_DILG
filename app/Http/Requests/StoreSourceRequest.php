@@ -25,15 +25,15 @@ class StoreSourceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'source_type' => ['required', Rule::in(['pdf', 'docx', 'txt', 'url', 'youtube', 'audio', 'video'])],
+            'source_type' => ['required', Rule::in(['pdf', 'docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt', 'txt', 'csv', 'url', 'youtube', 'audio', 'video'])],
             'title' => ['nullable', 'string', 'max:255'],
             'source_url' => ['nullable', 'url', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'upload_file' => [
                 'nullable',
                 'file',
-                'max:51200',
-                'mimetypes:text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,audio/mpeg,audio/wav,audio/x-wav,video/mp4,video/quicktime',
+                'max:512000',
+                'mimetypes:text/plain,text/csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint,audio/mpeg,audio/wav,audio/x-wav,audio/ogg,audio/flac,video/mp4,video/quicktime,video/webm,video/x-msvideo',
             ],
         ];
     }

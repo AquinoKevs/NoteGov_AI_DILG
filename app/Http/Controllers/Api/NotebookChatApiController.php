@@ -22,7 +22,7 @@ class NotebookChatApiController extends Controller
         Notebook $notebook,
         Chat $chat,
         NotebookRagService $rag,
-        GeminiService $openAI,
+        GeminiService $gemini,
     ): Response|JsonResponse|StreamedResponse {
         abort_unless($chat->notebook_id === $notebook->id, 404);
 
@@ -42,7 +42,7 @@ class NotebookChatApiController extends Controller
             'metadata' => ['mode' => $mode, 'selected_source_ids' => $selectedSourceIds ?: null],
         ]);
 
-        $answer = $openAI->answer($prompt, $contextPayload['context'], $contextPayload['citations'], $mode);
+        $answer = $gemini->answer($prompt, $contextPayload['context'], $contextPayload['citations'], $mode);
 
         $assistantMessage = $chat->messages()->create([
             'role' => 'assistant',

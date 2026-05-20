@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class NotebookRagService
 {
-    public function __construct(protected GeminiService $openAI) {}
+    public function __construct(protected GeminiService $gemini) {}
 
     /**
      * Index a source into chunked embeddings.
@@ -27,7 +27,7 @@ class NotebookRagService
         }
 
         $chunks = $this->chunkText($text);
-        $vectors = $this->openAI->embeddings(array_column($chunks, 'content'));
+        $vectors = $this->gemini->embeddings(array_column($chunks, 'content'));
 
         foreach ($chunks as $index => $chunk) {
             AiEmbedding::create([
