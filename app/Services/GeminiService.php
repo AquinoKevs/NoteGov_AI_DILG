@@ -35,6 +35,7 @@ class GeminiService
                 'text' => $this->fallbackAnswer($prompt, $context, $mode),
                 'citations' => $citations,
                 'provider' => 'local-fallback',
+                'used_sources' => false,
             ];
         }
 
@@ -104,6 +105,7 @@ PROMPT;
                     'text' => $text,
                     'citations' => [],
                     'provider' => $provider,
+                    'used_sources' => false,
                 ];
             } catch (Throwable $exception) {
                 Log::error('GeminiService: Conversational API error', [
@@ -114,6 +116,7 @@ PROMPT;
                     'text' => $this->friendlyFallbackAnswer($prompt),
                     'citations' => [],
                     'provider' => 'local-fallback',
+                    'used_sources' => false,
                 ];
             }
         }
@@ -177,6 +180,7 @@ PROMPT;
                     'text' => "You've exceeded your Gemini API free quota limit. Please try again tomorrow or upgrade your API plan.",
                     'citations' => $citations,
                     'provider' => 'gemini-quota-error',
+                    'used_sources' => false,
                 ];
             }
 
@@ -185,6 +189,7 @@ PROMPT;
                     'text' => $this->fallbackAnswer($prompt, $context, $mode),
                     'citations' => $citations,
                     'provider' => 'local-fallback',
+                    'used_sources' => false,
                 ];
             }
 
@@ -201,6 +206,7 @@ PROMPT;
                 'text' => $finalAnswer,
                 'citations' => $citations,
                 'provider' => 'gemini',
+                'used_sources' => true,
             ];
         } catch (Throwable $exception) {
             Log::error('GeminiService: API error', [
@@ -213,6 +219,7 @@ PROMPT;
                 'text' => $this->fallbackAnswer($prompt, $context, $mode),
                 'citations' => $citations,
                 'provider' => 'local-fallback',
+                'used_sources' => false,
             ];
         }
     }

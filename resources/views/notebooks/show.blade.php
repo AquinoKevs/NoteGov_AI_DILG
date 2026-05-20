@@ -1464,10 +1464,12 @@
                                 <template x-if="message.role === 'assistant' && message.content !== ''">
                                     <div class="assistant-footer">
                                         <div class="assistant-footer-left">
-                                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            <span x-text="`Answer generated from ${(selectedSourceIds.length || {{ $sourcesTotal }})} sources`"></span>
+                                            <template x-if="message.metadata && message.metadata.used_sources">
+                                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                <span x-text="`Answer generated from ${(selectedSourceIds.length || {{ $sourcesTotal }})} sources`"></span>
+                                            </template>
                                         </div>
                                         <div class="assistant-footer-right">
                                             <span x-text="message.created_at ?? ''"></span>

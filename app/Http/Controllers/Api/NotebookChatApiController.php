@@ -72,7 +72,11 @@ class NotebookChatApiController extends Controller
             'role' => 'assistant',
             'content' => $answer['text'],
             'citations' => $answer['citations'],
-            'metadata' => ['provider' => $answer['provider'], 'mode' => $mode],
+            'metadata' => [
+                'provider' => $answer['provider'], 
+                'mode' => $mode,
+                'used_sources' => $answer['used_sources'] ?? false
+            ],
         ]);
 
         $chat->update([
