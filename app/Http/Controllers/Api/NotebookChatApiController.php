@@ -68,6 +68,11 @@ class NotebookChatApiController extends Controller
             'answer_provider' => $answer['provider'],
         ]);
 
+        $uploadedSources = collect($contextPayload['citations'])->filter(fn ($c) => !in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
+        $webSources = collect($contextPayload['citations'])->filter(fn ($c) => in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
+        $webSourceUrls = $webSources->pluck('source_url')->filter()->values()->all();
+        $uploadedSourceNames = $uploadedSources->pluck('source_name')->values()->all();
+        
         $assistantMessage = $chat->messages()->create([
             'role' => 'assistant',
             'content' => $answer['text'],
@@ -75,7 +80,11 @@ class NotebookChatApiController extends Controller
             'metadata' => [
                 'provider' => $answer['provider'], 
                 'mode' => $mode,
-                'used_sources' => $answer['used_sources'] ?? false
+                'used_sources' => $answer['used_sources'] ?? false,
+                'uploaded_sources_count' => $uploadedSources->count(),
+                'uploaded_source_names' => $uploadedSourceNames,
+                'web_sources_count' => $webSources->count(),
+                'web_source_urls' => $webSourceUrls,
             ],
         ]);
 
@@ -102,6 +111,7 @@ class NotebookChatApiController extends Controller
                         'id' => $assistantMessage->id,
                         'content' => $assistantMessage->content,
                         'citations' => $assistantMessage->citations,
+                        'metadata' => $assistantMessage->metadata,
                     ],
                 ])."\n\n";
             }, 200, [

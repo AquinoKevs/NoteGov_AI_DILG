@@ -92,6 +92,7 @@ class NotebookRagService
                 'source_id' => $source->id,
                 'source_name' => $source->name,
                 'type' => $source->type,
+                'source_url' => $source->source_url,
             ])
             ->all();
 

@@ -1183,6 +1183,7 @@
                         'content' => $message->content,
                         'citations' => $message->citations ?? [],
                         'created_at' => $message->created_at?->format('h:i A'),
+                        'metadata' => $message->metadata ?? [],
                     ])->values()),
                 }),
                 sourcesCollapsed: false,
@@ -1715,7 +1716,44 @@
                                                 <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
-                                                <span x-text="`Answer generated from ${(selectedSourceIds.length || {{ $sourcesTotal }})} sources`"></span>
+                                                
+                                                <template x-if="message.metadata.uploaded_sources_count > 0 && message.metadata.web_sources_count === 0">
+                                                    <span x-text="`Answer generated from ${message.metadata.uploaded_sources_count} uploaded sources`"></span>
+                                                </template>
+                                                
+                                                <template x-if="message.metadata.web_sources_count > 0 && message.metadata.uploaded_sources_count === 0">
+                                                    <span x-text="`Answer generated from ${message.metadata.web_sources_count} web sources`"></span>
+                                                </template>
+                                                
+                                                <template x-if="message.metadata.uploaded_sources_count > 0 && message.metadata.web_sources_count > 0">
+                                                    <span>Answer generated from both web and uploaded sources</span>
+                                                </template>
+                                            </template>
+                                            
+                                            <template x-if="message.metadata && message.metadata.uploaded_source_names && message.metadata.uploaded_source_names.length > 0">
+                                                <div style="margin-top: 8px; font-size: 12px;">
+                                                    <div style="font-weight: 700; margin-bottom: 4px;">Uploaded Sources Used:</div>
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        <template x-for="(name, index) in message.metadata.uploaded_source_names" :key="index">
+                                                            <div style="color: #475569; word-break: break-word;" x-text="`• ${name}`"></div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            
+                                            <template x-if="message.metadata && message.metadata.web_source_urls && message.metadata.web_source_urls.length > 0">
+                                                <div style="margin-top: 8px; font-size: 12px;">
+                                                    <div style="font-weight: 700; margin-bottom: 4px;">Web Sources Used:</div>
+                                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                        <template x-for="(url, index) in message.metadata.web_source_urls" :key="index">
+                                                            <div style="padding: 8px 12px; background: #f1f5f9; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                                                <a :href="url" target="_blank" rel="noopener noreferrer" 
+                                                                   style="color: #2563eb; text-decoration: underline; word-break: break-all; font-family: monospace;"
+                                                                   x-text="`\`${url}\``"></a>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
                                             </template>
                                         </div>
                                         <div class="assistant-footer-right">
@@ -2217,6 +2255,7 @@
                                          assistantMessage.id = payload.message.id;
                                          assistantMessage.content = payload.message.content;
                                          assistantMessage.citations = payload.message.citations || [];
+                                         assistantMessage.metadata = payload.message.metadata || {};
                                          this.messages = [...this.messages];
                                      }
 
