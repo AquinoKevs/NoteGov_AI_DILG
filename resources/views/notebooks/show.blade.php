@@ -1103,19 +1103,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
                     </div>
-                    <div x-data="{ editingTitle: false, newTitle: @js($notebook->title) }">
-                        <form x-ref="renameForm" method="POST" :action="'/notebooks/' + {{ $notebook->id }}" x-show="editingTitle">
-                            @csrf
-                            @method('PATCH')
-                            <input type="text" name="title" x-model="newTitle" required 
-                                   x-init="$nextTick(() => $el.focus())"
-                                   @blur="$refs.renameForm.submit()"
-                                   @keyup.enter="$refs.renameForm.submit()"
-                                   @keyup.escape="editingTitle = false; newTitle = @js($notebook->title)"
-                                   style="font-family: 'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#1e293b; border:none; border-bottom:2px solid #6366f1; outline:none; background:transparent; width:100%;">
-                        </form>
-                        <h1 x-show="!editingTitle" @click="editingTitle = true" style="font-family: 'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#1e293b; margin:0; cursor:pointer; border-bottom:2px dashed transparent; transition:border-color 0.2s ease;" x-text="newTitle" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='transparent'"></h1>
-                    </div>
+                    <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #1e293b; margin: 0;">{{ $notebook->title }}</h1>
                 </div>
                 
                 <div style="display: flex; align-items: center; gap: 16px;">
