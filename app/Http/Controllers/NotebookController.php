@@ -34,19 +34,32 @@ class NotebookController extends Controller
             ->with(['owner', 'category'])
             ->withCount(['sources', 'chats', 'members'])
             ->where('is_featured', true)
-            ->orWhere('is_pinned', true)
             ->orderBy('display_order')
             ->orderByDesc('featured_at')
+            ->get();
+
+        $pinnedNotebooks = Notebook::query()
+            ->with(['owner', 'category'])
+            ->withCount(['sources', 'chats', 'members'])
+            ->where('is_pinned', true)
+            ->where('owner_id', $user->id)
+            ->orderBy('display_order')
+            ->orderByDesc('last_activity_at')
             ->get();
 
         $userNotebooks = Notebook::query()
             ->with(['owner', 'category'])
             ->withCount(['sources', 'chats', 'members'])
             ->where('owner_id', $user->id)
+            ->where('is_pinned', false)
             ->orderByDesc('last_activity_at')
             ->get();
 
-        return view('notebooks.index', compact('featuredNotebooks', 'userNotebooks'));
+        $shelves = $user->shelves()->with('notebooks')->get();
+
+        $sharedNotebooks = $user->sharedNotebooks()->with(['owner', 'category'])->withCount(['sources', 'chats', 'members'])->get();
+
+        return view('notebooks.index', compact('featuredNotebooks', 'pinnedNotebooks', 'userNotebooks', 'shelves', 'sharedNotebooks'));
     }
 
     /**
@@ -253,6 +266,164 @@ class NotebookController extends Controller
         return redirect()
             ->route('notebooks.index')
             ->with('status', "Notebook {$title} deleted.");
+    }
+
+    /**
+     * Duplicate the specified notebook.
+     */
+    public function duplicate(Request $request, Notebook $notebook): RedirectResponse
+    {
+        $user = $request->user();
+
+        $newNotebook = $notebook->replicate([
+            'id', 'slug', 'shared_token', 'created_at', 'updated_at', 'last_activity_at',
+        ]);
+
+        $newNotebook->title = $notebook->title . ' (Copy)';
+        $newNotebook->owner_id = $user->id;
+        $newNotebook->slug = $this->uniqueSlug($newNotebook->title);
+        $newNotebook->is_featured = false;
+        $newNotebook->is_pinned = false;
+        $newNotebook->last_activity_at = now();
+        $newNotebook->save();
+
+        foreach ($notebook->sources as $source) {
+            $newSource = $source->replicate([
+                'id', 'created_at', 'updated_at',
+            ]);
+            $newSource->notebook_id = $newNotebook->id;
+            $newSource->save();
+        }
+
+        foreach ($notebook->chats as $chat) {
+            $newChat = $chat->replicate([
+                'id', 'created_at', 'updated_at', 'last_message_at',
+            ]);
+            $newChat->notebook_id = $newNotebook->id;
+            $newChat->last_message_at = now();
+            $newChat->save();
+
+            foreach ($chat->messages as $message) {
+                $newMessage = $message->replicate([
+                    'id', 'created_at', 'updated_at',
+                ]);
+                $newMessage->chat_id = $newChat->id;
+                $newMessage->save();
+            }
+        }
+
+        $this->activityLogger->log(
+            null,
+            'notebook.duplicated',
+            "Duplicated notebook {$notebook->title}.",
+            $newNotebook,
+            null,
+            ['original_notebook_id' => $notebook->id],
+            $request->ip(),
+            $request->userAgent()
+        );
+
+        return redirect()
+            ->route('notebooks.index')
+            ->with('status', "Notebook duplicated successfully.");
+    }
+
+    /**
+     * Bulk actions for notebooks.
+     */
+    public function bulkActions(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'action' => 'required|in:delete,pin,unpin,share',
+            'notebook_ids' => 'required|array|min:1',
+            'notebook_ids.*' => 'integer|exists:notebooks,id',
+        ]);
+
+        $user = $request->user();
+        $notebooks = Notebook::whereIn('id', $request->notebook_ids)
+            ->where('owner_id', $user->id)
+            ->get();
+
+        switch ($request->action) {
+            case 'delete':
+                foreach ($notebooks as $notebook) {
+                    $notebook->delete();
+                }
+                $message = 'Selected notebooks deleted.';
+                break;
+
+            case 'pin':
+                foreach ($notebooks as $notebook) {
+                    $notebook->update(['is_pinned' => true]);
+                }
+                $message = 'Selected notebooks pinned.';
+                break;
+
+            case 'unpin':
+                foreach ($notebooks as $notebook) {
+                    $notebook->update(['is_pinned' => false]);
+                }
+                $message = 'Selected notebooks unpinned.';
+                break;
+
+            case 'share':
+                foreach ($notebooks as $notebook) {
+                    $notebook->update([
+                        'visibility' => 'shared',
+                        'shared_token' => Str::random(40),
+                    ]);
+                }
+                $message = 'Selected notebooks shared.';
+                break;
+        }
+
+        return redirect()
+            ->route('notebooks.index')
+            ->with('status', $message);
+    }
+
+    public function pin(Request $request, Notebook $notebook): RedirectResponse
+    {
+        if ($notebook->owner_id !== $request->user()->id) {
+            abort(403);
+        }
+        
+        $notebook->update(['is_pinned' => true]);
+        
+        $this->activityLogger->log(
+            null,
+            'notebook.pinned',
+            "Pinned notebook {$notebook->title}.",
+            $notebook,
+            null,
+            [],
+            $request->ip(),
+            $request->userAgent()
+        );
+        
+        return redirect()->back()->with('status', "Notebook {$notebook->title} pinned!");
+    }
+
+    public function unpin(Request $request, Notebook $notebook): RedirectResponse
+    {
+        if ($notebook->owner_id !== $request->user()->id) {
+            abort(403);
+        }
+        
+        $notebook->update(['is_pinned' => false]);
+        
+        $this->activityLogger->log(
+            null,
+            'notebook.unpinned',
+            "Unpinned notebook {$notebook->title}.",
+            $notebook,
+            null,
+            [],
+            $request->ip(),
+            $request->userAgent()
+        );
+        
+        return redirect()->back()->with('status', "Notebook {$notebook->title} unpinned!");
     }
 
     protected function uniqueSlug(string $title, ?int $ignoreId = null): string

@@ -91,6 +91,11 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function shelves(): HasMany
+    {
+        return $this->hasMany(Shelf::class)->orderBy('order');
+    }
+
     /**
      * Determine if the user has one of the given roles.
      */

@@ -180,4 +180,9 @@ class Notebook extends Model
     {
         return in_array($this->userPermission($user), ['owner', 'editor'], true);
     }
+
+    public function shelves(): BelongsToMany
+    {
+        return $this->belongsToMany(Shelf::class);
+    }
 }

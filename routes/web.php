@@ -46,11 +46,25 @@ Route::middleware(['auth'])->group(function () {
         ->name('notebooks.members.store');
     Route::delete('/notebooks/{notebook}/members/{member}', [\App\Http\Controllers\NotebookMemberController::class, 'destroy'])
         ->name('notebooks.members.destroy');
+    Route::post('/notebooks/{notebook}/duplicate', [\App\Http\Controllers\NotebookController::class, 'duplicate'])->name('notebooks.duplicate');
+    Route::post('/notebooks/bulk', [\App\Http\Controllers\NotebookController::class, 'bulkActions'])->name('notebooks.bulk');
+    Route::post('/notebooks/{notebook}/pin', [\App\Http\Controllers\NotebookController::class, 'pin'])->name('notebooks.pin');
+    Route::delete('/notebooks/{notebook}/pin', [\App\Http\Controllers\NotebookController::class, 'unpin'])->name('notebooks.unpin');
+    
+    Route::post('/shelves', [\App\Http\Controllers\ShelfController::class, 'store'])->name('shelves.store');
+    Route::patch('/shelves/{shelf}', [\App\Http\Controllers\ShelfController::class, 'update'])->name('shelves.update');
+    Route::delete('/shelves/{shelf}', [\App\Http\Controllers\ShelfController::class, 'destroy'])->name('shelves.destroy');
+    Route::post('/shelves/{shelf}/notebooks', [\App\Http\Controllers\ShelfController::class, 'addNotebook'])->name('shelves.notebooks.add');
+    Route::delete('/shelves/{shelf}/notebooks/{notebook}', [\App\Http\Controllers\ShelfController::class, 'removeNotebook'])->name('shelves.notebooks.remove');
 
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('users', UserController::class);
         Route::get('/settings', [SystemSettingsController::class, 'index'])->name('settings.index');
         Route::patch('/settings', [SystemSettingsController::class, 'update'])->name('settings.update');
         Route::post('/settings/import-psgc', [SystemSettingsController::class, 'importPsgc'])->name('settings.import-psgc');
+        Route::get('/featured-notebooks', [App\Http\Controllers\FeaturedNotebookController::class, 'index'])->name('featured-notebooks.index');
+        Route::post('/featured-notebooks/{notebook}/add', [App\Http\Controllers\FeaturedNotebookController::class, 'add'])->name('featured-notebooks.add');
+        Route::delete('/featured-notebooks/{notebook}/remove', [App\Http\Controllers\FeaturedNotebookController::class, 'remove'])->name('featured-notebooks.remove');
+        Route::patch('/featured-notebooks/reorder', [App\Http\Controllers\FeaturedNotebookController::class, 'reorder'])->name('featured-notebooks.reorder');
     });
 });

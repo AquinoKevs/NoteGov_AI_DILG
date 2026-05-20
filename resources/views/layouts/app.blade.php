@@ -15,7 +15,7 @@
     <body class="font-sans antialiased bg-gray-100">
         <div x-data="{ navOpen: false }" class="relative min-h-screen">
             <div class="relative flex min-h-screen">
-                <aside class="hidden w-72 shrink-0 xl:flex xl:flex-col bg-gray-900 text-white">
+                <aside class="hidden w-72 shrink-0 xl:flex xl:flex-col xl:fixed xl:h-screen xl:inset-y-0 xl:left-0 bg-gray-900 text-white z-20">
                     <div class="px-6 py-8 flex flex-col h-full">
                         <a href="{{ route('dashboard') }}" class="flex items-center gap-4 mb-10">
                             <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
@@ -45,6 +45,10 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                                     <span class="font-semibold">User Management</span>
                                 </a>
+                                <a href="{{ route('featured-notebooks.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('featured-notebooks.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.95 1.71l-1.52 4.674c-.3.921-1.604.921-1.902 0l-5.449-1.675a1 1 0 00-.95.69h-4.915c-.969 0-1.371-1.24-.95-1.71l1.52-4.674a1 1 0 00-.95-.69H5.183c-.969 0-1.371 1.24-.95 1.71l1.519 4.674c.3.921 1.603.921 1.902 0l5.45 1.675c.3.921 1.604-.921 1.902 0z"></path></svg>
+                                    <span class="font-semibold">Featured Notebooks</span>
+                                </a>
                                 <a href="{{ route('settings.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('settings.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-1.066 2.572c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 001.066-2.573c.94 1.543-.826 3.31-2.37 2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     <span class="font-semibold">System Settings</span>
@@ -68,7 +72,7 @@
                     </div>
                 </aside>
 
-                <div class="flex min-w-0 flex-1 flex-col">
+                <div class="flex min-w-0 flex-1 flex-col xl:ml-72">
                     <header class="sticky top-0 z-30 bg-white border-b border-gray-200">
                         <div class="flex items-center justify-between gap-4 px-6 py-5">
                             <div class="flex items-center gap-3">
@@ -125,6 +129,7 @@
                                 <div class="pt-4 pb-2 px-4 text-xs font-bold uppercase tracking-wider text-gray-400">Admin Tools</div>
                                 <a href="{{ route('analytics') }}" class="block rounded-xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('analytics') ? 'bg-blue-50 text-blue-700' : '' }}">Admin Dashboard</a>
                                 <a href="{{ route('users.index') }}" class="block rounded-xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('users.*') ? 'bg-blue-50 text-blue-700' : '' }}">User Management</a>
+                                <a href="{{ route('featured-notebooks.index') }}" class="block rounded-xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('featured-notebooks.*') ? 'bg-blue-50 text-blue-700' : '' }}">Featured Notebooks</a>
                                 <a href="{{ route('settings.index') }}" class="block rounded-xl px-4 py-3 text-gray-700 hover:bg-gray-50 font-semibold {{ request()->routeIs('settings.*') ? 'bg-blue-50 text-blue-700' : '' }}">System Settings</a>
                             @endif
                         </div>
