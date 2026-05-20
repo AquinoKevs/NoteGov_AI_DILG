@@ -65,7 +65,7 @@ class NotebookRagService
             ->when(
                 is_array($sourceIds) && $sourceIds !== [],
                 fn ($query) => $query->whereIn('id', $sourceIds),
-                fn ($query) => $query->whereNotNull('extracted_text')
+                fn ($query) => $query->whereRaw('1 = 0')
             )
             ->latest('updated_at')
             ->get();

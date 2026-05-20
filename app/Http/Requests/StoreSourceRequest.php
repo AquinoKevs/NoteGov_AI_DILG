@@ -32,7 +32,7 @@ class StoreSourceRequest extends FormRequest
             'upload_file' => [
                 'nullable',
                 'file',
-                'max:512000',
+                'max:1048576',
                 'mimetypes:text/plain,text/csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint,audio/mpeg,audio/wav,audio/x-wav,audio/ogg,audio/flac,video/mp4,video/quicktime,video/webm,video/x-msvideo',
             ],
         ];
