@@ -1,9 +1,17 @@
 <x-app-layout>
     <div class="space-y-8 py-2">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Welcome back, {{ auth()->user()->name ?? 'Kenshin' }} 👋</h1>
-                <p class="text-gray-500 mt-1 text-sm">Here's what's happening with your platform today.</p>
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('dashboard') }}" class="btn-premium-outline flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">System Analytics</h1>
+                    <p class="text-gray-500 mt-1 text-sm">Here's what's happening with your platform today.</p>
+                </div>
             </div>
         </div>
 

@@ -1,10 +1,18 @@
 <x-app-layout>
     <div class="space-y-8 py-2">
-        <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start justify-between gap-4 flex-wrap">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.3em] text-blue-600 mb-2">DILG KNOWLEDGE ASSISTANT</p>
                 <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ $user->name }} 👋</h1>
                 <p class="text-gray-500 mt-2">Here's what's happening with your platform today.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('analytics') }}" class="btn-premium">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Show System Analytics
+                </a>
             </div>
         </div>
 
