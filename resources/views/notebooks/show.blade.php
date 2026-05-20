@@ -1015,7 +1015,7 @@
                     ])->values()),
                 }),
                 sourcesCollapsed: false,
-                selectedSourceIds: @js($sources->getCollection()->pluck('id')->values()),
+                selectedSourceIds: [],
                 pageSourceIds: @js($sources->getCollection()->pluck('id')->values()),
                 get selectAllChecked() {
                     if (!this.pageSourceIds.length) return false;

@@ -385,7 +385,7 @@ class DocumentIngestionService
             return '';
         }
 
-        $maxBytes = (int) (config('notegov.sources.max_pdf_parse_bytes') ?? env('SOURCES_MAX_PDF_PARSE_BYTES') ?? 50 * 1024 * 1024);
+        $maxBytes = (int) (config('notegov.sources.max_pdf_parse_bytes') ?? env('SOURCES_MAX_PDF_PARSE_BYTES') ?? 200 * 1024 * 1024);
         $fileSize = @filesize($path) ?: $source->file_size;
 
         if ($maxBytes > 0 && is_int($fileSize) && $fileSize > $maxBytes) {
