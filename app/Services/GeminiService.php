@@ -97,18 +97,40 @@ PROMPT;
                         'topK' => 40,
                         'topP' => 0.95,
                     ],
-                ])
-                ->throw()
-                ->json();
+                ]);
 
             Log::info('GeminiService: Received raw response', [
-                'raw_response' => $response,
+                'status' => $response->status(),
+                'raw_response' => $response->json(),
             ]);
 
-            $text = $this->extractResponseText($response);
+            if ($response->status() === 429) {
+                return [
+                    'text' => "You've exceeded your Gemini API free quota limit. Please try again tomorrow or upgrade your API plan.",
+                    'citations' => $citations,
+                    'provider' => 'gemini-quota-error',
+                ];
+            }
+
+            if ($response->failed()) {
+                return [
+                    'text' => $this->fallbackAnswer($prompt, $context, $mode),
+                    'citations' => $citations,
+                    'provider' => 'local-fallback',
+                ];
+            }
+
+            $responseJson = $response->json();
+            $text = $this->extractResponseText($responseJson);
+
+            $finalAnswer = $text ?: $this->fallbackAnswer($prompt, $context, $mode);
+
+            Log::info('GeminiService: Final formatted response ready', [
+                'final_answer_text' => $finalAnswer,
+            ]);
 
             return [
-                'text' => $text ?: $this->fallbackAnswer($prompt, $context, $mode),
+                'text' => $finalAnswer,
                 'citations' => $citations,
                 'provider' => 'gemini',
             ];

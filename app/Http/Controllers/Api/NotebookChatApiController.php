@@ -10,6 +10,7 @@ use App\Services\NotebookRagService;
 use App\Services\GeminiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class NotebookChatApiController extends Controller
@@ -24,6 +25,11 @@ class NotebookChatApiController extends Controller
         NotebookRagService $rag,
         GeminiService $gemini,
     ): Response|JsonResponse|StreamedResponse {
+        Log::info('NotebookChatApiController: Starting answer pipeline', [
+            'notebook_id' => $notebook->id,
+            'chat_id' => $chat->id,
+        ]);
+
         abort_unless($chat->notebook_id === $notebook->id, 404);
 
         $prompt = $request->string('prompt')->trim()->toString();
@@ -33,7 +39,18 @@ class NotebookChatApiController extends Controller
             ? array_values(array_map('intval', array_filter($selectedSourceIds, fn ($id) => is_int($id) || ctype_digit((string) $id))))
             : null;
 
+        Log::info('NotebookChatApiController: Received prompt', [
+            'prompt' => $prompt,
+            'mode' => $mode,
+            'selected_source_ids' => $selectedSourceIds,
+        ]);
+
         $contextPayload = $rag->buildContext($notebook, $prompt, 4, $selectedSourceIds ?: null);
+
+        Log::info('NotebookChatApiController: Context built', [
+            'context_length' => strlen($contextPayload['context']),
+            'citations_count' => count($contextPayload['citations']),
+        ]);
 
         $userMessage = $chat->messages()->create([
             'user_id' => null,
@@ -42,7 +59,14 @@ class NotebookChatApiController extends Controller
             'metadata' => ['mode' => $mode, 'selected_source_ids' => $selectedSourceIds ?: null],
         ]);
 
+        Log::info('NotebookChatApiController: Calling GeminiService for answer');
+
         $answer = $gemini->answer($prompt, $contextPayload['context'], $contextPayload['citations'], $mode);
+
+        Log::info('NotebookChatApiController: Received final answer from AI', [
+            'answer_text' => $answer['text'],
+            'answer_provider' => $answer['provider'],
+        ]);
 
         $assistantMessage = $chat->messages()->create([
             'role' => 'assistant',
@@ -58,6 +82,8 @@ class NotebookChatApiController extends Controller
         ]);
 
         if ($request->boolean('stream')) {
+            Log::info('NotebookChatApiController: Streaming response to frontend');
+
             return response()->stream(function () use ($assistantMessage): void {
                 foreach (str_split($assistantMessage->content, 140) as $chunk) {
                     echo 'data: '.json_encode(['chunk' => $chunk])."\n\n";
@@ -80,6 +106,8 @@ class NotebookChatApiController extends Controller
                 'X-Accel-Buffering' => 'no',
             ]);
         }
+
+        Log::info('NotebookChatApiController: Returning final response to frontend');
 
         return response()->json([
             'message' => 'AI response generated successfully.',
