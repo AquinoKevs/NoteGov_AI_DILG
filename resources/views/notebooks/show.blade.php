@@ -1323,7 +1323,7 @@
                         </svg>
                     </div>
                     <div x-data="{ editingTitle: false, newTitle: @js($notebook->title) }">
-                        <form x-ref="renameForm" method="POST" :action="'/notebooks/' + {{ $notebook->id }}" x-show="editingTitle">
+                        <form x-ref="renameForm" method="POST" :action="'/notebooks/' + {{ $notebook->id }}" x-show="editingTitle" x-cloak>
                             @csrf
                             @method('PATCH')
                             <input type="text" name="title" x-model="newTitle" required 
@@ -1333,7 +1333,7 @@
                                    @keyup.escape="editingTitle = false; newTitle = @js($notebook->title)"
                                    style="font-family: 'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#1e293b; border:none; border-bottom:2px solid #6366f1; outline:none; background:transparent; width:100%;">
                         </form>
-                        <h1 x-show="!editingTitle" @click="editingTitle = true" style="font-family: 'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#1e293b; margin:0; cursor:pointer; border-bottom:2px dashed transparent; transition:border-color 0.2s ease;" x-text="newTitle" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='transparent'"></h1>
+                        <h1 x-show="!editingTitle" x-cloak @click="editingTitle = true" style="font-family: 'Space Grotesk', sans-serif; font-size:28px; font-weight:700; color:#1e293b; margin:0; cursor:pointer; border-bottom:2px dashed transparent; transition:border-color 0.2s ease;" x-text="newTitle" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='transparent'"></h1>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 16px;">
@@ -1358,7 +1358,7 @@
                         <button @click="userMenuOpen = !userMenuOpen" style="width: 40px; height: 40px; background: linear-gradient(135deg, #8b5cf6, #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; border: none;">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                         </button>
-                        <div x-show="userMenuOpen" @click.outside="userMenuOpen = false" style="position: absolute; top: 50px; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); min-width: 200px; z-index: 100;">
+                        <div x-show="userMenuOpen" @click.outside="userMenuOpen = false" x-cloak style="position: absolute; top: 50px; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); min-width: 200px; z-index: 100;">
                             <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
                                 <p style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; color: #1e293b; margin: 0;">{{ Auth::user()->name ?? 'User' }}</p>
                                 <p style="font-family: 'Manrope', sans-serif; font-size: 13px; color: #64748b; margin: 4px 0 0;">{{ Auth::user()->email ?? '' }}</p>
@@ -1374,7 +1374,7 @@
                 </div>
             </div>
             
-            <div x-show="showShareModal" class="modal-overlay" @click.self="showShareModal = false">
+            <div x-show="showShareModal" class="modal-overlay" @click.self="showShareModal = false" x-cloak>
                 <div class="modal-content" style="max-width: 680px; border-radius: 24px;" @click.stop>
                     <div style="padding: 24px 32px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 16px;">
@@ -1480,7 +1480,7 @@
                                 </div>
                                 
                                 <!-- Dropdown -->
-                                <div x-show="showAccessDropdown" @click.outside="showAccessDropdown = false" style="margin-top: 12px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; overflow: hidden;">
+                                <div x-show="showAccessDropdown" x-cloak @click.outside="showAccessDropdown = false" style="margin-top: 12px; border: 1px solid #e2e8f0; border-radius: 16px; background: white; overflow: hidden;">
                                     <button type="button" @click="currentAccess = 'restricted'; document.getElementById('visibilityInput').value = 'restricted'; document.getElementById('visibilityForm').submit(); showAccessDropdown = false;" :style="{ background: currentAccess === 'restricted' ? '#f8fafc' : 'white' }" style="width: 100%; display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: none; cursor: pointer; text-align: left; border-bottom: 1px solid #e2e8f0;">
                                         <div style="width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                             <svg style="width: 20px; height: 20px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1543,7 +1543,7 @@
                         </svg>
                     </button>
                 </div>
-                <div class="panel-content" x-show="!sourcesCollapsed" x-transition.opacity.duration.200ms>
+                <div class="panel-content" x-show="!sourcesCollapsed" x-cloak x-transition.opacity.duration.200ms>
                     <button class="add-sources-btn" type="button" @click="showModal = true; modalStep = 'main'">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -1724,7 +1724,7 @@
                         </div>
                     @endif
                 </div>
-                <div class="panel-content" x-show="sourcesCollapsed" x-transition.opacity.duration.200ms style="padding: 16px 0;">
+                <div class="panel-content" x-show="sourcesCollapsed" x-cloak x-transition.opacity.duration.200ms style="padding: 16px 0;">
                     <div class="sources-collapsed-actions">
                         <button type="button" class="sources-icon-btn primary" title="Add sources" @click="showModal = true; modalStep = 'main'">
                             <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1990,7 +1990,7 @@
                 </div>
             </div>
 
-            <div x-show="showModal" class="modal-overlay" @click.self="showModal = false">
+            <div x-show="showModal" class="modal-overlay" @click.self="showModal = false" x-cloak>
                 <div class="modal-content" @click.stop>
                     <button class="modal-close" @click="showModal = false">&times;</button>
                     
@@ -2087,7 +2087,7 @@
                                     </label>
                                 </div>
 
-                                <div x-show="isUploading" style="margin-bottom: 24px;">
+                                <div x-show="isUploading" x-cloak style="margin-bottom: 24px;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                         <span style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; color: #1e293b;">Uploading...</span>
                                         <span style="font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; color: #3b82f6;" x-text="uploadProgress + '%'"></span>
@@ -2175,13 +2175,13 @@
                 </div>
             </div>
             </div>
-            <div x-show="showRenameModal" class="modal-overlay" @click.self="showRenameModal = false">
+            <div x-show="showRenameModal" class="modal-overlay" @click.self="showRenameModal = false" x-cloak>
                 <div class="modal-content" style="max-width: 500px; border-radius: 24px;" @click.stop>
                     <button class="modal-close" @click="showRenameModal = false">&times;</button>
                     <div class="form-section">
                         <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: #1e293b; margin: 0 0 24px;">Rename Source</h2>
                         <template x-for="source in @js($sources->getCollection())" :key="source.id">
-                            <form x-show="source.id === renameSourceId" method="POST" :action="`{{ route('notebooks.sources.update', [$notebook, ':id']) }}`.replace(':id', renameSourceId)">
+                            <form x-show="source.id === renameSourceId" x-cloak method="POST" :action="`{{ route('notebooks.sources.update', [$notebook, ':id']) }}`.replace(':id', renameSourceId)">
                                 @csrf
                                 @method('PATCH')
                                 <div class="form-group">
