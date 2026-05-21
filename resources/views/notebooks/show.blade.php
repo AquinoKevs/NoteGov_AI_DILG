@@ -1851,7 +1851,22 @@
                                                 </template>
                                             </template>
                                             
-                                            <template x-if="message.metadata && message.metadata.uploaded_source_names && message.metadata.uploaded_source_names.length > 0">
+                                            <template x-if="message.metadata && message.metadata.uploaded_source_links && message.metadata.uploaded_source_links.length > 0">
+                                                <div style="margin-top: 8px; font-size: 12px;">
+                                                    <div style="font-weight: 700; margin-bottom: 4px;">Uploaded Sources Used:</div>
+                                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                        <template x-for="(source, index) in message.metadata.uploaded_source_links" :key="index">
+                                                            <div style="padding: 8px 12px; background: #f1f5f9; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                                                <a :href="source.url" target="_blank" rel="noopener noreferrer"
+                                                                   style="color: #2563eb; text-decoration: underline; word-break: break-word; font-weight: 700;"
+                                                                   x-text="source.name"></a>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template x-if="message.metadata && (!message.metadata.uploaded_source_links || message.metadata.uploaded_source_links.length === 0) && message.metadata.uploaded_source_names && message.metadata.uploaded_source_names.length > 0">
                                                 <div style="margin-top: 8px; font-size: 12px;">
                                                     <div style="font-weight: 700; margin-bottom: 4px;">Uploaded Sources Used:</div>
                                                     <div style="display: flex; flex-direction: column; gap: 2px;">

@@ -11,6 +11,7 @@ use App\Services\GeminiService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class NotebookChatApiController extends Controller
@@ -73,6 +74,20 @@ class NotebookChatApiController extends Controller
         $webSources = $answerCitations->filter(fn ($c) => in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
         $webSourceUrls = $webSources->pluck('source_url')->filter()->values()->all();
         $uploadedSourceNames = $uploadedSources->pluck('source_name')->values()->all();
+        $uploadedSourceLinks = $uploadedSources
+            ->map(function ($source) use ($notebook) {
+                $sourceId = $source['source_id'] ?? null;
+
+                return [
+                    'name' => $source['source_name'] ?? 'Uploaded source',
+                    'url' => $sourceId
+                        ? URL::route('notebooks.sources.show', [$notebook, $sourceId])
+                        : ($source['source_url'] ?? null),
+                ];
+            })
+            ->filter(fn ($source) => filled($source['url']))
+            ->values()
+            ->all();
         
         $assistantMessage = $chat->messages()->create([
             'role' => 'assistant',
@@ -84,6 +99,7 @@ class NotebookChatApiController extends Controller
                 'used_sources' => $answer['used_sources'] ?? false,
                 'uploaded_sources_count' => $uploadedSources->count(),
                 'uploaded_source_names' => $uploadedSourceNames,
+                'uploaded_source_links' => $uploadedSourceLinks,
                 'web_sources_count' => $webSources->count(),
                 'web_source_urls' => $webSourceUrls,
             ],
