@@ -20,7 +20,7 @@ class GeminiService
     /**
      * Generate a notebook-aware answer.
      *
-     * @return array{text:string,citations:array<int, array<string, mixed>>,provider:string}
+     * @return array{text:string,citations:array<int, array<string, mixed>>,provider:string,used_sources:bool}
      */
     public function answer(string $prompt, string $context, array $citations = [], string $mode = 'qa'): array
     {
@@ -51,7 +51,7 @@ class GeminiService
         if ($trimmedContext === '') {
             try {
                 $apiKey = config('services.gemini.api_key');
-                $model = config('services.gemini.chat_model', 'gemini-flash-latest');
+                $model = config('services.gemini.grounded_model', 'gemini-2.5-flash');
                 
                 $systemPrompt = <<<PROMPT
 You are NoteGov AI, a general-purpose AI assistant with deep knowledge across many fields.
@@ -68,7 +68,7 @@ USER MESSAGE:
 {$prompt}
 PROMPT;
 
-                Log::info('GeminiService: Sending conversational request to API (no sources available)');
+                Log::info('GeminiService: Sending grounded web request to API (no notebook sources available)');
                 
                 $response = Http::baseUrl('https://generativelanguage.googleapis.com/v1beta')
                     ->timeout(120)
@@ -83,6 +83,11 @@ PROMPT;
                         ],
                         'generationConfig' => [
                             'temperature' => 0.7,
+                        ],
+                        'tools' => [
+                            [
+                                'google_search' => (object) [],
+                            ],
                         ],
                     ]);
 
@@ -100,12 +105,16 @@ PROMPT;
                     $text = $this->extractResponseText($responseJson) ?: $this->friendlyFallbackAnswer($prompt);
                 }
 
-                $provider = $response->status() === 429 ? 'gemini-quota-error' : 'gemini-conversational';
+                $groundingSources = isset($responseJson) ? $this->extractGroundingSources($responseJson) : [];
+                $provider = $response->status() === 429
+                    ? 'gemini-quota-error'
+                    : ($groundingSources === [] ? 'gemini-conversational' : 'gemini-grounded-web');
+
                 return [
                     'text' => $text,
-                    'citations' => [],
+                    'citations' => $groundingSources,
                     'provider' => $provider,
-                    'used_sources' => false,
+                    'used_sources' => $groundingSources !== [],
                 ];
             } catch (Throwable $exception) {
                 Log::error('GeminiService: Conversational API error', [
@@ -350,6 +359,40 @@ PROMPT;
         }
 
         return null;
+    }
+
+    /**
+     * Extract Google Search grounding links from the Gemini response.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function extractGroundingSources(array $response): array
+    {
+        $chunks = data_get($response, 'candidates.0.groundingMetadata.groundingChunks', []);
+
+        return collect($chunks)
+            ->map(function (array $chunk): ?array {
+                $url = data_get($chunk, 'web.uri');
+
+                if (blank($url)) {
+                    return null;
+                }
+
+                $title = data_get($chunk, 'web.title')
+                    ?: parse_url((string) $url, PHP_URL_HOST)
+                    ?: 'Web source';
+
+                return [
+                    'source_id' => null,
+                    'source_name' => $title,
+                    'type' => 'web',
+                    'source_url' => $url,
+                ];
+            })
+            ->filter()
+            ->unique('source_url')
+            ->values()
+            ->all();
     }
 
     /**

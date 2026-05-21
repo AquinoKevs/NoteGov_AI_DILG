@@ -68,8 +68,9 @@ class NotebookChatApiController extends Controller
             'answer_provider' => $answer['provider'],
         ]);
 
-        $uploadedSources = collect($contextPayload['citations'])->filter(fn ($c) => !in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
-        $webSources = collect($contextPayload['citations'])->filter(fn ($c) => in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
+        $answerCitations = collect($answer['citations'] ?? []);
+        $uploadedSources = $answerCitations->filter(fn ($c) => !in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
+        $webSources = $answerCitations->filter(fn ($c) => in_array($c['type'] ?? '', ['web', 'url', 'youtube']))->values();
         $webSourceUrls = $webSources->pluck('source_url')->filter()->values()->all();
         $uploadedSourceNames = $uploadedSources->pluck('source_name')->values()->all();
         

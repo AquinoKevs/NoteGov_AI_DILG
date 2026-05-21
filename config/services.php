@@ -46,6 +46,7 @@ return [
         'api_key' => env('GEMINI_API_KEY'),
         'project_id' => env('GEMINI_PROJECT_ID'),
         'chat_model' => env('GEMINI_CHAT_MODEL', 'gemini-flash-latest'),
+        'grounded_model' => env('GEMINI_GROUNDED_MODEL', 'gemini-2.5-flash'),
         'embedding_model' => env('GEMINI_EMBEDDING_MODEL', 'gemini-embedding-001'),
     ],
 

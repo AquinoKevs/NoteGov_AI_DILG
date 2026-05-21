@@ -1012,10 +1012,51 @@
                 font-weight: 700;
             }
             .assistant-footer-left {
-                display: inline-flex;
-                align-items: center;
+                display: flex;
+                align-items: flex-start;
                 gap: 8px;
                 min-width: 0;
+                flex: 1 1 auto;
+            }
+            .assistant-source-details {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                min-width: 0;
+            }
+            .assistant-source-summary {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: #64748b;
+            }
+            .assistant-source-group {
+                font-size: 12px;
+                color: #64748b;
+            }
+            .assistant-source-title {
+                font-weight: 800;
+                color: #475569;
+                margin-bottom: 4px;
+            }
+            .assistant-source-list {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .assistant-source-item {
+                padding: 8px 10px;
+                background: #f8fafc;
+                border-radius: 8px;
+                border: 1px solid #e2e8f0;
+                color: #475569;
+                word-break: break-word;
+            }
+            .assistant-source-link {
+                color: #2563eb;
+                text-decoration: underline;
+                word-break: break-all;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             }
             .assistant-footer-right {
                 display: inline-flex;
@@ -1835,6 +1876,23 @@
                                                     </div>
                                                 </div>
                                             </template>
+
+                                            <template x-if="message.metadata && message.metadata.provider === 'gemini-conversational'">
+                                                <div class="assistant-source-details">
+                                                    <div class="assistant-source-summary">
+                                                        <svg style="width: 14px; height: 14px; flex: 0 0 auto;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                        </svg>
+                                                        <span>Answer generated from Web Sources</span>
+                                                    </div>
+                                                    <div class="assistant-source-group">
+                                                        <div class="assistant-source-title">Web Sources</div>
+                                                        <div class="assistant-source-list">
+                                                            <div class="assistant-source-item">Answer came from web/general AI knowledge.</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         </div>
                                         <div class="assistant-footer-right">
                                             <span x-text="message.created_at ?? ''"></span>
@@ -2266,6 +2324,7 @@
                             content: '',
                             created_at: 'Now',
                             citations: [],
+                            metadata: {},
                         };
 
                         this.messages.push(assistantMessage);
